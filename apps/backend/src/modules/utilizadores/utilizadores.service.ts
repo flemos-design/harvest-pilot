@@ -27,15 +27,52 @@ export class UtilizadoresService {
       throw new ConflictException('Email já está em uso');
     }
 
+    // Se organizacaoId não for fornecido, criar automaticamente uma nova organização
+    let organizacaoId = createUtilizadorDto.organizacaoId;
+    if (!organizacaoId) {
+      // Criar slug único baseado no nome do utilizador
+      const nomeBase = createUtilizadorDto.nome
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+        .replace(/\s+/g, '-') // Substitui espaços por hífens
+        .replace(/-+/g, '-') // Remove hífens duplicados
+        .trim();
+
+      // Garantir que o slug é único adicionando um sufixo numérico se necessário
+      let slug = nomeBase;
+      let contador = 1;
+      let slugExists = await this.prisma.organizacao.findUnique({ where: { slug } });
+
+      while (slugExists) {
+        slug = `${nomeBase}-${contador}`;
+        contador++;
+        slugExists = await this.prisma.organizacao.findUnique({ where: { slug } });
+      }
+
+      // Criar a organização
+      const novaOrganizacao = await this.prisma.organizacao.create({
+        data: {
+          nome: `${createUtilizadorDto.nome} - Organização`,
+          slug,
+        },
+      });
+
+      organizacaoId = novaOrganizacao.id;
+    }
+
     // Hash da password
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(createUtilizadorDto.password, saltRounds);
 
     // Criar utilizador
-    const { password, ...userData } = createUtilizadorDto;
+    const { password, organizacaoId: _, ...userData } = createUtilizadorDto;
     return this.prisma.utilizador.create({
       data: {
-        ...userData,
+        email: userData.email,
+        nome: userData.nome,
+        organizacaoId,
         passwordHash,
         papel: userData.papel || 'OPERADOR',
       },

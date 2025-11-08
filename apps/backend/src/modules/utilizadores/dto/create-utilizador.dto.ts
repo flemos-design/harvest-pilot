@@ -35,7 +35,8 @@ export class CreateUtilizadorDto {
   @IsOptional()
   papel?: PapelUtilizador;
 
-  @ApiProperty({ description: 'ID da organização', example: 'cuid123...' })
+  @ApiProperty({ description: 'ID da organização (opcional - criado automaticamente se não fornecido)', example: 'cuid123...', required: false })
   @IsString()
-  organizacaoId: string;
+  @IsOptional()
+  organizacaoId?: string;
 }
