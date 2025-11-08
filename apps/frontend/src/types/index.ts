@@ -494,3 +494,39 @@ export interface UtilizadorStats {
     totalTarefas: number;
   }>;
 }
+
+// ====================
+// IA Types
+// ====================
+
+export interface ChatMessage {
+  message: string;
+  parcelaId?: string;
+  organizacaoId: string;
+}
+
+export interface ChatResponse {
+  answer: string;
+  sources: string[];
+  confidence: number;
+  explanation?: string;
+}
+
+export type InsightType = 'warning' | 'recommendation' | 'alert' | 'info';
+
+export interface Insight {
+  type: InsightType;
+  title: string;
+  description: string;
+  parcelaIds: string[];
+  priority: number;
+  actions: string[];
+  explanation: string;
+  dataPoints: Record<string, any>;
+}
+
+export interface CriticalParcela {
+  parcela: Parcela;
+  score: number;
+  reasons: string[];
+}
