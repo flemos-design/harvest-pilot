@@ -8,17 +8,17 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'HarvestPilot - Gestão Agrícola Inteligente',
-  description: 'Plataforma de Gestão de Terrenos & Calendário Agrícola para Espinhosela, Bragança',
+  description: 'Sistema de gestão agrícola com monitorização por satélite e alertas meteorológicos para produção de frutos secos',
   manifest: '/manifest.json',
-  themeColor: '#22c55e',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  themeColor: '#2f7a99',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   icons: {
-    icon: '/favicon.png',
-    apple: '/favicon.png',
+    icon: '/icons/icon-192x192.png',
+    apple: '/icons/icon-192x192.png',
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'HarvestPilot',
   },
 };

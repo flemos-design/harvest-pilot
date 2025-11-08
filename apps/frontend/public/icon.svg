@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background verde -->
+  <rect width="512" height="512" fill="#10b981" rx="128"/>
+  
+  <!-- Trator simplificado em branco -->
+  <g fill="#ffffff">
+    <!-- Roda traseira grande -->
+    <circle cx="140" cy="340" r="80" fill="none" stroke="#ffffff" stroke-width="16"/>
+    <circle cx="140" cy="340" r="40"/>
+    
+    <!-- Roda dianteira pequena -->
+    <circle cx="360" cy="370" r="50" fill="none" stroke="#ffffff" stroke-width="12"/>
+    <circle cx="360" cy="370" r="25"/>
+    
+    <!-- Corpo do trator -->
+    <path d="M 140 260 L 140 180 L 280 180 L 280 220 L 320 220 L 320 320 L 220 320 Z" fill="#ffffff"/>
+    
+    <!-- Cabine -->
+    <rect x="200" y="140" width="80" height="80" rx="8" fill="#ffffff"/>
+    
+    <!-- Janela -->
+    <rect x="215" y="155" width="50" height="50" rx="4" fill="#10b981"/>
+    
+    <!-- Chaminé -->
+    <rect x="160" y="150" width="20" height="30" rx="4" fill="#ffffff"/>
+  </g>
+</svg>
