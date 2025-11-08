@@ -159,11 +159,11 @@ export default function AssistentePage() {
 
           {/* Sidebar - Insights & Critical */}
           <div className="space-y-6">
-            {/* Parcelas Críticas */}
+            {/* Terrenos Críticos */}
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
-                Parcelas Críticas
+                Terrenos Críticos
               </h3>
               {loadingCritical ? (
                 <div className="flex justify-center py-8">
@@ -186,7 +186,7 @@ export default function AssistentePage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 text-center py-4">Nenhuma parcela crítica</p>
+                <p className="text-sm text-gray-500 text-center py-4">Nenhum terreno crítico</p>
               )}
             </div>
 

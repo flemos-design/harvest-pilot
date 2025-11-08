@@ -22,7 +22,7 @@ export class IaController {
   }
 
   @Get('critical-parcelas')
-  @ApiOperation({ summary: 'Top 3 parcelas mais críticas (priorizar atenção)' })
+  @ApiOperation({ summary: 'Top 3 terrenos mais críticos (priorizar atenção)' })
   @ApiQuery({ name: 'organizacaoId', required: true, description: 'ID da organização' })
   async getTopCriticalParcelas(@Query('organizacaoId') organizacaoId: string) {
     return this.iaService.getTopCriticalParcelas(organizacaoId);

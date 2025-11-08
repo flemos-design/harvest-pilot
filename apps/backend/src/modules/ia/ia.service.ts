@@ -83,7 +83,7 @@ export class IaService {
   }
 
   /**
-   * Obter top 3 parcelas críticas
+   * Obter top 3 terrenos críticos
    */
   async getTopCriticalParcelas(organizacaoId: string): Promise<any> {
     // Combinar múltiplos fatores:

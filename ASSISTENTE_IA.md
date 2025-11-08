@@ -21,8 +21,8 @@ Sistema que detecta automaticamente:
 - 🌧️ Chuva intensa > 30mm
 - ⏰ Tarefas atrasadas
 
-### 3. **Parcelas Críticas**
-Algoritmo de scoring multi-fator que prioriza parcelas por:
+### 3. **Terrenos Críticos**
+Algoritmo de scoring multi-fator que prioriza terrenos por:
 - 40% - Área da parcela
 - 30% - NDVI recente (vigor vegetativo)
 - 20% - Número de operações pendentes
@@ -129,7 +129,7 @@ Obter insights automáticos.
 ```
 
 ### GET `/api/v1/ia/critical-parcelas`
-Top 3 parcelas críticas com scoring.
+Top 3 terrenos críticos com scoring.
 
 **Query params:**
 - `organizacaoId` (obrigatório)
