@@ -269,11 +269,6 @@ export default function EditarParcelaPage() {
                 height="300px"
                 showControls={false}
               />
-              {parcela.latitude && parcela.longitude && (
-                <div className="mt-3 text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                  <span className="font-medium">Coordenadas:</span> {parcela.latitude.toFixed(6)}, {parcela.longitude.toFixed(6)}
-                </div>
-              )}
             </div>
 
             {/* GPS Location */}
