@@ -182,7 +182,9 @@ export default function MapaPage() {
                         <div className="flex items-center justify-between mt-1">
                           <p className="text-xs text-gray-600">{parcela.area} ha</p>
                           {parcela.culturas && parcela.culturas.length > 0 && (
-                            <p className="text-xs text-gray-500">{parcela.culturas.map(c => c.nome).join(', ')}</p>
+                            <p className="text-xs text-gray-500">
+                              {parcela.culturas.map(c => c.variedade ? `${c.especie} (${c.variedade})` : c.especie).join(', ')}
+                            </p>
                           )}
                         </div>
                       </Link>
