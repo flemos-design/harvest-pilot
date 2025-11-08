@@ -244,7 +244,7 @@ export default function ParcelaDetailPage() {
                           )}
                           <div className="mt-2 flex flex-wrap gap-2">
                             <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded">
-                              {cultura.tipo}
+                              {cultura.finalidade}
                             </span>
                             {cultura.ciclos && cultura.ciclos.length > 0 && (
                               <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
