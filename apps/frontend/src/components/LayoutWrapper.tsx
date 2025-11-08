@@ -1,18 +1,34 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Navbar } from './Navbar';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Don't show navbar on home page
-  const showNavbar = pathname !== '/';
+  // Don't show app layout on home/landing page
+  const showAppLayout = pathname !== '/';
+
+  if (!showAppLayout) {
+    return <>{children}</>;
+  }
 
   return (
-    <>
-      {showNavbar && <Navbar />}
-      {children}
-    </>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col ml-[260px] transition-all duration-300">
+        {/* Header */}
+        <Header />
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

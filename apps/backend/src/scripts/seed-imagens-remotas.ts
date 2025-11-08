@@ -22,6 +22,7 @@ async function main() {
   const parcelaNorte = parcelas[1];
 
   // Imagens para Parcela Sul (evolução temporal)
+  // Usando imagens placeholder de agricultura/campos para demonstração
   const imagensSul = [
     {
       parcelaId: parcelaSul.id,
@@ -31,7 +32,7 @@ async function main() {
       ndvi: 0.45,
       ndre: 0.38,
       evi: 0.42,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
     {
@@ -42,7 +43,7 @@ async function main() {
       ndvi: 0.62,
       ndre: 0.55,
       evi: 0.65,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
     {
@@ -53,7 +54,7 @@ async function main() {
       ndvi: 0.73,
       ndre: 0.68,
       evi: 0.75,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
     {
@@ -64,7 +65,7 @@ async function main() {
       ndvi: 0.68,
       ndre: 0.62,
       evi: 0.70,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1566281796817-93bc94d7dbd2?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'], note: 'Alta cobertura de nuvens' },
     },
     {
@@ -75,7 +76,7 @@ async function main() {
       ndvi: 0.71,
       ndre: 0.65,
       evi: 0.73,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
   ];
@@ -90,7 +91,7 @@ async function main() {
       ndvi: 0.52,
       ndre: 0.45,
       evi: 0.50,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1589922034137-d2c80fc7238e?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
     {
@@ -101,7 +102,7 @@ async function main() {
       ndvi: 0.68,
       ndre: 0.60,
       evi: 0.70,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
     {
@@ -112,7 +113,7 @@ async function main() {
       ndvi: 0.78,
       ndre: 0.72,
       evi: 0.81,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'], note: 'Excelente qualidade' },
     },
     {
@@ -123,7 +124,7 @@ async function main() {
       ndvi: 0.75,
       ndre: 0.69,
       evi: 0.78,
-      urlImagem: 'https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi',
+      urlImagem: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop',
       metadados: { resolution: '10m', bands: ['B4', 'B8', 'B5'] },
     },
   ];

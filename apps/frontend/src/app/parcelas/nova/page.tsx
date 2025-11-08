@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateParcela } from '@/hooks/use-parcelas';
 import { usePropriedades } from '@/hooks/use-propriedades';
-import { Loader2, Save, X, MapPin } from 'lucide-react';
+import { Loader2, Save, X, MapPin, Upload, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -40,6 +40,8 @@ export default function NovaParcelaPage() {
   const createParcela = useCreateParcela();
   const [useGPS, setUseGPS] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [uploadedGeometry, setUploadedGeometry] = useState<any>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
   const {
     register,
@@ -77,22 +79,77 @@ export default function NovaParcelaPage() {
     );
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+    if (fileExtension !== 'geojson' && fileExtension !== 'json' && fileExtension !== 'kml') {
+      alert('Formato de ficheiro não suportado. Use GeoJSON (.geojson, .json) ou KML (.kml)');
+      return;
+    }
+
+    try {
+      const text = await file.text();
+
+      if (fileExtension === 'kml') {
+        alert('Suporte para KML será adicionado em breve. Por favor use GeoJSON.');
+        return;
+      }
+
+      const geojson = JSON.parse(text);
+
+      // Validar estrutura básica do GeoJSON
+      if (!geojson.type) {
+        throw new Error('Ficheiro GeoJSON inválido');
+      }
+
+      // Extrair geometria
+      let geometry;
+      if (geojson.type === 'FeatureCollection' && geojson.features?.[0]) {
+        geometry = geojson.features[0].geometry;
+      } else if (geojson.type === 'Feature') {
+        geometry = geojson.geometry;
+      } else if (geojson.type === 'Polygon' || geojson.type === 'MultiPolygon') {
+        geometry = geojson;
+      } else {
+        throw new Error('Tipo de geometria não suportado. Use Polygon ou MultiPolygon.');
+      }
+
+      // Calcular centro aproximado para preview
+      if (geometry.type === 'Polygon' && geometry.coordinates?.[0]?.[0]) {
+        const coords = geometry.coordinates[0];
+        const lats = coords.map((c: number[]) => c[1]);
+        const lngs = coords.map((c: number[]) => c[0]);
+        const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+        const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
+
+        setValue('latitude', centerLat);
+        setValue('longitude', centerLng);
+        setUseGPS(true);
+      }
+
+      setUploadedGeometry(geometry);
+      setUploadedFileName(file.name);
+
+      alert(`Ficheiro "${file.name}" carregado com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao ler ficheiro:', error);
+      alert('Erro ao ler ficheiro. Verifica se é um GeoJSON válido.');
+    }
+  };
+
   const onSubmit = async (data: ParcelaFormData) => {
     try {
-      // Criar um polígono simples se temos coordenadas GPS
-      let geometria: any = {
-        type: 'Polygon',
-        coordinates: [[
-          [-6.7500, 41.7900], // Default para Espinhosela se não tiver GPS
-          [-6.7490, 41.7900],
-          [-6.7490, 41.7890],
-          [-6.7500, 41.7890],
-          [-6.7500, 41.7900],
-        ]],
-      };
+      // Prioridade: 1) Geometria importada, 2) GPS, 3) Default
+      let geometria: any;
 
-      // Se temos GPS, criar polígono ao redor do ponto
-      if (data.latitude && data.longitude) {
+      if (uploadedGeometry) {
+        // Usar geometria do ficheiro importado
+        geometria = uploadedGeometry;
+      } else if (data.latitude && data.longitude) {
+        // Criar polígono ao redor do ponto GPS
         const offset = 0.001; // ~100m
         geometria = {
           type: 'Polygon',
@@ -102,6 +159,18 @@ export default function NovaParcelaPage() {
             [data.longitude + offset, data.latitude - offset],
             [data.longitude - offset, data.latitude - offset],
             [data.longitude - offset, data.latitude + offset],
+          ]],
+        };
+      } else {
+        // Default para Espinhosela se não tiver GPS nem ficheiro
+        geometria = {
+          type: 'Polygon',
+          coordinates: [[
+            [-6.7500, 41.7900],
+            [-6.7490, 41.7900],
+            [-6.7490, 41.7890],
+            [-6.7500, 41.7890],
+            [-6.7500, 41.7900],
           ]],
         };
       }
@@ -244,6 +313,55 @@ export default function NovaParcelaPage() {
               </select>
             </div>
 
+            {/* File Upload */}
+            <div className="border-t pt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Importar Geometria (GeoJSON/KML)
+              </label>
+              <p className="text-xs text-gray-500 mb-3">
+                Importa um ficheiro GeoJSON ou KML com a geometria exata do terreno
+              </p>
+
+              <div className="flex items-center gap-3">
+                <label className="flex-1 cursor-pointer">
+                  <div className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 transition">
+                    <Upload className="w-5 h-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">
+                      {uploadedFileName || 'Escolher ficheiro GeoJSON/KML...'}
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    accept=".geojson,.json,.kml"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                {uploadedFileName && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUploadedGeometry(null);
+                      setUploadedFileName('');
+                    }}
+                    className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {uploadedFileName && (
+                <div className="mt-3 flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <FileText className="w-4 h-4 text-green-600" />
+                  <span className="text-sm text-green-800">
+                    Geometria carregada: <strong>{uploadedFileName}</strong>
+                  </span>
+                </div>
+              )}
+            </div>
+
             {/* GPS Location */}
             <div className="border-t pt-6">
               <div className="flex items-center justify-between mb-4">
@@ -252,27 +370,31 @@ export default function NovaParcelaPage() {
                     Localização GPS (Centro da Parcela)
                   </label>
                   <p className="text-xs text-gray-500 mt-1">
-                    Opcional: Use para criar automaticamente a geometria do terreno
+                    {uploadedFileName
+                      ? 'Centro calculado automaticamente do ficheiro importado'
+                      : 'Opcional: Use para criar automaticamente a geometria do terreno'}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={getCurrentLocation}
-                  disabled={gettingLocation}
-                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition disabled:opacity-50"
-                >
-                  {gettingLocation ? (
-                    <>
-                      <Loader2 className="w-4 h-4 inline animate-spin mr-1" />
-                      A obter...
-                    </>
-                  ) : (
-                    <>
-                      <MapPin className="w-4 h-4 inline mr-1" />
-                      Usar GPS
-                    </>
-                  )}
-                </button>
+                {!uploadedFileName && (
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    disabled={gettingLocation}
+                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition disabled:opacity-50"
+                  >
+                    {gettingLocation ? (
+                      <>
+                        <Loader2 className="w-4 h-4 inline animate-spin mr-1" />
+                        A obter...
+                      </>
+                    ) : (
+                      <>
+                        <MapPin className="w-4 h-4 inline mr-1" />
+                        Usar GPS
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               {useGPS && (
@@ -321,8 +443,11 @@ export default function NovaParcelaPage() {
                 <div className="text-sm text-blue-800">
                   <p className="font-medium mb-1">Sobre a Geometria da Parcela</p>
                   <p className="text-blue-700">
-                    Por enquanto, a geometria é criada automaticamente como um polígono simples.
-                    Em breve poderás desenhar o terreno no mapa ou importar ficheiros GeoJSON/KML.
+                    {uploadedFileName
+                      ? 'A geometria será criada a partir do ficheiro importado.'
+                      : useGPS
+                      ? 'A geometria será criada automaticamente como um polígono ao redor do ponto GPS.'
+                      : 'Importa um ficheiro GeoJSON/KML para definir a geometria exata, ou usa o GPS para criar um polígono simples.'}
                   </p>
                 </div>
               </div>
