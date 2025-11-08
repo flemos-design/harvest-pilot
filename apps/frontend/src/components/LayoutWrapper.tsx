@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import FloatingChat from './FloatingChat';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -30,6 +31,9 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* Floating Chat - Acessível globalmente */}
+      <FloatingChat />
     </div>
   );
 }
