@@ -192,9 +192,6 @@ export default function OperacaoDetailPage() {
                     <div>
                       <h3 className="font-semibold text-gray-900 text-lg">{operacao.parcela.nome}</h3>
                       <p className="text-sm text-gray-600 mt-1">{operacao.parcela.area} hectares</p>
-                      {operacao.parcela.tipoSolo && (
-                        <p className="text-sm text-gray-600">Solo: {operacao.parcela.tipoSolo}</p>
-                      )}
                     </div>
                     <MapPin className="w-5 h-5 text-green-600" />
                   </div>
