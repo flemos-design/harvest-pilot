@@ -174,7 +174,7 @@ export default function AssistentePage() {
                   {criticalParcelas.map((item, i) => (
                     <div key={i} className="p-3 bg-red-50 border border-red-200 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-gray-900">{item.parcela.nome}</span>
+                        <span className="font-medium text-gray-900">{item.nome}</span>
                         <span className="text-sm font-bold text-red-600">{item.score.toFixed(0)}%</span>
                       </div>
                       <div className="text-xs text-gray-600 space-y-1">

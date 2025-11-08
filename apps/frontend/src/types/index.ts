@@ -526,7 +526,10 @@ export interface Insight {
 }
 
 export interface CriticalParcela {
-  parcela: Parcela;
+  parcelaId: string;
+  nome: string;
+  area: number;
+  cultura: string;
   score: number;
   reasons: string[];
 }
