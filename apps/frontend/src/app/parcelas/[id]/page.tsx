@@ -227,16 +227,6 @@ export default function ParcelaDetailPage() {
                 height="400px"
                 showControls={true}
               />
-              {parcela.latitude && parcela.longitude && (
-                <div className="mt-4 flex items-center gap-4 text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                  <div>
-                    <span className="font-medium">Latitude:</span> {parcela.latitude.toFixed(6)}
-                  </div>
-                  <div>
-                    <span className="font-medium">Longitude:</span> {parcela.longitude.toFixed(6)}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Culturas */}
