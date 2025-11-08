@@ -15,6 +15,7 @@
     "build:backend": "npm run build --workspace=apps/backend",
     "build:frontend": "npm run build --workspace=apps/frontend",
     "test": "npm run test --workspaces",
+    "test:production": "npx playwright test --reporter=list",
     "lint": "npm run lint --workspaces",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",

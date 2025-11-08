@@ -50,6 +50,48 @@ export class ParcelasService {
     });
   }
 
+  /**
+   * Criar múltiplas parcelas de uma vez (ex: importar KMZ)
+   * Usa transação para garantir atomicidade
+   */
+  async createBulk(createParcelasDtos: CreateParcelaDto[]) {
+    return this.prisma.$transaction(async (tx) => {
+      const parcelas = [];
+
+      for (const createParcelaDto of createParcelasDtos) {
+        const { geometria, ...data } = createParcelaDto;
+
+        const parcela = await tx.parcela.create({
+          data: {
+            ...data,
+            geometria: JSON.stringify(geometria),
+          },
+          include: {
+            propriedade: {
+              select: {
+                id: true,
+                nome: true,
+              },
+            },
+            culturas: {
+              include: {
+                ciclos: {
+                  where: { estado: 'ATIVO' },
+                  take: 1,
+                  orderBy: { dataInicio: 'desc' },
+                },
+              },
+            },
+          },
+        });
+
+        parcelas.push(parcela);
+      }
+
+      return parcelas;
+    });
+  }
+
   async findAll(propriedadeId?: string) {
     const parcelas = await this.prisma.parcela.findMany({
       where: propriedadeId ? { propriedadeId } : undefined,

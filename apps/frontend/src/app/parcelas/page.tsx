@@ -1,7 +1,7 @@
 'use client';
 
 import { useParcelas } from '@/hooks/use-parcelas';
-import { Loader2, MapPin, TrendingUp } from 'lucide-react';
+import { Loader2, MapPin, TrendingUp, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { MapThumbnail } from '@/components/MapThumbnail';
 
@@ -46,6 +46,13 @@ export default function ParcelasPage() {
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
               >
                 + Novo Terreno
+              </Link>
+              <Link
+                href="/parcelas/importar"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Importar KMZ
               </Link>
               <Link
                 href="/"

@@ -16,6 +16,7 @@ import {
   ApiResponse,
   ApiQuery,
   ApiParam,
+  ApiBody,
 } from '@nestjs/swagger';
 import { ParcelasService } from './parcelas.service';
 import { CreateParcelaDto } from './dto/create-parcela.dto';
@@ -32,6 +33,15 @@ export class ParcelasController {
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   create(@Body() createParcelaDto: CreateParcelaDto) {
     return this.parcelasService.create(createParcelaDto);
+  }
+
+  @Post('bulk')
+  @ApiOperation({ summary: 'Criar múltiplas parcelas de uma vez (ex: importar KMZ)' })
+  @ApiBody({ type: [CreateParcelaDto] })
+  @ApiResponse({ status: 201, description: 'Parcelas criadas com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  createBulk(@Body() createParcelasDtos: CreateParcelaDto[]) {
+    return this.parcelasService.createBulk(createParcelasDtos);
   }
 
   @Get()
