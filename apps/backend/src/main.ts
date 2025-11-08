@@ -19,9 +19,25 @@ async function bootstrap() {
   app.use(helmet());
   // app.use(compression()); // TODO: Re-enable after fixing import
 
-  // CORS
+  // CORS - Allow multiple origins
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3003',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean);
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, etc)
+      if (!origin) return callback(null, true);
+
+      // Check if origin is allowed or matches Railway pattern
+      if (allowedOrigins.includes(origin) || origin.endsWith('.up.railway.app')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 
