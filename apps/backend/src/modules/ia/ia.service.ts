@@ -466,7 +466,93 @@ export class IaService {
         context.sources.push('Calendário agrícola completo');
       }
 
-      // 7. ESTATÍSTICAS GLOBAIS DE NDVI
+      // 7. METEOROLOGIA GLOBAL - Previsões para todas as parcelas
+      if (org) {
+        const meteoRecente = await this.prisma.meteoParcela.findMany({
+          where: {
+            parcela: {
+              propriedade: {
+                organizacaoId,
+              },
+            },
+            data: {
+              gte: new Date(), // Apenas previsões futuras
+            },
+          },
+          include: {
+            parcela: {
+              select: { nome: true },
+            },
+          },
+          orderBy: { data: 'asc' },
+          take: 50, // Próximos dias para várias parcelas
+        });
+
+        if (meteoRecente.length > 0) {
+          // Agrupar por parcela
+          const meteoGrouped: Record<string, any[]> = {};
+          meteoRecente.forEach((m) => {
+            if (!meteoGrouped[m.parcela.nome]) {
+              meteoGrouped[m.parcela.nome] = [];
+            }
+            meteoGrouped[m.parcela.nome].push({
+              data: m.data,
+              temp: m.temperatura,
+              tempMin: m.tempMin,
+              tempMax: m.tempMax,
+              precipitacao: m.precipitacao,
+              probChuva: m.probChuva,
+              vento: m.vento,
+              humidade: m.humidade,
+            });
+          });
+
+          context.data.previsaoMeteorologica = {
+            parcelas: meteoGrouped,
+            proximosDias: Object.values(meteoGrouped)[0]?.slice(0, 7) || [], // Próximos 7 dias
+            resumo: {
+              totalPrevisoes: meteoRecente.length,
+              dataInicio: meteoRecente[0]?.data,
+              dataFim: meteoRecente[meteoRecente.length - 1]?.data,
+            },
+          };
+          context.sources.push('Previsões meteorológicas (próximos dias)');
+        }
+
+        // Meteorologia histórica recente (últimos 7 dias)
+        const meteoHistorico = await this.prisma.meteoParcela.findMany({
+          where: {
+            parcela: {
+              propriedade: {
+                organizacaoId,
+              },
+            },
+            data: {
+              lt: new Date(),
+              gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            },
+          },
+          orderBy: { data: 'desc' },
+          take: 30,
+        });
+
+        if (meteoHistorico.length > 0) {
+          const tempMedia = meteoHistorico.reduce((sum, m) => sum + (m.temperatura || 0), 0) / meteoHistorico.length;
+          const precipTotal = meteoHistorico.reduce((sum, m) => sum + (m.precipitacao || 0), 0);
+          const ventoMax = Math.max(...meteoHistorico.map((m) => m.vento || 0));
+
+          context.data.meteorologiaRecente = {
+            ultimos7Dias: {
+              temperaturaMedia: tempMedia,
+              precipitacaoTotal: precipTotal,
+              ventoMaximo: ventoMax,
+            },
+          };
+          context.sources.push('Histórico meteorológico (7 dias)');
+        }
+      }
+
+      // 8. ESTATÍSTICAS GLOBAIS DE NDVI
       if (org) {
         const todasImagens = await this.prisma.imagemRemota.findMany({
           where: {
@@ -507,8 +593,15 @@ export class IaService {
     return `És um assistente agrícola especializado para a plataforma HarvestPilot.
 
 **ACESSO COMPLETO À PLATAFORMA**
-Tens acesso a TODOS os dados da conta do utilizador:
+Tens acesso a TODOS os dados da conta do utilizador, incluindo:
 ${fontesDados}
+
+**IMPORTANTE SOBRE METEOROLOGIA:**
+- Tens acesso DIRETO a previsões meteorológicas das parcelas
+- Os dados estão em context.data.previsaoMeteorologica (próximos dias)
+- Os dados estão em context.data.meteorologiaRecente (últimos 7 dias)
+- NUNCA digas que não tens acesso a meteorologia - TU TENS!
+- Usa SEMPRE os dados meteorológicos disponíveis para responder sobre o tempo
 
 **Contexto atual:**
 ${JSON.stringify(context.data, null, 2)}
@@ -518,7 +611,8 @@ ${JSON.stringify(context.data, null, 2)}
 - Foca em ações concretas que o agricultor pode tomar
 - Usa ATIVAMENTE os dados fornecidos para fundamentar as tuas recomendações
 - Cruza informação de múltiplos módulos (insumos, meteorologia, NDVI, operações, tarefas)
-- Se faltarem dados específicos para dar uma resposta precisa, diz isso claramente
+- NUNCA digas que não tens acesso a dados - verifica SEMPRE o contexto primeiro
+- Se faltarem dados específicos no contexto, diz "não tenho essa informação disponível no momento"
 - Prioriza a segurança das culturas e a otimização de recursos
 - Explica o "porquê" das tuas sugestões com base nos dados
 - Dá prioridade a alertas críticos (insumos vencidos, stock baixo, tarefas atrasadas, NDVI em queda)
@@ -576,6 +670,12 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
 
     // Estatísticas NDVI globais
     if (context.data.estatisticasNDVI) confidence += 0.05;
+
+    // Previsões meteorológicas
+    if (context.data.previsaoMeteorologica) confidence += 0.05;
+
+    // Meteorologia recente
+    if (context.data.meteorologiaRecente) confidence += 0.05;
 
     // Bónus por número de fontes de dados (máx +0.15)
     confidence += Math.min(context.sources.length * 0.03, 0.15);
