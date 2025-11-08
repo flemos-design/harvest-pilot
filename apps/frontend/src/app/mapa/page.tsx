@@ -181,8 +181,8 @@ export default function MapaPage() {
                         <p className="font-medium text-gray-900 text-sm">{parcela.nome}</p>
                         <div className="flex items-center justify-between mt-1">
                           <p className="text-xs text-gray-600">{parcela.area} ha</p>
-                          {parcela.cultura && (
-                            <p className="text-xs text-gray-500">{parcela.cultura}</p>
+                          {parcela.culturas && parcela.culturas.length > 0 && (
+                            <p className="text-xs text-gray-500">{parcela.culturas.map(c => c.nome).join(', ')}</p>
                           )}
                         </div>
                       </Link>
