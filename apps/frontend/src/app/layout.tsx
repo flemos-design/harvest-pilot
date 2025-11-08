@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'HarvestPilot - Gestão Agrícola Inteligente',
   description: 'Sistema de gestão agrícola com monitorização por satélite e alertas meteorológicos para produção de frutos secos',
   manifest: '/manifest.json',
-  themeColor: '#2f7a99',
+  themeColor: '#22c55e',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   icons: {
     icon: '/icons/icon-192x192.png',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
+    statusBarStyle: 'default',
     title: 'HarvestPilot',
   },
 };

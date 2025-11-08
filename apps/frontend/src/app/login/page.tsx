@@ -37,8 +37,12 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
-            <Tractor className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <img
+              src="/logo.png"
+              alt="HarvestPilot Logo"
+              className="h-20 w-auto"
+            />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">HarvestPilot</h1>
           <p className="text-gray-600 mt-2">Gestão Agrícola Inteligente</p>
