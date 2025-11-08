@@ -36,13 +36,13 @@ export class IaService {
     // 3. Chamar OpenAI
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: dto.message },
         ],
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 2000, // Aumentado para respostas mais completas
       });
 
       const answer = completion.choices[0]?.message?.content || 'Sem resposta';
