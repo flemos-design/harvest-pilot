@@ -23,6 +23,8 @@ async function bootstrap() {
   const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3003',
+    'https://bo.harvestpilot.online',
+    'https://app.harvestpilot.online',
     process.env.FRONTEND_URL,
   ].filter(Boolean);
 
