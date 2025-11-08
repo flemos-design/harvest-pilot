@@ -168,6 +168,7 @@ export class IaService {
 
   /**
    * RAG: Construir contexto a partir dos dados
+   * Acesso completo a TODOS os dados da plataforma da organização
    */
   private async buildContext(organizacaoId: string, parcelaId?: string) {
     const context: any = {
@@ -176,118 +177,319 @@ export class IaService {
     };
 
     try {
-      // Dados da organização
+      // 1. ORGANIZAÇÃO - Dados gerais
       const org = await this.prisma.organizacao.findUnique({
         where: { id: organizacaoId },
         include: {
           propriedades: {
             include: {
-              parcelas: { take: 5 },
+              parcelas: {
+                include: {
+                  culturas: {
+                    include: {
+                      ciclos: {
+                        orderBy: { createdAt: 'desc' },
+                      },
+                    },
+                  },
+                },
+              },
             },
-            take: 3,
+          },
+          utilizadores: {
+            select: {
+              nome: true,
+              papel: true,
+            },
           },
         },
       });
 
       if (org) {
+        const totalParcelas = org.propriedades.reduce((sum, p) => sum + p.parcelas.length, 0);
+        const totalAreaHa = org.propriedades.reduce(
+          (sum, p) => sum + p.parcelas.reduce((s, pa) => s + pa.area, 0),
+          0,
+        );
+
         context.data.organizacao = {
           nome: org.nome,
           numPropriedades: org.propriedades.length,
-          numParcelas: org.propriedades.reduce((sum, p) => sum + p.parcelas.length, 0),
+          numParcelas: totalParcelas,
+          areaTotal: totalAreaHa,
+          numUtilizadores: org.utilizadores.length,
+          propriedades: org.propriedades.map((prop) => ({
+            nome: prop.nome,
+            numParcelas: prop.parcelas.length,
+            areaTotal: prop.parcelas.reduce((sum, p) => sum + p.area, 0),
+            parcelas: prop.parcelas.map((p) => ({
+              nome: p.nome,
+              area: p.area,
+              tipoSolo: p.tipoSolo,
+              cultura: p.culturas[0]?.especie || 'Sem cultura',
+              variedade: p.culturas[0]?.variedade,
+              cicloAtivo: p.culturas[0]?.ciclos.find((c) => c.estado === 'ATIVO')?.epoca,
+            })),
+          })),
         };
-        context.sources.push('Dados da Organização');
+        context.sources.push('Organização completa');
       }
 
-      // Se parcela específica
+      // 2. PARCELA ESPECÍFICA - Detalhes completos
       if (parcelaId) {
         const parcela = await this.prisma.parcela.findUnique({
           where: { id: parcelaId },
           include: {
+            propriedade: true,
             culturas: {
               include: {
                 ciclos: {
                   orderBy: { createdAt: 'desc' },
-                  take: 1,
                 },
               },
-              orderBy: { createdAt: 'desc' },
-              take: 1,
             },
             operacoes: {
               orderBy: { data: 'desc' },
+              include: {
+                operador: {
+                  select: { nome: true },
+                },
+              },
+            },
+            imagensRemotas: {
+              orderBy: { data: 'desc' },
               take: 10,
+            },
+            meteo: {
+              orderBy: { data: 'desc' },
+              take: 14,
             },
           },
         });
 
         if (parcela) {
+          const culturaAtiva = parcela.culturas.find((c) =>
+            c.ciclos.some((ci) => ci.estado === 'ATIVO'),
+          );
+          const cicloAtivo = culturaAtiva?.ciclos.find((c) => c.estado === 'ATIVO');
+
           context.data.parcela = {
             nome: parcela.nome,
             area: parcela.area,
-            cultura: parcela.culturas[0]?.especie || 'Sem cultura',
-            ultimaOperacao: parcela.operacoes[0]?.tipo,
-            numOperacoes: parcela.operacoes.length,
+            altitude: parcela.altitude,
+            tipoSolo: parcela.tipoSolo,
+            propriedade: parcela.propriedade.nome,
+            cultura: {
+              especie: culturaAtiva?.especie || 'Sem cultura',
+              variedade: culturaAtiva?.variedade,
+              finalidade: culturaAtiva?.finalidade,
+              cicloAtual: cicloAtivo?.epoca,
+              dataInicioCiclo: cicloAtivo?.dataInicio,
+            },
+            operacoes: parcela.operacoes.map((op) => ({
+              tipo: op.tipo,
+              data: op.data,
+              descricao: op.descricao,
+              operador: op.operador.nome,
+              insumos: op.insumos,
+              custoTotal: op.custoTotal,
+            })),
+            ndvi: parcela.imagensRemotas
+              .filter((img) => img.ndvi !== null)
+              .map((img) => ({
+                data: img.data,
+                valor: img.ndvi,
+                nuvens: img.nuvens,
+              })),
+            meteo: parcela.meteo.map((m) => ({
+              data: m.data,
+              temp: m.temperatura,
+              precipitacao: m.precipitacao,
+              vento: m.vento,
+              probChuva: m.probChuva,
+            })),
           };
-          context.sources.push('Dados da Parcela');
+          context.sources.push('Parcela completa (histórico total)');
         }
       }
 
-      // Meteorologia recente (últimos 7 dias)
-      if (parcelaId) {
-        const meteo = await this.prisma.meteoParcela.findMany({
-          where: { parcelaId },
-          orderBy: { data: 'desc' },
-          take: 7,
-        });
+      // 3. TODAS AS OPERAÇÕES RECENTES (últimos 30 dias)
+      const operacoesRecentes = await this.prisma.operacao.findMany({
+        where: {
+          parcela: {
+            propriedade: {
+              organizacaoId,
+            },
+          },
+          data: {
+            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          },
+        },
+        include: {
+          parcela: { select: { nome: true } },
+          operador: { select: { nome: true } },
+        },
+        orderBy: { data: 'desc' },
+      });
 
-        if (meteo.length > 0) {
-          context.data.meteorologia = {
-            mediaTemp: meteo.reduce((sum, m) => sum + (m.temperatura || 0), 0) / meteo.length,
-            totalPrecipitacao: meteo.reduce((sum, m) => sum + (m.precipitacao || 0), 0),
-            maxVento: Math.max(...meteo.map((m) => m.vento || 0)),
-          };
-          context.sources.push('Dados Meteorológicos (7 dias)');
-        }
+      if (operacoesRecentes.length > 0) {
+        context.data.operacoesRecentes = operacoesRecentes.map((op) => ({
+          parcela: op.parcela.nome,
+          tipo: op.tipo,
+          data: op.data,
+          operador: op.operador.nome,
+          custoTotal: op.custoTotal,
+        }));
+        context.sources.push('Operações recentes (30 dias)');
       }
 
-      // NDVI recente
-      if (parcelaId) {
-        const ndvi = await this.getLastNDVI(parcelaId);
-        if (ndvi) {
-          context.data.ndvi = {
-            valor: ndvi.valor,
-            data: ndvi.data,
-            interpretacao: this.interpretNDVI(ndvi.valor),
-          };
-          context.sources.push('Índices de Vegetação (NDVI)');
-        }
-      }
-
-      // Tarefas pendentes (sem relação direta com parcela)
+      // 4. TODAS AS TAREFAS (pendentes, em curso, atrasadas)
       const tarefas = await this.prisma.tarefa.findMany({
         where: {
           responsavel: {
             organizacaoId,
           },
-          estado: { not: 'CONCLUIDA' },
         },
-        take: 10,
         include: {
           responsavel: {
             select: { nome: true },
           },
         },
+        orderBy: { dataInicio: 'asc' },
       });
 
+      const tarefasPendentes = tarefas.filter((t) => t.estado === 'PLANEADA');
+      const tarefasEmCurso = tarefas.filter((t) => t.estado === 'EM_CURSO');
+      const tarefasAtrasadas = tarefas.filter(
+        (t) => t.estado !== 'CONCLUIDA' && t.dataFim && t.dataFim < new Date(),
+      );
+
       if (tarefas.length > 0) {
-        context.data.tarefas = tarefas.map((t) => ({
-          titulo: t.titulo,
-          responsavel: t.responsavel?.nome || 'Sem responsável',
-          prioridade: t.prioridade,
-          dataInicio: t.dataInicio,
-          dataFim: t.dataFim,
-        }));
-        context.sources.push('Tarefas Pendentes');
+        context.data.tarefas = {
+          total: tarefas.length,
+          pendentes: tarefasPendentes.map((t) => ({
+            titulo: t.titulo,
+            tipo: t.tipo,
+            prioridade: t.prioridade,
+            responsavel: t.responsavel?.nome,
+            dataInicio: t.dataInicio,
+            dataFim: t.dataFim,
+          })),
+          emCurso: tarefasEmCurso.map((t) => ({
+            titulo: t.titulo,
+            tipo: t.tipo,
+            responsavel: t.responsavel?.nome,
+          })),
+          atrasadas: tarefasAtrasadas.map((t) => ({
+            titulo: t.titulo,
+            tipo: t.tipo,
+            prioridade: t.prioridade,
+            diasAtraso: Math.floor(
+              (Date.now() - t.dataFim!.getTime()) / (1000 * 60 * 60 * 24),
+            ),
+          })),
+        };
+        context.sources.push('Todas as tarefas');
+      }
+
+      // 5. INVENTÁRIO DE INSUMOS
+      const insumos = await this.prisma.insumo.findMany({
+        orderBy: { nome: 'asc' },
+      });
+
+      if (insumos.length > 0) {
+        const insumosAbaixoMinimo = insumos.filter(
+          (i) => i.stockMinimo && i.stock < i.stockMinimo,
+        );
+        const insumosVencidos = insumos.filter((i) => i.validade && i.validade < new Date());
+
+        context.data.insumos = {
+          total: insumos.length,
+          categorias: {
+            fertilizantes: insumos.filter((i) => i.categoria === 'FERTILIZANTE').length,
+            fitofarmacos: insumos.filter((i) => i.categoria === 'FITOFARMACO').length,
+            sementes: insumos.filter((i) => i.categoria === 'SEMENTE').length,
+            outros: insumos.filter((i) => i.categoria === 'OUTRO').length,
+          },
+          alertas: {
+            abaixoStockMinimo: insumosAbaixoMinimo.map((i) => ({
+              nome: i.nome,
+              stock: i.stock,
+              stockMinimo: i.stockMinimo,
+            })),
+            vencidos: insumosVencidos.map((i) => ({
+              nome: i.nome,
+              validade: i.validade,
+            })),
+          },
+          lista: insumos.map((i) => ({
+            nome: i.nome,
+            categoria: i.categoria,
+            stock: i.stock,
+            unidade: i.unidade,
+            validade: i.validade,
+          })),
+        };
+        context.sources.push('Inventário completo de insumos');
+      }
+
+      // 6. CALENDÁRIO AGRÍCOLA - Regras e janelas ideais
+      const calendarioRegras = await this.prisma.calendarioRegra.findMany({
+        orderBy: [{ cultura: 'asc' }, { mesInicio: 'asc' }],
+      });
+
+      if (calendarioRegras.length > 0) {
+        const mesAtual = new Date().getMonth() + 1;
+        const regrasAtuais = calendarioRegras.filter(
+          (r) => r.mesInicio <= mesAtual && r.mesFim >= mesAtual,
+        );
+
+        context.data.calendario = {
+          totalRegras: calendarioRegras.length,
+          operacoesRecomendadasAgora: regrasAtuais.map((r) => ({
+            cultura: r.cultura,
+            variedade: r.variedade,
+            operacao: r.tipoOperacao,
+            mesInicio: r.mesInicio,
+            mesFim: r.mesFim,
+            restricoes: {
+              ventoMax: r.ventoMax,
+              chuvaMax: r.chuvaMax,
+            },
+          })),
+          todasRegras: calendarioRegras.map((r) => ({
+            cultura: r.cultura,
+            operacao: r.tipoOperacao,
+            periodo: `${r.mesInicio}-${r.mesFim}`,
+          })),
+        };
+        context.sources.push('Calendário agrícola completo');
+      }
+
+      // 7. ESTATÍSTICAS GLOBAIS DE NDVI
+      if (org) {
+        const todasImagens = await this.prisma.imagemRemota.findMany({
+          where: {
+            parcela: {
+              propriedade: {
+                organizacaoId,
+              },
+            },
+            ndvi: { not: null },
+          },
+          orderBy: { data: 'desc' },
+          take: 100,
+        });
+
+        if (todasImagens.length > 0) {
+          const ndviMedio = todasImagens.reduce((sum, img) => sum + (img.ndvi || 0), 0) / todasImagens.length;
+          context.data.estatisticasNDVI = {
+            numImagens: todasImagens.length,
+            ndviMedio,
+            interpretacao: this.interpretNDVI(ndviMedio),
+          };
+          context.sources.push('Estatísticas de vigor vegetativo');
+        }
       }
     } catch (error) {
       this.logger.error(`Error building context: ${error.message}`);
@@ -300,45 +502,83 @@ export class IaService {
    * Construir prompt do sistema com contexto
    */
   private buildSystemPrompt(context: any): string {
+    const fontesDados = context.sources.join(', ');
+
     return `És um assistente agrícola especializado para a plataforma HarvestPilot.
+
+**ACESSO COMPLETO À PLATAFORMA**
+Tens acesso a TODOS os dados da conta do utilizador:
+${fontesDados}
 
 **Contexto atual:**
 ${JSON.stringify(context.data, null, 2)}
 
 **Instruções:**
-- Responde em português de Portugal de forma clara e prática
+- Responde em português de Portugal de forma clara, prática e objetiva
 - Foca em ações concretas que o agricultor pode tomar
-- Usa os dados fornecidos para fundamentar as tuas recomendações
-- Se não tiveres dados suficientes, diz isso claramente
+- Usa ATIVAMENTE os dados fornecidos para fundamentar as tuas recomendações
+- Cruza informação de múltiplos módulos (insumos, meteorologia, NDVI, operações, tarefas)
+- Se faltarem dados específicos para dar uma resposta precisa, diz isso claramente
 - Prioriza a segurança das culturas e a otimização de recursos
-- Explica o "porquê" das tuas sugestões
+- Explica o "porquê" das tuas sugestões com base nos dados
+- Dá prioridade a alertas críticos (insumos vencidos, stock baixo, tarefas atrasadas, NDVI em queda)
 
-**Expertise:**
-- Castanheiro (fruto e madeira)
-- Cerejeira (fruto e madeira)
-- Fenologia, NDVI, meteorologia
-- Calendário agrícola (plantação, colheita, podas, tratamentos)
+**Expertise completa:**
+- Culturas: Castanheiro, Cerejeira, Nogueira, Aveleira (fruto e madeira)
+- Fenologia e ciclos de cultivo
+- Índices de vegetação (NDVI, NDRE, EVI) e interpretação
+- Meteorologia e janelas de aplicação
+- Calendário agrícola (plantação, colheita, podas, tratamentos, adubações)
+- Gestão de insumos (fertilizantes, fitofármacos, sementes)
+- Operações de campo e boas práticas
+- Gestão de tarefas e priorização
+- Análise de custos e eficiência
 
-Responde à pergunta do utilizador de forma útil e baseada nos dados.`;
+**Capacidades:**
+- Analisar todas as parcelas da organização e identificar prioridades
+- Sugerir operações baseadas no calendário agrícola e condições meteorológicas
+- Alertar sobre insumos em falta, vencidos ou abaixo do stock mínimo
+- Identificar tarefas atrasadas e recomendar replanejamento
+- Interpretar tendências de NDVI e correlacionar com operações
+- Cruzar dados de meteorologia com janelas ideais de operação
+
+Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados COMPLETOS da plataforma.`;
   }
 
   /**
-   * Calcular confiança da resposta
+   * Calcular confiança da resposta baseada na riqueza de dados disponíveis
    */
   private calculateConfidence(context: any, answer: string): number {
-    let confidence = 0.5; // Base
+    let confidence = 0.4; // Base aumentado (mais dados = maior confiança mínima)
 
-    // +0.2 se tiver dados da parcela
-    if (context.data.parcela) confidence += 0.2;
+    // Dados da organização completos
+    if (context.data.organizacao) confidence += 0.1;
 
-    // +0.15 se tiver NDVI
-    if (context.data.ndvi) confidence += 0.15;
+    // Dados de parcela específica
+    if (context.data.parcela) {
+      confidence += 0.15;
+      if (context.data.parcela.operacoes?.length > 0) confidence += 0.05;
+      if (context.data.parcela.ndvi?.length > 0) confidence += 0.05;
+      if (context.data.parcela.meteo?.length > 0) confidence += 0.05;
+    }
 
-    // +0.1 se tiver meteorologia
-    if (context.data.meteorologia) confidence += 0.1;
+    // Dados de insumos
+    if (context.data.insumos) confidence += 0.05;
 
-    // +0.05 por fonte de dados
-    confidence += Math.min(context.sources.length * 0.05, 0.15);
+    // Calendário agrícola
+    if (context.data.calendario) confidence += 0.05;
+
+    // Tarefas
+    if (context.data.tarefas) confidence += 0.05;
+
+    // Operações recentes
+    if (context.data.operacoesRecentes) confidence += 0.05;
+
+    // Estatísticas NDVI globais
+    if (context.data.estatisticasNDVI) confidence += 0.05;
+
+    // Bónus por número de fontes de dados (máx +0.15)
+    confidence += Math.min(context.sources.length * 0.03, 0.15);
 
     return Math.min(confidence, 1.0);
   }
