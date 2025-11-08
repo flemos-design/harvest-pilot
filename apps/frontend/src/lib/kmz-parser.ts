@@ -3,36 +3,47 @@ import { kml } from '@tmcw/togeojson';
 // @ts-ignore - Turf types have package.json exports issue
 import * as turf from '@turf/turf';
 
-export interface ParsedParcela {
+export interface ParsedTerreno {
   nome: string;
   area: number; // hectares
   geometria: any; // GeoJSON
   altitude?: number;
   tipoSolo?: string;
-  propriedadeId: string;
+}
+
+export interface ParsedPropriedade {
+  nome: string;
+  descricao?: string;
+  terrenos: ParsedTerreno[];
+}
+
+export interface KmzImportResult {
+  propriedades: ParsedPropriedade[];
+  organizacaoId: string;
 }
 
 /**
- * Parse KMZ file (ZIP containing KML) to array of parcelas
+ * Parse KMZ file (ZIP containing KML) extracting hierarchical structure
+ * KML Folders → Propriedades
+ * KML Placemarks → Terrenos
+ *
  * @param file KMZ file from input
- * @param propriedadeId ID da propriedade para associar as parcelas
- * @returns Array of parcelas ready for API
+ * @param organizacaoId ID da organização para associar as propriedades
+ * @returns Propriedades com terrenos nested
  */
-export async function parseKmz(
+export async function parseKmzHierarchical(
   file: File,
-  propriedadeId: string
-): Promise<ParsedParcela[]> {
+  organizacaoId: string
+): Promise<KmzImportResult> {
   try {
     // 1. Load KMZ as ZIP
     const zip = await JSZip.loadAsync(file);
 
-    // 2. Find KML file inside ZIP (usually doc.kml or *.kml)
+    // 2. Find KML file inside ZIP
     let kmlContent: string | null = null;
-    let kmlFilename: string | null = null;
 
     for (const filename in zip.files) {
       if (filename.toLowerCase().endsWith('.kml')) {
-        kmlFilename = filename;
         kmlContent = await zip.files[filename].async('string');
         break;
       }
@@ -52,66 +63,153 @@ export async function parseKmz(
       throw new Error('Erro ao fazer parse do KML: ' + parserError.textContent);
     }
 
-    // 4. Convert KML to GeoJSON using togeojson
-    const geojson = kml(xmlDoc);
+    // 4. Extract hierarchical structure
+    const propriedades: ParsedPropriedade[] = [];
 
-    if (!geojson || !geojson.features || geojson.features.length === 0) {
-      throw new Error('Nenhuma geometria encontrada no ficheiro KML');
+    // Find all Folders (propriedades)
+    const folders = xmlDoc.querySelectorAll('Document > Folder');
+
+    if (folders.length === 0) {
+      // No folders, treat all placemarks as single property
+      const defaultPropriedade = await extractPropriedadeFromDocument(xmlDoc, 'Propriedade Principal');
+      if (defaultPropriedade && defaultPropriedade.terrenos.length > 0) {
+        propriedades.push(defaultPropriedade);
+      }
+    } else {
+      // Process each folder as a propriedade
+      for (const folder of Array.from(folders)) {
+        const propriedade = await extractPropriedadeFromFolder(folder);
+        if (propriedade && propriedade.terrenos.length > 0) {
+          propriedades.push(propriedade);
+        }
+      }
     }
 
-    // 5. Extract parcelas from GeoJSON features
-    const parcelas: ParsedParcela[] = [];
-
-    for (let i = 0; i < geojson.features.length; i++) {
-      const feature = geojson.features[i];
-
-      // Extract name from properties (KML name tag)
-      const nome = feature.properties?.name || `Terreno ${i + 1}`;
-
-      // Get geometry (Polygon or MultiPolygon)
-      const geometria = feature.geometry;
-
-      if (!geometria || (geometria.type !== 'Polygon' && geometria.type !== 'MultiPolygon')) {
-        console.warn(`Feature ${i} não é um Polygon/MultiPolygon, a ignorar`);
-        continue;
-      }
-
-      // Calculate area in hectares using Turf.js
-      const areaM2 = turf.area(geometria);
-      const areaHa = areaM2 / 10000; // Convert m² to hectares
-
-      // Build parcela object
-      const parcela: ParsedParcela = {
-        nome,
-        area: parseFloat(areaHa.toFixed(4)), // 4 decimais
-        geometria,
-        propriedadeId,
-      };
-
-      // Optional: Extract altitude from properties if exists
-      if (feature.properties?.altitude) {
-        parcela.altitude = parseFloat(feature.properties.altitude);
-      }
-
-      // Optional: Extract description as tipoSolo if exists
-      if (feature.properties?.description) {
-        parcela.tipoSolo = feature.properties.description;
-      }
-
-      parcelas.push(parcela);
+    if (propriedades.length === 0) {
+      throw new Error('Nenhuma propriedade ou terreno válido encontrado no ficheiro');
     }
 
-    if (parcelas.length === 0) {
-      throw new Error('Nenhum terreno válido encontrado no ficheiro');
-    }
-
-    return parcelas;
+    return {
+      propriedades,
+      organizacaoId,
+    };
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Erro ao processar KMZ: ${error.message}`);
     }
     throw new Error('Erro desconhecido ao processar KMZ');
   }
+}
+
+/**
+ * Extract propriedade from a KML Folder
+ */
+async function extractPropriedadeFromFolder(folder: Element): Promise<ParsedPropriedade | null> {
+  const nameElement = folder.querySelector(':scope > name');
+  const descElement = folder.querySelector(':scope > description');
+
+  const propriedadeNome = nameElement?.textContent?.trim() || 'Propriedade Sem Nome';
+  const propriedadeDesc = descElement?.textContent?.trim();
+
+  // Find all Placemarks within this folder
+  const placemarks = folder.querySelectorAll(':scope > Placemark');
+  const terrenos: ParsedTerreno[] = [];
+
+  for (const placemark of Array.from(placemarks)) {
+    const terreno = await extractTerrenoFromPlacemark(placemark);
+    if (terreno) {
+      terrenos.push(terreno);
+    }
+  }
+
+  if (terrenos.length === 0) {
+    return null;
+  }
+
+  return {
+    nome: propriedadeNome,
+    descricao: propriedadeDesc,
+    terrenos,
+  };
+}
+
+/**
+ * Extract default propriedade from Document (when no folders exist)
+ */
+async function extractPropriedadeFromDocument(doc: Document, defaultName: string): Promise<ParsedPropriedade | null> {
+  const placemarks = doc.querySelectorAll('Document > Placemark');
+  const terrenos: ParsedTerreno[] = [];
+
+  for (const placemark of Array.from(placemarks)) {
+    const terreno = await extractTerrenoFromPlacemark(placemark);
+    if (terreno) {
+      terrenos.push(terreno);
+    }
+  }
+
+  if (terrenos.length === 0) {
+    return null;
+  }
+
+  return {
+    nome: defaultName,
+    terrenos,
+  };
+}
+
+/**
+ * Extract terreno from a KML Placemark
+ */
+async function extractTerrenoFromPlacemark(placemark: Element): Promise<ParsedTerreno | null> {
+  const nameElement = placemark.querySelector('name');
+  const descElement = placemark.querySelector('description');
+  const polygonElement = placemark.querySelector('Polygon, MultiGeometry');
+
+  if (!polygonElement) {
+    return null; // Skip placemarks without polygons
+  }
+
+  const terrenoNome = nameElement?.textContent?.trim() || 'Terreno Sem Nome';
+  const terrenoDesc = descElement?.textContent?.trim();
+
+  // Convert single placemark to GeoJSON
+  const tempDoc = document.implementation.createDocument(null, 'kml', null);
+  const kmlRoot = tempDoc.documentElement;
+  kmlRoot.setAttribute('xmlns', 'http://www.opengis.net/kml/2.2');
+
+  const clonedPlacemark = placemark.cloneNode(true) as Element;
+  kmlRoot.appendChild(clonedPlacemark);
+
+  const geojson = kml(tempDoc);
+
+  if (!geojson || !geojson.features || geojson.features.length === 0) {
+    return null;
+  }
+
+  const feature = geojson.features[0];
+  const geometria = feature.geometry;
+
+  if (!geometria || (geometria.type !== 'Polygon' && geometria.type !== 'MultiPolygon')) {
+    return null;
+  }
+
+  // Calculate area in hectares
+  const areaM2 = turf.area(geometria);
+  const areaHa = areaM2 / 10000;
+
+  const terreno: ParsedTerreno = {
+    nome: terrenoNome,
+    area: parseFloat(areaHa.toFixed(4)),
+    geometria,
+    tipoSolo: terrenoDesc,
+  };
+
+  // Extract altitude if exists
+  if (feature.properties?.altitude) {
+    terreno.altitude = parseFloat(feature.properties.altitude);
+  }
+
+  return terreno;
 }
 
 /**

@@ -2,53 +2,55 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Loader2, Check, X, Edit2, Trash2, FileUp } from 'lucide-react';
-import { usePropriedades } from '@/hooks/use-propriedades';
+import { Upload, Loader2, Check, X, Edit2, Trash2, FileUp, ChevronDown, ChevronUp } from 'lucide-react';
+import { useOrganizacoes } from '@/hooks/use-organizacoes';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
-import { parseKmz, validateKmzFile, type ParsedParcela } from '@/lib/kmz-parser';
+import { parseKmzHierarchical, validateKmzFile, type ParsedPropriedade, type ParsedTerreno } from '@/lib/kmz-parser';
 
 export default function ImportarParcelasPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [propriedadeId, setPropriedadeId] = useState('');
-  const [parcelas, setParcelas] = useState<ParsedParcela[]>([]);
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [propriedades, setPropriedades] = useState<ParsedPropriedade[]>([]);
+  const [expandedProps, setExpandedProps] = useState<Set<number>>(new Set());
   const [error, setError] = useState('');
   const [parseError, setParseError] = useState('');
 
-  const { data: propriedades, isLoading: loadingProps } = usePropriedades();
+  const { data: organizacoes } = useOrganizacoes();
+  const orgId = organizacoes?.[0]?.id || '';
 
   // Parse KMZ mutation
   const parseMutation = useMutation({
     mutationFn: async (file: File) => {
-      if (!propriedadeId) {
-        throw new Error('Selecione uma propriedade primeiro');
+      if (!orgId) {
+        throw new Error('Nenhuma organização encontrada');
       }
-      return parseKmz(file, propriedadeId);
+      return parseKmzHierarchical(file, orgId);
     },
     onSuccess: (data) => {
-      setParcelas(data);
+      setPropriedades(data.propriedades);
+      // Expand all properties by default
+      setExpandedProps(new Set(data.propriedades.map((_, i) => i)));
       setParseError('');
       setError('');
     },
     onError: (error: Error) => {
       setParseError(error.message);
-      setParcelas([]);
+      setPropriedades([]);
     },
   });
 
-  // Bulk create mutation
-  const createMutation = useMutation({
-    mutationFn: async (parcelas: ParsedParcela[]) => {
-      const response = await apiClient.post('/parcelas/bulk', parcelas);
+  // Bulk import mutation
+  const importMutation = useMutation({
+    mutationFn: async (data: { organizacaoId: string; propriedades: ParsedPropriedade[] }) => {
+      const response = await apiClient.post('/propriedades/bulk-import', data);
       return response.data;
     },
     onSuccess: () => {
       router.push('/parcelas');
     },
     onError: (error: any) => {
-      setError(error.response?.data?.message || 'Erro ao criar terrenos');
+      setError(error.response?.data?.message || 'Erro ao importar');
     },
   });
 
@@ -72,30 +74,65 @@ export default function ImportarParcelasPage() {
       setParseError('Selecione um ficheiro primeiro');
       return;
     }
-    if (!propriedadeId) {
-      setParseError('Selecione uma propriedade primeiro');
+    if (!orgId) {
+      setParseError('Nenhuma organização encontrada. Crie uma organização primeiro.');
       return;
     }
     parseMutation.mutate(file);
   };
 
-  const handleEditParcela = (index: number, field: keyof ParsedParcela, value: any) => {
-    const newParcelas = [...parcelas];
-    newParcelas[index] = { ...newParcelas[index], [field]: value };
-    setParcelas(newParcelas);
+  const handleEditPropriedade = (propIndex: number, field: keyof ParsedPropriedade, value: any) => {
+    const newProps = [...propriedades];
+    newProps[propIndex] = { ...newProps[propIndex], [field]: value };
+    setPropriedades(newProps);
   };
 
-  const handleRemoveParcela = (index: number) => {
-    setParcelas(parcelas.filter((_, i) => i !== index));
+  const handleEditTerreno = (propIndex: number, terrenoIndex: number, field: keyof ParsedTerreno, value: any) => {
+    const newProps = [...propriedades];
+    const newTerrenos = [...newProps[propIndex].terrenos];
+    newTerrenos[terrenoIndex] = { ...newTerrenos[terrenoIndex], [field]: value };
+    newProps[propIndex] = { ...newProps[propIndex], terrenos: newTerrenos };
+    setPropriedades(newProps);
+  };
+
+  const handleRemoveTerreno = (propIndex: number, terrenoIndex: number) => {
+    const newProps = [...propriedades];
+    newProps[propIndex].terrenos = newProps[propIndex].terrenos.filter((_, i) => i !== terrenoIndex);
+
+    // Remove propriedade se não tiver terrenos
+    if (newProps[propIndex].terrenos.length === 0) {
+      newProps.splice(propIndex, 1);
+    }
+
+    setPropriedades(newProps);
+  };
+
+  const handleRemovePropriedade = (propIndex: number) => {
+    setPropriedades(propriedades.filter((_, i) => i !== propIndex));
+  };
+
+  const togglePropriedade = (propIndex: number) => {
+    const newExpanded = new Set(expandedProps);
+    if (newExpanded.has(propIndex)) {
+      newExpanded.delete(propIndex);
+    } else {
+      newExpanded.add(propIndex);
+    }
+    setExpandedProps(newExpanded);
   };
 
   const handleSubmit = () => {
-    if (parcelas.length === 0) {
-      setError('Não há terrenos para importar');
+    if (propriedades.length === 0) {
+      setError('Não há propriedades para importar');
       return;
     }
-    createMutation.mutate(parcelas);
+    importMutation.mutate({
+      organizacaoId: orgId,
+      propriedades,
+    });
   };
+
+  const totalTerrenos = propriedades.reduce((sum, p) => sum + p.terrenos.length, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -103,7 +140,7 @@ export default function ImportarParcelasPage() {
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-900">Importar Terrenos (KMZ)</h1>
           <p className="text-gray-600 mt-1">
-            Faça upload de um ficheiro .kmz ou .kml com múltiplos terrenos
+            Faça upload de um ficheiro .kmz ou .kml - propriedades e terrenos são extraídos automaticamente
           </p>
         </div>
       </header>
@@ -113,48 +150,25 @@ export default function ImportarParcelasPage() {
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <FileUp className="w-5 h-5" />
-            Passo 1: Selecionar Ficheiro e Propriedade
+            Passo 1: Selecionar Ficheiro
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Propriedade Select */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Propriedade *
-              </label>
-              <select
-                value={propriedadeId}
-                onChange={(e) => setPropriedadeId(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                disabled={loadingProps || parcelas.length > 0}
-              >
-                <option value="">Selecione uma propriedade</option>
-                {propriedades?.map((prop) => (
-                  <option key={prop.id} value={prop.id}>
-                    {prop.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* File Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ficheiro KMZ/KML *
-              </label>
-              <input
-                type="file"
-                accept=".kmz,.kml"
-                onChange={handleFileChange}
-                disabled={!propriedadeId || parcelas.length > 0}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
-              />
-              {file && (
-                <p className="text-sm text-gray-600 mt-2">
-                  Ficheiro: {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                </p>
-              )}
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ficheiro KMZ/KML *
+            </label>
+            <input
+              type="file"
+              accept=".kmz,.kml"
+              onChange={handleFileChange}
+              disabled={propriedades.length > 0}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+            />
+            {file && (
+              <p className="text-sm text-gray-600 mt-2">
+                Ficheiro: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+              </p>
+            )}
           </div>
 
           {parseError && (
@@ -167,7 +181,7 @@ export default function ImportarParcelasPage() {
           <div className="mt-6 flex gap-3">
             <button
               onClick={handleParse}
-              disabled={!file || !propriedadeId || parseMutation.isPending || parcelas.length > 0}
+              disabled={!file || parseMutation.isPending || propriedades.length > 0}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {parseMutation.isPending ? (
@@ -183,12 +197,11 @@ export default function ImportarParcelasPage() {
               )}
             </button>
 
-            {parcelas.length > 0 && (
+            {propriedades.length > 0 && (
               <button
                 onClick={() => {
-                  setParcelas([]);
+                  setPropriedades([]);
                   setFile(null);
-                  setPropriedadeId('');
                 }}
                 className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
               >
@@ -199,137 +212,148 @@ export default function ImportarParcelasPage() {
         </div>
 
         {/* Step 2: Preview & Edit */}
-        {parcelas.length > 0 && (
+        {propriedades.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Edit2 className="w-5 h-5" />
-              Passo 2: Rever e Editar ({parcelas.length} terrenos)
+              Passo 2: Rever e Editar ({propriedades.length} propriedades, {totalTerrenos} terrenos)
             </h2>
 
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Nome
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Área (ha)
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Altitude (m)
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Tipo de Solo
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {parcelas.map((parcela, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        {editingIndex === index ? (
-                          <input
-                            type="text"
-                            value={parcela.nome}
-                            onChange={(e) => handleEditParcela(index, 'nome', e.target.value)}
-                            className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                            autoFocus
-                          />
+            <div className="space-y-4">
+              {propriedades.map((prop, propIndex) => (
+                <div key={propIndex} className="border rounded-lg">
+                  {/* Propriedade Header */}
+                  <div className="bg-gray-50 p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <button
+                        onClick={() => togglePropriedade(propIndex)}
+                        className="p-1 hover:bg-gray-200 rounded"
+                      >
+                        {expandedProps.has(propIndex) ? (
+                          <ChevronUp className="w-5 h-5" />
                         ) : (
-                          <span className="text-sm text-gray-900">{parcela.nome}</span>
+                          <ChevronDown className="w-5 h-5" />
                         )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editingIndex === index ? (
-                          <input
-                            type="number"
-                            step="0.0001"
-                            value={parcela.area}
-                            onChange={(e) =>
-                              handleEditParcela(index, 'area', parseFloat(e.target.value))
-                            }
-                            className="w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-900">{parcela.area.toFixed(2)}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editingIndex === index ? (
-                          <input
-                            type="number"
-                            value={parcela.altitude || ''}
-                            onChange={(e) =>
-                              handleEditParcela(
-                                index,
-                                'altitude',
-                                e.target.value ? parseFloat(e.target.value) : undefined
-                              )
-                            }
-                            placeholder="Opcional"
-                            className="w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-600">
-                            {parcela.altitude?.toFixed(0) || '-'}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editingIndex === index ? (
-                          <input
-                            type="text"
-                            value={parcela.tipoSolo || ''}
-                            onChange={(e) => handleEditParcela(index, 'tipoSolo', e.target.value)}
-                            placeholder="Opcional"
-                            className="w-32 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-600">{parcela.tipoSolo || '-'}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {editingIndex === index ? (
-                            <button
-                              onClick={() => setEditingIndex(null)}
-                              className="p-1 text-green-600 hover:bg-green-50 rounded"
-                              title="Concluir edição"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setEditingIndex(index)}
-                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                              title="Editar"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleRemoveParcela(index)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded"
-                            title="Remover"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </button>
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          value={prop.nome}
+                          onChange={(e) => handleEditPropriedade(propIndex, 'nome', e.target.value)}
+                          className="font-medium text-lg px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500 w-full max-w-md"
+                          placeholder="Nome da propriedade"
+                        />
+                        <p className="text-sm text-gray-600 mt-1">
+                          {prop.terrenos.length} terreno(s)
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemovePropriedade(propIndex)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded"
+                      title="Remover propriedade"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Terrenos */}
+                  {expandedProps.has(propIndex) && (
+                    <div className="p-4">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                              Nome do Terreno
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                              Área (ha)
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                              Altitude (m)
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                              Tipo de Solo
+                            </th>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                              Ações
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {prop.terrenos.map((terreno, terrenoIndex) => (
+                            <tr key={terrenoIndex} className="hover:bg-gray-50">
+                              <td className="px-4 py-2">
+                                <input
+                                  type="text"
+                                  value={terreno.nome}
+                                  onChange={(e) =>
+                                    handleEditTerreno(propIndex, terrenoIndex, 'nome', e.target.value)
+                                  }
+                                  className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                              </td>
+                              <td className="px-4 py-2">
+                                <input
+                                  type="number"
+                                  step="0.0001"
+                                  value={terreno.area}
+                                  onChange={(e) =>
+                                    handleEditTerreno(propIndex, terrenoIndex, 'area', parseFloat(e.target.value))
+                                  }
+                                  className="w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                              </td>
+                              <td className="px-4 py-2">
+                                <input
+                                  type="number"
+                                  value={terreno.altitude || ''}
+                                  onChange={(e) =>
+                                    handleEditTerreno(
+                                      propIndex,
+                                      terrenoIndex,
+                                      'altitude',
+                                      e.target.value ? parseFloat(e.target.value) : undefined
+                                    )
+                                  }
+                                  placeholder="Opcional"
+                                  className="w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                              </td>
+                              <td className="px-4 py-2">
+                                <input
+                                  type="text"
+                                  value={terreno.tipoSolo || ''}
+                                  onChange={(e) =>
+                                    handleEditTerreno(propIndex, terrenoIndex, 'tipoSolo', e.target.value)
+                                  }
+                                  placeholder="Opcional"
+                                  className="w-32 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                              </td>
+                              <td className="px-4 py-2">
+                                <button
+                                  onClick={() => handleRemoveTerreno(propIndex, terrenoIndex)}
+                                  className="p-1 text-red-600 hover:bg-red-50 rounded"
+                                  title="Remover terreno"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
         {/* Step 3: Submit */}
-        {parcelas.length > 0 && (
+        {propriedades.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Check className="w-5 h-5" />
@@ -344,18 +368,18 @@ export default function ImportarParcelasPage() {
             )}
 
             <p className="text-gray-600 mb-6">
-              Está prestes a criar <strong>{parcelas.length} terrenos</strong>. Após a importação,
-              poderá editar cada terreno individualmente para adicionar mais detalhes (culturas,
-              ciclos, etc.).
+              Está prestes a criar <strong>{propriedades.length} propriedade(s)</strong> com{' '}
+              <strong>{totalTerrenos} terreno(s)</strong> no total. Após a importação, poderá editar cada
+              item individualmente.
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={handleSubmit}
-                disabled={createMutation.isPending}
+                disabled={importMutation.isPending}
                 className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg font-medium"
               >
-                {createMutation.isPending ? (
+                {importMutation.isPending ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
                     A importar...
@@ -363,14 +387,14 @@ export default function ImportarParcelasPage() {
                 ) : (
                   <>
                     <Check className="w-5 h-5" />
-                    Importar {parcelas.length} Terrenos
+                    Importar {propriedades.length} Propriedade(s) e {totalTerrenos} Terreno(s)
                   </>
                 )}
               </button>
 
               <button
                 onClick={() => router.push('/parcelas')}
-                disabled={createMutation.isPending}
+                disabled={importMutation.isPending}
                 className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50"
               >
                 Cancelar

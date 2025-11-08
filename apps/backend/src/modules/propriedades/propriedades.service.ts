@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreatePropriedadeDto } from './dto/create-propriedade.dto';
 import { UpdatePropriedadeDto } from './dto/update-propriedade.dto';
+import { BulkImportDto } from './dto/bulk-import.dto';
 
 @Injectable()
 export class PropriedadesService {
@@ -90,6 +91,56 @@ export class PropriedadesService {
 
     return this.prisma.propriedade.delete({
       where: { id },
+    });
+  }
+
+  /**
+   * Importar propriedades e terrenos em massa (KMZ/KML)
+   * Cria propriedades e seus terrenos numa única transação atómica
+   */
+  async bulkImport(bulkImportDto: BulkImportDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const results = {
+        propriedades: [],
+        totalTerrenos: 0,
+      };
+
+      for (const propriedadeData of bulkImportDto.propriedades) {
+        const { terrenos, ...propriedadeInfo } = propriedadeData;
+
+        // 1. Criar propriedade
+        const propriedade = await tx.propriedade.create({
+          data: {
+            nome: propriedadeInfo.nome,
+            descricao: propriedadeInfo.descricao,
+            organizacaoId: bulkImportDto.organizacaoId,
+          },
+        });
+
+        // 2. Criar terrenos associados
+        const createdTerrenos = [];
+        for (const terrenoData of terrenos) {
+          const terreno = await tx.parcela.create({
+            data: {
+              nome: terrenoData.nome,
+              area: terrenoData.area,
+              geometria: JSON.stringify(terrenoData.geometria),
+              altitude: terrenoData.altitude,
+              tipoSolo: terrenoData.tipoSolo,
+              propriedadeId: propriedade.id,
+            },
+          });
+          createdTerrenos.push(terreno);
+          results.totalTerrenos++;
+        }
+
+        results.propriedades.push({
+          ...propriedade,
+          terrenos: createdTerrenos,
+        });
+      }
+
+      return results;
     });
   }
 }

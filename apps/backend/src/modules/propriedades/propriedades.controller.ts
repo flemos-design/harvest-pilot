@@ -16,10 +16,12 @@ import {
   ApiResponse,
   ApiQuery,
   ApiParam,
+  ApiBody,
 } from '@nestjs/swagger';
 import { PropriedadesService } from './propriedades.service';
 import { CreatePropriedadeDto } from './dto/create-propriedade.dto';
 import { UpdatePropriedadeDto } from './dto/update-propriedade.dto';
+import { BulkImportDto } from './dto/bulk-import.dto';
 
 @ApiTags('propriedades')
 @Controller('propriedades')
@@ -31,6 +33,15 @@ export class PropriedadesController {
   @ApiResponse({ status: 201, description: 'Propriedade criada com sucesso' })
   create(@Body() createPropriedadeDto: CreatePropriedadeDto) {
     return this.propriedadesService.create(createPropriedadeDto);
+  }
+
+  @Post('bulk-import')
+  @ApiOperation({ summary: 'Importar propriedades e terrenos em massa (KMZ/KML)' })
+  @ApiBody({ type: BulkImportDto })
+  @ApiResponse({ status: 201, description: 'Propriedades e terrenos importados com sucesso' })
+  @ApiResponse({ status: 400, description: 'Dados inválidos' })
+  bulkImport(@Body() bulkImportDto: BulkImportDto) {
+    return this.propriedadesService.bulkImport(bulkImportDto);
   }
 
   @Get()
