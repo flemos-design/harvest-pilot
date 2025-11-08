@@ -1,8 +1,19 @@
 # 🌾 HarvestPilot
 
-**Plataforma de Gestão de Parcelas & Calendário Agrícola**
+<div align="center">
 
-Plataforma à medida para planear, executar e analisar a produção em castanheiro e cerejeira (fruto e madeira), com mapa de parcelas, registos de campo offline, agenda global, e calendário de plantação/colheita com janelas recomendadas.
+![GitHub](https://img.shields.io/github/license/flemos-design/harvest-pilot)
+![GitHub last commit](https://img.shields.io/github/last-commit/flemos-design/harvest-pilot)
+![GitHub issues](https://img.shields.io/github/issues/flemos-design/harvest-pilot)
+![GitHub stars](https://img.shields.io/github/stars/flemos-design/harvest-pilot)
+![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+
+</div>
+
+**Plataforma de Gestão Agrícola com Satélite e Meteo**
+
+Sistema completo de gestão agrícola com monitorização por satélite e alertas meteorológicos para produção de frutos secos (castanheiro e cerejeira). Inclui mapa de parcelas, registos de campo offline, calendário agrícola, análise de vigor vegetativo e previsões meteorológicas.
 
 ---
 
@@ -22,19 +33,39 @@ Plataforma à medida para planear, executar e analisar a produção em castanhei
 ## ✨ Características
 
 ### Fase 1 - MVP (Atual)
-- ✅ Mapa de parcelas com MapLibre GL JS
-- ✅ Suporte GeoJSON, KML, Shapefile
-- ✅ Registos de campo com GPS e fotos (offline-first)
-- ✅ Sistema de gestão de culturas e ciclos
-- ✅ Base de dados geoespacial (PostGIS)
-- ✅ API REST documentada (Swagger)
-- ✅ PWA (Progressive Web App)
-- ✅ **CRUD completo de Parcelas** (listar, criar, editar, eliminar)
-- ✅ **CRUD completo de Operações** (listar, criar, editar, eliminar)
-- ✅ **Calendário Agrícola** - Vista mensal com operações organizadas por dia
-- ✅ **Relatórios e Analytics** - KPIs, gráficos, análise de custos e eficiência
-- ✅ **Navegação Global** - Navbar com indicador de página ativa
-- ✅ **Dashboard Operacional** - Estatísticas e resumos
+- ✅ **Autenticação & Autorização**
+  - Sistema completo de login e registo
+  - Gestão de sessão com JWT e localStorage
+  - 3 níveis de acesso (Admin, Gestor, Operador)
+  - Proteção de rotas e UI condicional
+  - Logout funcional com limpeza de sessão
+- ✅ **Mapa de Parcelas**
+  - MapLibre GL JS com suporte GeoJSON, KML, Shapefile
+  - Upload de ficheiros geoespaciais
+  - Cálculo automático de área e centroide
+- ✅ **Gestão de Parcelas & Operações**
+  - CRUD completo de Parcelas (criar, listar, editar, eliminar)
+  - CRUD completo de Operações com GPS e custos
+  - Registos de campo com localização e fotos (offline-first)
+- ✅ **Calendário Agrícola**
+  - Vista mensal com operações organizadas por dia
+  - Filtros por tipo de operação
+  - Estatísticas mensais agregadas
+- ✅ **Relatórios e Analytics**
+  - KPIs operacionais (operações, custos, parcelas)
+  - Gráficos de tendência mensal e distribuição por tipo
+  - Análise de custos e eficiência
+  - Seleção de período customizável
+- ✅ **UI/UX Moderna**
+  - Sidebar vertical colapsável com categorias
+  - Header com breadcrumbs, pesquisa e perfil de utilizador
+  - Design SaaS profissional com Tailwind CSS
+  - Navegação responsiva e intuitiva
+- ✅ **Infraestrutura**
+  - Base de dados geoespacial (PostGIS)
+  - API REST documentada (Swagger)
+  - PWA (Progressive Web App)
+  - Sistema de gestão de culturas e ciclos
 
 ### Fases Futuras
 - 📅 Janelas recomendadas de plantação/colheita
@@ -492,13 +523,21 @@ Endpoints principais:
 
 ## 📄 Licença
 
-Proprietary - Todos os direitos reservados
+Este projeto está licenciado sob a licença MIT - consulte o ficheiro [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
 ## 🤝 Contribuir
 
-Este é um projeto privado. Para contribuir, contacte a equipa de desenvolvimento.
+Contribuições são bem-vindas! Por favor:
+
+1. Faça fork do projeto
+2. Crie uma branch para a sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit das suas alterações (`git commit -m 'feat: adicionar MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+Para bugs e sugestões de features, abra uma [issue](https://github.com/flemos-design/harvest-pilot/issues).
 
 ---
 

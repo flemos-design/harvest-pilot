@@ -82,3 +82,34 @@ dump.rdb
 ios/
 android/
 *.keystore
+
+# Security & Secrets
+*.pem
+*.key
+*.cert
+*.crt
+.env.local
+.env.*.local
+*.secret
+secrets/
+.secrets/
+
+# IDE - VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.history/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Git credentials
+.git-credentials
