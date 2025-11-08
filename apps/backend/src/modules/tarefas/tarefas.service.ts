@@ -248,8 +248,19 @@ export class TarefasService {
       this.getOverdue(),
     ]);
 
+    // Transformar array de estados em objeto com propriedades diretas
+    const estadosMap = porEstado.reduce((acc, e) => {
+      acc[e.estado] = e._count;
+      return acc;
+    }, {} as Record<string, number>);
+
     return {
       total,
+      planeadas: estadosMap['PLANEADA'] || 0,
+      emCurso: estadosMap['EM_CURSO'] || 0,
+      concluidas: estadosMap['CONCLUIDA'] || 0,
+      canceladas: estadosMap['CANCELADA'] || 0,
+      atrasadas: atrasadas.length,
       porEstado: porEstado.map((e) => ({
         estado: e.estado,
         count: e._count,
@@ -258,7 +269,6 @@ export class TarefasService {
         prioridade: p.prioridade,
         count: p._count,
       })),
-      atrasadasCount: atrasadas.length,
     };
   }
 

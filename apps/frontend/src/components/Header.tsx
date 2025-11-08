@@ -12,6 +12,7 @@ import {
   Menu,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Map routes to breadcrumb labels
 const routeLabels: Record<string, string> = {
@@ -38,6 +39,25 @@ export function Header() {
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const { user, logout } = useAuth();
+
+  // Get user initials
+  const getUserInitials = () => {
+    if (!user?.nome) return 'U';
+    const names = user.nome.split(' ');
+    if (names.length === 1) return names[0][0].toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+  };
+
+  // Get user role label
+  const getRoleLabel = () => {
+    const roleLabels: Record<string, string> = {
+      ADMIN: 'Administrador',
+      GESTOR: 'Gestor',
+      OPERADOR: 'Operador',
+    };
+    return user?.papel ? roleLabels[user.papel] : 'Utilizador';
+  };
 
   // Generate breadcrumbs from pathname
   const breadcrumbs = pathname
@@ -152,11 +172,11 @@ export function Header() {
               className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">CO</span>
+                <span className="text-white font-semibold text-sm">{getUserInitials()}</span>
               </div>
               <div className="hidden lg:block text-left">
-                <p className="text-sm font-medium text-gray-900">Carlos Oliveira</p>
-                <p className="text-xs text-gray-500">Operador</p>
+                <p className="text-sm font-medium text-gray-900">{user?.nome || 'Utilizador'}</p>
+                <p className="text-xs text-gray-500">{getRoleLabel()}</p>
               </div>
             </button>
 
@@ -164,8 +184,8 @@ export function Header() {
             {showUserMenu && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-slide-down">
                 <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="text-sm font-semibold text-gray-900">Carlos Oliveira</p>
-                  <p className="text-xs text-gray-500">operador3@harvestpilot.com</p>
+                  <p className="text-sm font-semibold text-gray-900">{user?.nome || 'Utilizador'}</p>
+                  <p className="text-xs text-gray-500">{user?.email || ''}</p>
                 </div>
                 <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                   <User className="w-4 h-4" />
@@ -176,7 +196,10 @@ export function Header() {
                   Definições
                 </button>
                 <div className="border-t border-gray-200 my-2"></div>
-                <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                <button
+                  onClick={logout}
+                  className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                >
                   <LogOut className="w-4 h-4" />
                   Terminar Sessão
                 </button>

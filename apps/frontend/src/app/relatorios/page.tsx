@@ -8,6 +8,8 @@ import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'd
 import { ptBR } from 'date-fns/locale';
 import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -153,6 +155,118 @@ export default function RelatoriosPage() {
     return { custoPorHa, opsPorHa };
   }, [parcelas, kpis]);
 
+  const exportarPDF = () => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(22, 163, 74); // Green
+    doc.text('HarvestPilot - Relatório de Operações', 14, 22);
+
+    // Period
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    const periodoTexto = `Período: ${format(dateRange.start, "d MMM yyyy", { locale: ptBR })} - ${format(dateRange.end, "d MMM yyyy", { locale: ptBR })}`;
+    doc.text(periodoTexto, 14, 30);
+    doc.text(`Gerado em: ${format(new Date(), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}`, 14, 36);
+
+    // KPIs Section
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text('Indicadores Principais', 14, 46);
+
+    autoTable(doc, {
+      startY: 50,
+      head: [['Métrica', 'Valor']],
+      body: [
+        ['Total de Operações', `${kpis.total} (${kpis.opsPorMes}/mês)`],
+        ['Custo Total', `${kpis.custoTotal.toFixed(2)}€`],
+        ['Custo Médio por Operação', `${kpis.custoMedio.toFixed(2)}€`],
+        ['Parcelas Ativas', `${kpis.parcelasAtivas} de ${parcelas?.length || 0}`],
+        ['Custo por Hectare', `${eficiencia.custoPorHa.toFixed(2)}€/ha`],
+        ['Operações por Hectare', `${eficiencia.opsPorHa.toFixed(1)} ops/ha`],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [22, 163, 74] },
+    });
+
+    // Operations by Type
+    let finalY = (doc as any).lastAutoTable.finalY || 120;
+    doc.setFontSize(14);
+    doc.text('Operações por Tipo', 14, finalY + 10);
+
+    autoTable(doc, {
+      startY: finalY + 14,
+      head: [['Tipo', 'Quantidade', 'Custo Total']],
+      body: opsPorTipo.map(item => {
+        const custo = custoPorTipo.find(c => c.tipo === item.tipo)?.custo || 0;
+        return [item.tipo, item.count.toString(), `${custo.toFixed(2)}€`];
+      }),
+      theme: 'striped',
+      headStyles: { fillColor: [22, 163, 74] },
+    });
+
+    // Operations by Parcela
+    finalY = (doc as any).lastAutoTable.finalY || 200;
+    doc.setFontSize(14);
+    doc.text('Atividade por Parcela', 14, finalY + 10);
+
+    autoTable(doc, {
+      startY: finalY + 14,
+      head: [['Parcela', 'Operações', 'Custo Total']],
+      body: opsPorParcela.map(item => [
+        item.nome,
+        item.count.toString(),
+        `${item.custo.toFixed(2)}€`
+      ]),
+      theme: 'striped',
+      headStyles: { fillColor: [22, 163, 74] },
+    });
+
+    // Summary
+    if ((doc as any).lastAutoTable.finalY < 240) {
+      finalY = (doc as any).lastAutoTable.finalY || 240;
+      doc.setFontSize(14);
+      doc.text('Resumo do Período', 14, finalY + 10);
+
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      let summaryY = finalY + 18;
+
+      if (opsPorTipo[0]) {
+        doc.text(`Operação Mais Frequente: ${opsPorTipo[0].tipo} (${opsPorTipo[0].count} vezes)`, 14, summaryY);
+        summaryY += 6;
+      }
+
+      if (custoPorTipo[0]) {
+        doc.text(`Maior Custo: ${custoPorTipo[0].tipo} (${custoPorTipo[0].custo.toFixed(2)}€)`, 14, summaryY);
+        summaryY += 6;
+      }
+
+      if (opsPorParcela[0]) {
+        doc.text(`Parcela Mais Trabalhada: ${opsPorParcela[0].nome} (${opsPorParcela[0].count} operações)`, 14, summaryY);
+      }
+    }
+
+    // Footer
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(
+        `HarvestPilot - Página ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() / 2,
+        doc.internal.pageSize.getHeight() - 10,
+        { align: 'center' }
+      );
+    }
+
+    // Save
+    const fileName = `HarvestPilot_Relatorio_${format(new Date(), 'yyyy-MM-dd_HHmm')}.pdf`;
+    doc.save(fileName);
+  };
+
   if (isLoadingOps || isLoadingParcelas) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -172,8 +286,8 @@ export default function RelatoriosPage() {
               <p className="text-gray-600 mt-1">Insights sobre operações agrícolas e análise NDVI por satélite</p>
             </div>
             <button
-              disabled
-              className="px-4 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition inline-flex items-center gap-2 opacity-50 cursor-not-allowed"
+              onClick={exportarPDF}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               Exportar PDF

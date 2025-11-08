@@ -40,9 +40,9 @@ export default function EditarInsumoPage() {
         nome: insumo.nome,
         categoria: insumo.categoria,
         unidade: insumo.unidade,
-        stock: insumo.stock,
-        stockMinimo: insumo.stockMinimo,
-        custoUnit: insumo.custoUnit,
+        stock: insumo.stock ?? undefined,
+        stockMinimo: insumo.stockMinimo ?? undefined,
+        custoUnit: insumo.custoUnit ?? undefined,
         validade: insumo.validade ? new Date(insumo.validade).toISOString().split('T')[0] : '',
         lote: insumo.lote || '',
       });
