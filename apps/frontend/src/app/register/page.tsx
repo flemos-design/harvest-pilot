@@ -13,7 +13,6 @@ const registerSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Password deve ter pelo menos 6 caracteres'),
   confirmPassword: z.string(),
-  papel: z.enum(['ADMIN', 'GESTOR', 'OPERADOR']),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'As passwords não coincidem',
   path: ['confirmPassword'],
@@ -27,16 +26,14 @@ export default function RegisterPage() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      papel: 'GESTOR',
-    },
   });
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setError('');
       const { confirmPassword, ...registerData } = data;
-      await registerUser(registerData);
+      // Todos os novos utilizadores são GESTOR da sua organização
+      await registerUser({ ...registerData, papel: 'GESTOR' });
     } catch (err: any) {
       setError(err.message || 'Erro ao criar conta. Tenta novamente.');
     }
@@ -94,24 +91,6 @@ export default function RegisterPage() {
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Papel */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Conta *
-              </label>
-              <select
-                {...register('papel')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                <option value="GESTOR">Gestor Agrícola</option>
-                <option value="OPERADOR">Operador de Campo</option>
-                <option value="ADMIN">Administrador</option>
-              </select>
-              {errors.papel && (
-                <p className="mt-1 text-sm text-red-600">{errors.papel.message}</p>
               )}
             </div>
 
