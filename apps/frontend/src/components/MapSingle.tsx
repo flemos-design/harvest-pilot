@@ -47,7 +47,6 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
       },
       center: [-6.75, 41.79], // Default center
       zoom: 15,
-      attributionControl: true,
     });
 
     // Add navigation controls

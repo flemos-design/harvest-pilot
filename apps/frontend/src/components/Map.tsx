@@ -51,7 +51,6 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       },
       center: [-6.75, 41.79], // Espinhosela, Bragança
       zoom: 13,
-      attributionControl: true,
     });
 
     // Add navigation controls
@@ -91,7 +90,9 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
             id: parcela.id,
             nome: parcela.nome,
             area: parcela.area,
-            cultura: parcela.cultura || 'N/A',
+            cultura: parcela.culturas && parcela.culturas.length > 0
+              ? parcela.culturas.map(c => c.especie).join(', ')
+              : 'N/A',
             tipoSolo: parcela.tipoSolo || 'N/A',
           },
         })),

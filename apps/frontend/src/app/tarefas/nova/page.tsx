@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useCreateTarefa } from '@/hooks/use-tarefas';
 import { Loader2, Save, X, Info } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const tarefaSchema = z.object({
   titulo: z.string().min(3, 'Título deve ter pelo menos 3 caracteres'),
@@ -48,7 +48,6 @@ const ESTADO_OPTIONS = [
 
 export default function NovaTarefaPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const createTarefa = useCreateTarefa();
 
   const {

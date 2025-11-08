@@ -151,7 +151,7 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
                       </div>
                     )}
 
-                    {day.tempMin !== null && day.tempMax !== null && (
+                    {day.tempMin !== null && day.tempMin !== undefined && day.tempMax !== null && day.tempMax !== undefined && (
                       <span className="text-xs text-gray-500">
                         {day.tempMin.toFixed(0)}° - {day.tempMax.toFixed(0)}°
                       </span>
