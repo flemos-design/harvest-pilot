@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Loader2, Check, X, Edit2, Trash2, FileUp, ChevronDown, ChevronUp } from 'lucide-react';
+import { Upload, Loader2, Check, X, Edit2, Trash2, FileUp, ChevronDown, ChevronUp, Info, HelpCircle, FolderTree, MapPin } from 'lucide-react';
 import { useOrganizacoes } from '@/hooks/use-organizacoes';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
@@ -15,9 +15,23 @@ export default function ImportarParcelasPage() {
   const [expandedProps, setExpandedProps] = useState<Set<number>>(new Set());
   const [error, setError] = useState('');
   const [parseError, setParseError] = useState('');
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const { data: organizacoes } = useOrganizacoes();
   const orgId = organizacoes?.[0]?.id || '';
+
+  // Check if user has seen welcome modal before
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem('kmz-import-welcome-seen');
+    if (hasSeenWelcome) {
+      setShowWelcome(false);
+    }
+  }, []);
+
+  const handleCloseWelcome = () => {
+    localStorage.setItem('kmz-import-welcome-seen', 'true');
+    setShowWelcome(false);
+  };
 
   // Parse KMZ mutation
   const parseMutation = useMutation({
@@ -136,22 +150,151 @@ export default function ImportarParcelasPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Welcome Modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-green-100 rounded-lg">
+                <Upload className="w-8 h-8 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Como funciona a Importação KMZ
+                </h2>
+                <p className="text-gray-600">
+                  Importe todos os seus terrenos de uma só vez a partir de um ficheiro do Google Maps ou Google Earth
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                  1
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Faça upload do ficheiro KMZ/KML</h3>
+                  <p className="text-sm text-gray-600">
+                    Selecione o ficheiro exportado do Google Maps. Pode ser .kmz ou .kml
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                  2
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">O sistema extrai automaticamente</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Propriedades e terrenos são detetados pela estrutura do ficheiro:
+                  </p>
+                  <div className="bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono">
+                    <div className="flex items-center gap-2 text-blue-600">
+                      <FolderTree className="w-4 h-4" />
+                      <span>Pasta/Folder</span>
+                      <span className="text-gray-400">→</span>
+                      <span className="text-gray-700">Propriedade</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-green-600 ml-6 mt-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>Marcadores com áreas</span>
+                      <span className="text-gray-400">→</span>
+                      <span className="text-gray-700">Terrenos</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                  3
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Reveja e edite (opcional)</h3>
+                  <p className="text-sm text-gray-600">
+                    Pode alterar nomes, áreas, ou remover itens antes de importar
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                  4
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Importe tudo de uma vez</h3>
+                  <p className="text-sm text-gray-600">
+                    Um clique e todas as propriedades e terrenos são criados automaticamente
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex gap-3">
+                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-blue-900">
+                  <p className="font-medium mb-1">Dica:</p>
+                  <p>
+                    Se o seu ficheiro KML não tiver pastas/folders, todos os terrenos serão agrupados
+                    numa propriedade chamada "Propriedade Principal" que pode renomear.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCloseWelcome}
+                className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
+              >
+                Entendi, começar
+              </button>
+              <button
+                onClick={handleCloseWelcome}
+                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+              >
+                Não mostrar novamente
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Importar Terrenos (KMZ)</h1>
-          <p className="text-gray-600 mt-1">
-            Faça upload de um ficheiro .kmz ou .kml - propriedades e terrenos são extraídos automaticamente
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Importar Terrenos (KMZ)</h1>
+              <p className="text-gray-600 mt-1">
+                Importe terrenos do Google Maps ou Google Earth
+              </p>
+            </div>
+            <button
+              onClick={() => setShowWelcome(true)}
+              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+            >
+              <HelpCircle className="w-5 h-5" />
+              <span className="text-sm font-medium">Como funciona?</span>
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
         {/* Step 1: Upload File */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <FileUp className="w-5 h-5" />
-            Passo 1: Selecionar Ficheiro
-          </h2>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+              1
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">Selecionar Ficheiro</h2>
+              <p className="text-sm text-gray-600">Escolha o ficheiro KMZ ou KML exportado</p>
+            </div>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -166,7 +309,7 @@ export default function ImportarParcelasPage() {
             />
             {file && (
               <p className="text-sm text-gray-600 mt-2">
-                Ficheiro: {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                ✓ Ficheiro: {file.name} ({(file.size / 1024).toFixed(1)} KB)
               </p>
             )}
           </div>
@@ -205,7 +348,7 @@ export default function ImportarParcelasPage() {
                 }}
                 className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
               >
-                Limpar
+                Limpar e recomeçar
               </button>
             )}
           </div>
@@ -214,10 +357,24 @@ export default function ImportarParcelasPage() {
         {/* Step 2: Preview & Edit */}
         {propriedades.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Edit2 className="w-5 h-5" />
-              Passo 2: Rever e Editar ({propriedades.length} propriedades, {totalTerrenos} terrenos)
-            </h2>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                2
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">
+                  Rever e Editar
+                </h2>
+                <p className="text-sm text-gray-600">
+                  {propriedades.length} propriedade(s) e {totalTerrenos} terreno(s) encontrados
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm text-blue-900">
+              <Info className="w-4 h-4 inline mr-2" />
+              Pode editar nomes, áreas ou remover itens. As alterações são opcionais.
+            </div>
 
             <div className="space-y-4">
               {propriedades.map((prop, propIndex) => (
@@ -235,6 +392,7 @@ export default function ImportarParcelasPage() {
                           <ChevronDown className="w-5 h-5" />
                         )}
                       </button>
+                      <FolderTree className="w-5 h-5 text-blue-600" />
                       <div className="flex-1">
                         <input
                           type="text"
@@ -284,14 +442,17 @@ export default function ImportarParcelasPage() {
                           {prop.terrenos.map((terreno, terrenoIndex) => (
                             <tr key={terrenoIndex} className="hover:bg-gray-50">
                               <td className="px-4 py-2">
-                                <input
-                                  type="text"
-                                  value={terreno.nome}
-                                  onChange={(e) =>
-                                    handleEditTerreno(propIndex, terrenoIndex, 'nome', e.target.value)
-                                  }
-                                  className="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
-                                />
+                                <div className="flex items-center gap-2">
+                                  <MapPin className="w-4 h-4 text-green-600" />
+                                  <input
+                                    type="text"
+                                    value={terreno.nome}
+                                    onChange={(e) =>
+                                      handleEditTerreno(propIndex, terrenoIndex, 'nome', e.target.value)
+                                    }
+                                    className="flex-1 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                                  />
+                                </div>
                               </td>
                               <td className="px-4 py-2">
                                 <input
@@ -355,10 +516,15 @@ export default function ImportarParcelasPage() {
         {/* Step 3: Submit */}
         {propriedades.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Check className="w-5 h-5" />
-              Passo 3: Confirmar Importação
-            </h2>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                3
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Confirmar Importação</h2>
+                <p className="text-sm text-gray-600">Criar todas as propriedades e terrenos</p>
+              </div>
+            </div>
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
@@ -367,11 +533,23 @@ export default function ImportarParcelasPage() {
               </div>
             )}
 
-            <p className="text-gray-600 mb-6">
-              Está prestes a criar <strong>{propriedades.length} propriedade(s)</strong> com{' '}
-              <strong>{totalTerrenos} terreno(s)</strong> no total. Após a importação, poderá editar cada
-              item individualmente.
-            </p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+              <div className="flex gap-3">
+                <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-green-900">
+                  <p className="font-medium mb-2">Pronto para importar:</p>
+                  <ul className="space-y-1">
+                    <li>✓ <strong>{propriedades.length}</strong> propriedade(s)</li>
+                    <li>✓ <strong>{totalTerrenos}</strong> terreno(s)</li>
+                    <li>✓ Todas as geometrias e áreas calculadas</li>
+                  </ul>
+                  <p className="mt-3 text-xs">
+                    Após a importação, poderá editar cada item individualmente e adicionar mais detalhes
+                    (culturas, ciclos, operações, etc.)
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <div className="flex gap-3">
               <button
