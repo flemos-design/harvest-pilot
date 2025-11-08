@@ -12,13 +12,17 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { MeteorologiaService } from './meteorologia.service';
+import { IpmaIntegrationService } from './ipma-integration.service';
 import { CreateMeteoParcelaDto } from './dto/create-meteo-parcela.dto';
 import { UpdateMeteoParcelaDto } from './dto/update-meteo-parcela.dto';
 
 @ApiTags('meteorologia')
 @Controller('meteorologia')
 export class MeteorologiaController {
-  constructor(private readonly meteorologiaService: MeteorologiaService) {}
+  constructor(
+    private readonly meteorologiaService: MeteorologiaService,
+    private readonly ipmaService: IpmaIntegrationService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Criar novo registo meteorológico' })
@@ -98,5 +102,35 @@ export class MeteorologiaController {
   @ApiOperation({ summary: 'Eliminar registo meteorológico' })
   remove(@Param('id') id: string) {
     return this.meteorologiaService.remove(id);
+  }
+
+  // ===== INTEGRAÇÃO IPMA =====
+
+  @Post('sync/parcela/:parcelaId')
+  @ApiOperation({ summary: 'Sincronizar previsão IPMA para uma parcela' })
+  async syncParcelaFromIpma(@Param('parcelaId') parcelaId: string) {
+    const count = await this.ipmaService.syncForecastForParcela(parcelaId);
+    return {
+      success: true,
+      message: `${count} previsões sincronizadas com sucesso`,
+      count,
+    };
+  }
+
+  @Post('sync/organizacao/:organizacaoId')
+  @ApiOperation({ summary: 'Sincronizar previsão IPMA para todas as parcelas de uma organização' })
+  async syncOrganizacaoFromIpma(@Param('organizacaoId') organizacaoId: string) {
+    const result = await this.ipmaService.syncForecastForOrganizacao(organizacaoId);
+    return {
+      success: true,
+      message: `${result.total} previsões sincronizadas em ${result.parcelas} parcelas`,
+      ...result,
+    };
+  }
+
+  @Get('ipma/locations')
+  @ApiOperation({ summary: 'Listar todos os locais disponíveis no IPMA' })
+  async getIpmaLocations() {
+    return this.ipmaService.getAvailableLocations();
   }
 }
