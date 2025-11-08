@@ -13,10 +13,15 @@ interface Message {
   sources?: string[];
 }
 
+const CHAT_STORAGE_KEY = 'moranguinha-chat-messages';
+const CHAT_TIMESTAMP_KEY = 'moranguinha-chat-timestamp';
+const CHAT_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 horas
+
 export default function FloatingChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [chatExpiresAt, setChatExpiresAt] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: organizacoes } = useOrganizacoes();
@@ -24,7 +29,69 @@ export default function FloatingChat() {
 
   const chatMutation = useChat();
 
-  // Mensagem de boas-vindas automática
+  // Calcular tempo restante até expiração
+  const getTimeUntilExpiry = () => {
+    if (!chatExpiresAt) return null;
+    const now = Date.now();
+    const remaining = chatExpiresAt - now;
+
+    if (remaining <= 0) return 'Expirado';
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (hours > 0) {
+      return `Conversa guardada por ${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`;
+    }
+    return `Conversa guardada por ${minutes}m`;
+  };
+
+  // Carregar mensagens do localStorage ao iniciar
+  useEffect(() => {
+    try {
+      const storedMessages = localStorage.getItem(CHAT_STORAGE_KEY);
+      const storedTimestamp = localStorage.getItem(CHAT_TIMESTAMP_KEY);
+
+      if (storedMessages && storedTimestamp) {
+        const timestamp = parseInt(storedTimestamp, 10);
+        const now = Date.now();
+        const expiresAt = timestamp + CHAT_EXPIRY_MS;
+
+        // Verificar se passaram 24 horas
+        if (now < expiresAt) {
+          // Restaurar mensagens
+          setMessages(JSON.parse(storedMessages));
+          setChatExpiresAt(expiresAt);
+        } else {
+          // Limpar mensagens expiradas
+          localStorage.removeItem(CHAT_STORAGE_KEY);
+          localStorage.removeItem(CHAT_TIMESTAMP_KEY);
+          setChatExpiresAt(null);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar histórico do chat:', error);
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      localStorage.removeItem(CHAT_TIMESTAMP_KEY);
+      setChatExpiresAt(null);
+    }
+  }, []);
+
+  // Guardar mensagens no localStorage sempre que mudarem
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        const now = Date.now();
+        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+        localStorage.setItem(CHAT_TIMESTAMP_KEY, now.toString());
+        setChatExpiresAt(now + CHAT_EXPIRY_MS);
+      } catch (error) {
+        console.error('Erro ao guardar histórico do chat:', error);
+      }
+    }
+  }, [messages]);
+
+  // Mensagem de boas-vindas automática (só se não houver histórico)
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setMessages([
@@ -34,7 +101,7 @@ export default function FloatingChat() {
         },
       ]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   // Auto-scroll para última mensagem
   useEffect(() => {
@@ -125,10 +192,13 @@ export default function FloatingChat() {
           <button
             onClick={() => {
               setMessages([]);
+              localStorage.removeItem(CHAT_STORAGE_KEY);
+              localStorage.removeItem(CHAT_TIMESTAMP_KEY);
+              setChatExpiresAt(null);
               setIsOpen(false);
             }}
             className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
-            aria-label="Fechar chat"
+            aria-label="Fechar e limpar chat"
           >
             <X className="w-4 h-4" />
           </button>
@@ -193,9 +263,12 @@ export default function FloatingChat() {
             <Send className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-2 text-center">
-          Tenho acesso a todos os dados da tua conta
-        </p>
+        <div className="text-xs text-gray-500 mt-2 text-center space-y-0.5">
+          <p>Tenho acesso a todos os dados da tua conta</p>
+          {chatExpiresAt && (
+            <p className="text-green-600 font-medium">{getTimeUntilExpiry()}</p>
+          )}
+        </div>
       </div>
     </div>
   );
