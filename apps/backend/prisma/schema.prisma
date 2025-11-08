@@ -27,14 +27,16 @@ model Organizacao {
 }
 
 model Utilizador {
-  id             String   @id @default(cuid())
-  email          String   @unique
-  nome           String
-  passwordHash   String   @map("password_hash")
-  papel          String   @default("OPERADOR") // ADMIN, GESTOR, PLANEADOR, OPERADOR
-  organizacaoId  String   @map("organizacao_id")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                String    @id @default(cuid())
+  email             String    @unique
+  nome              String
+  passwordHash      String    @map("password_hash")
+  papel             String    @default("OPERADOR") // ADMIN, GESTOR, PLANEADOR, OPERADOR
+  organizacaoId     String    @map("organizacao_id")
+  resetToken        String?   @unique @map("reset_token")
+  resetTokenExpiry  DateTime? @map("reset_token_expiry")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   organizacao Organizacao @relation(fields: [organizacaoId], references: [id], onDelete: Cascade)
   operacoes   Operacao[]

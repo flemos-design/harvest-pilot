@@ -1,14 +1,21 @@
-import { Injectable, NotFoundException, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { EmailService } from '../email/email.service';
 import { CreateUtilizadorDto } from './dto/create-utilizador.dto';
 import { UpdateUtilizadorDto } from './dto/update-utilizador.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UtilizadoresService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+  ) {}
 
   async create(createUtilizadorDto: CreateUtilizadorDto) {
     // Verificar se email já existe
@@ -317,5 +324,99 @@ export class UtilizadoresService {
         totalTarefas: u._count.tarefas,
       })),
     };
+  }
+
+  // Recuperação de password
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const utilizador = await this.prisma.utilizador.findUnique({
+      where: { email: forgotPasswordDto.email },
+      select: {
+        id: true,
+        email: true,
+        nome: true,
+      },
+    });
+
+    // Por segurança, sempre retorna sucesso mesmo que o email não exista
+    // Isto previne ataques de enumeração de utilizadores
+    if (!utilizador) {
+      return { message: 'Se o email existir, receberás um link de recuperação' };
+    }
+
+    // Gerar token de reset único e seguro
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date();
+    resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1); // Válido por 1 hora
+
+    // Guardar o token na base de dados
+    await this.prisma.utilizador.update({
+      where: { id: utilizador.id },
+      data: {
+        resetToken,
+        resetTokenExpiry,
+      },
+    });
+
+    // Enviar email com o link de reset
+    try {
+      await this.emailService.sendPasswordResetEmail(utilizador.email, resetToken);
+    } catch (error) {
+      // Se falhar o envio do email, limpar o token
+      await this.prisma.utilizador.update({
+        where: { id: utilizador.id },
+        data: {
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
+      });
+      throw new BadRequestException('Erro ao enviar email de recuperação');
+    }
+
+    return { message: 'Se o email existir, receberás um link de recuperação' };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    // Procurar utilizador com o token válido
+    const utilizador = await this.prisma.utilizador.findUnique({
+      where: { resetToken: resetPasswordDto.token },
+      select: {
+        id: true,
+        resetToken: true,
+        resetTokenExpiry: true,
+      },
+    });
+
+    if (!utilizador || !utilizador.resetTokenExpiry) {
+      throw new BadRequestException('Token inválido ou expirado');
+    }
+
+    // Verificar se o token expirou
+    if (utilizador.resetTokenExpiry < new Date()) {
+      // Limpar token expirado
+      await this.prisma.utilizador.update({
+        where: { id: utilizador.id },
+        data: {
+          resetToken: null,
+          resetTokenExpiry: null,
+        },
+      });
+      throw new BadRequestException('Token expirado');
+    }
+
+    // Hash da nova password
+    const saltRounds = 10;
+    const newPasswordHash = await bcrypt.hash(resetPasswordDto.newPassword, saltRounds);
+
+    // Atualizar password e limpar token
+    await this.prisma.utilizador.update({
+      where: { id: utilizador.id },
+      data: {
+        passwordHash: newPasswordHash,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    return { message: 'Password alterada com sucesso' };
   }
 }

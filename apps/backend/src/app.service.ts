@@ -14,10 +14,16 @@ export class AppService {
   getInfo() {
     return {
       name: 'HarvestPilot API',
-      version: '0.1.0',
-      description: 'Plataforma de Gestão de Parcelas & Calendário Agrícola',
-      docs: '/api/docs',
-      health: '/api/v1/health',
+      version: '1.0.0',
+      description: 'Sistema de Gestão Agrícola com Satélite e Meteo',
+      status: 'online',
+      timestamp: new Date().toISOString(),
+      endpoints: {
+        documentation: '/api/docs',
+        api: '/api/v1',
+        health: '/health',
+      },
+      frontend: process.env.FRONTEND_URL || 'https://app.harvestpilot.online',
     };
   }
 }

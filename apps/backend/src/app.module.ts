@@ -20,6 +20,7 @@ import { TarefasModule } from './modules/tarefas/tarefas.module';
 import { OrganizacoesModule } from './modules/organizacoes/organizacoes.module';
 import { CalendarioModule } from './modules/calendario/calendario.module';
 import { UtilizadoresModule } from './modules/utilizadores/utilizadores.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UtilizadoresModule } from './modules/utilizadores/utilizadores.module';
     PrismaModule,
 
     // Feature modules
+    EmailModule,
     OrganizacoesModule,
     UtilizadoresModule,
     PropriedadesModule,
