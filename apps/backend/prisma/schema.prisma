@@ -1,0 +1,245 @@
+// HarvestPilot Database Schema
+// PostgreSQL 16 + PostGIS 3.4
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== ORGANIZAÇÕES & UTILIZADORES =====
+
+model Organizacao {
+  id        String   @id @default(cuid())
+  nome      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  propriedades Propriedade[]
+  utilizadores Utilizador[]
+
+  @@map("organizacoes")
+}
+
+model Utilizador {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  nome           String
+  passwordHash   String   @map("password_hash")
+  papel          String   @default("OPERADOR") // ADMIN, GESTOR, PLANEADOR, OPERADOR
+  organizacaoId  String   @map("organizacao_id")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organizacao Organizacao @relation(fields: [organizacaoId], references: [id], onDelete: Cascade)
+  operacoes   Operacao[]
+  tarefas     Tarefa[]
+
+  @@map("utilizadores")
+}
+
+// ===== PROPRIEDADES & PARCELAS =====
+
+model Propriedade {
+  id            String   @id @default(cuid())
+  nome          String
+  descricao     String?
+  organizacaoId String   @map("organizacao_id")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organizacao Organizacao @relation(fields: [organizacaoId], references: [id], onDelete: Cascade)
+  parcelas    Parcela[]
+
+  @@map("propriedades")
+}
+
+model Parcela {
+  id            String   @id @default(cuid())
+  nome          String
+  area          Float    // hectares
+  geometria     String   // GeoJSON (PostGIS GEOMETRY type)
+  altitude      Float?   // metros
+  tipoSolo      String?  @map("tipo_solo")
+  propriedadeId String   @map("propriedade_id")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  propriedade    Propriedade      @relation(fields: [propriedadeId], references: [id], onDelete: Cascade)
+  culturas       Cultura[]
+  operacoes      Operacao[]
+  imagensRemotas ImagemRemota[]
+  meteo          MeteoParcela[]
+
+  @@map("parcelas")
+}
+
+// ===== CULTURAS & CICLOS =====
+
+model Cultura {
+  id         String   @id @default(cuid())
+  especie    String   // Castanheiro, Cerejeira, Nogueira, Avelã, etc.
+  variedade  String?
+  finalidade String   @default("FRUTO") // FRUTO, MADEIRA
+  parcelaId  String   @map("parcela_id")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  parcela Parcela @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
+  ciclos  Ciclo[]
+
+  @@map("culturas")
+}
+
+model Ciclo {
+  id           String    @id @default(cuid())
+  epoca        String    // 2024/2025
+  dataInicio   DateTime  @map("data_inicio")
+  dataFim      DateTime? @map("data_fim")
+  estado       String    @default("ATIVO") // ATIVO, CONCLUIDO, CANCELADO
+  culturaId    String    @map("cultura_id")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  cultura   Cultura    @relation(fields: [culturaId], references: [id], onDelete: Cascade)
+  operacoes Operacao[]
+
+  @@map("ciclos")
+}
+
+// ===== OPERAÇÕES DE CAMPO =====
+
+model Operacao {
+  id            String   @id @default(cuid())
+  tipo          String   // PLANTACAO, REGA, ADUBACAO, TRATAMENTO, COLHEITA, INSPECAO, PODA, DESBASTE
+  data          DateTime
+  descricao     String?
+  notas         String?  @db.Text
+  latitude      Float?
+  longitude     Float?
+  fotos         String[] // URLs S3
+  insumos       Json?    // [{produto, dose, unidade, custo}]
+  custoTotal    Float?   @default(0) @map("custo_total")
+  parcelaId     String   @map("parcela_id")
+  cicloId       String?  @map("ciclo_id")
+  operadorId    String   @map("operador_id")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  parcela  Parcela     @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
+  ciclo    Ciclo?      @relation(fields: [cicloId], references: [id], onDelete: SetNull)
+  operador Utilizador  @relation(fields: [operadorId], references: [id])
+
+  @@map("operacoes")
+}
+
+// ===== AGENDA & TAREFAS =====
+
+model Tarefa {
+  id              String    @id @default(cuid())
+  titulo          String
+  descricao       String?   @db.Text
+  tipo            String    // PLANTACAO, COLHEITA, TRATAMENTO, etc.
+  prioridade      String    @default("MEDIA") // BAIXA, MEDIA, ALTA, URGENTE
+  estado          String    @default("PLANEADA") // PLANEADA, EM_CURSO, CONCLUIDA, CANCELADA
+  dataInicio      DateTime  @map("data_inicio")
+  dataFim         DateTime? @map("data_fim")
+  dataConclusao   DateTime? @map("data_conclusao")
+  janelaMeteo     Json?     @map("janela_meteo") // {score, vento, chuva, temp}
+  responsavelId   String?   @map("responsavel_id")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  responsavel Utilizador? @relation(fields: [responsavelId], references: [id])
+
+  @@map("tarefas")
+}
+
+// ===== METEOROLOGIA =====
+
+model MeteoParcela {
+  id          String   @id @default(cuid())
+  parcelaId   String   @map("parcela_id")
+  data        DateTime
+  fonte       String   @default("IPMA") // IPMA, OpenMeteo
+  temperatura Float?   // °C
+  tempMin     Float?   @map("temp_min")
+  tempMax     Float?   @map("temp_max")
+  precipitacao Float?  // mm
+  probChuva   Float?   @map("prob_chuva") // %
+  vento       Float?   // km/h
+  humidade    Float?   // %
+  createdAt   DateTime @default(now())
+
+  parcela Parcela @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
+
+  @@unique([parcelaId, data, fonte])
+  @@map("meteo_parcelas")
+}
+
+// ===== IMAGENS DE SATÉLITE =====
+
+model ImagemRemota {
+  id         String   @id @default(cuid())
+  parcelaId  String   @map("parcela_id")
+  fonte      String   @default("SENTINEL") // SENTINEL, LANDSAT
+  data       DateTime
+  nuvens     Float?   // %
+  ndvi       Float?
+  ndre       Float?
+  evi        Float?
+  urlImagem  String?  @map("url_imagem")
+  metadados  Json?
+  createdAt  DateTime @default(now())
+
+  parcela Parcela @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
+
+  @@unique([parcelaId, data, fonte])
+  @@map("imagens_remotas")
+}
+
+// ===== INVENTÁRIO =====
+
+model Insumo {
+  id          String    @id @default(cuid())
+  nome        String
+  categoria   String    // FERTILIZANTE, FITOFARMACO, SEMENTE, OUTRO
+  unidade     String    // kg, L, unidade
+  stock       Float     @default(0)
+  stockMinimo Float?    @default(0) @map("stock_minimo")
+  custoUnit   Float?    @map("custo_unitario")
+  validade    DateTime?
+  lote        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("insumos")
+}
+
+// ===== CALENDÁRIO & REGRAS =====
+
+model CalendarioRegra {
+  id           String   @id @default(cuid())
+  cultura      String   // Castanheiro, Cerejeira, etc.
+  variedade    String?
+  finalidade   String   @default("FRUTO") // FRUTO, MADEIRA
+  tipoOperacao String   @map("tipo_operacao") // PLANTACAO, COLHEITA, PODA, etc.
+  regiao       String?  @default("Espinhosela") // Espinhosela, Bragança
+  mesInicio    Int      @map("mes_inicio") // 1-12
+  mesFim       Int      @map("mes_fim") // 1-12
+  tbase        Float?   // temperatura base para GDD
+  gddAlvo      Int?     @map("gdd_alvo") // graus-dia acumulados
+  ventoMax     Float?   @map("vento_max") // km/h
+  chuvaMax     Float?   @map("chuva_max") // mm
+  phiDias      Int?     @map("phi_dias") // período de segurança
+  descricao    String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("calendario_regras")
+}
