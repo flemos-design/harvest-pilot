@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Sprout,
+  Brain,
 } from 'lucide-react';
 
 // Navegação organizada por categorias
@@ -29,6 +30,7 @@ const navigation = [
     category: 'Overview',
     items: [
       { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/assistente', label: 'Assistente IA', icon: Brain },
       { href: '/relatorios', label: 'Relatórios', icon: FileText },
     ],
   },
