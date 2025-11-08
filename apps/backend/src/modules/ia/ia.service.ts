@@ -1,14 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import OpenAI from 'openai';
 import { ChatMessageDto, ChatResponseDto, InsightDto } from './dto/chat.dto';
+import { AutoSyncService } from '../meteorologia/auto-sync.service';
 
 @Injectable()
 export class IaService {
   private readonly logger = new Logger(IaService.name);
   private openai: OpenAI;
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => AutoSyncService))
+    private autoSyncService: AutoSyncService,
+  ) {
     if (!process.env.OPENAI_API_KEY) {
       this.logger.warn('OPENAI_API_KEY not configured - IA features disabled');
       return;
@@ -25,6 +30,14 @@ export class IaService {
   async chat(dto: ChatMessageDto): Promise<ChatResponseDto> {
     if (!this.openai) {
       throw new Error('OpenAI API key not configured');
+    }
+
+    // 0. Sincronizar meteorologia se necessário (1x por dia)
+    try {
+      await this.autoSyncService.checkAndSyncIfNeeded(dto.organizacaoId);
+    } catch (error) {
+      this.logger.warn(`Auto-sync meteorologia falhou: ${error.message}`);
+      // Continuar mesmo se a sincronização falhar
     }
 
     // 1. Buscar contexto relevante (RAG)
@@ -606,12 +619,15 @@ ${JSON.stringify(context.data, null, 2)}
 
 **INSTRUÇÕES CRÍTICAS:**
 
-1. METEOROLOGIA:
+1. METEOROLOGIA - SINCRONIZAÇÃO AUTOMÁTICA:
+   - Os dados meteorológicos são sincronizados AUTOMATICAMENTE 1x por dia do IPMA
    - VERIFICA SEMPRE context.data.previsaoMeteorologica ANTES de responder sobre tempo
    - VERIFICA SEMPRE context.data.meteorologiaRecente para dados históricos
+   - Dados disponíveis: temperaturas (min/max), probabilidade chuva, vento
+   - Cobertura: até 5 dias de previsão (D+0 até D+5)
    - Se previsaoMeteorologica existir → USA OS DADOS para responder
-   - Se previsaoMeteorologica for undefined/null → diz "ainda não tenho dados meteorológicos carregados na base de dados"
-   - NUNCA digas "não tenho acesso a meteorologia" - isso é FALSO!
+   - Se previsaoMeteorologica for undefined/null → "Os dados meteorológicos estão a ser carregados. Tenta novamente em alguns segundos."
+   - NUNCA digas "não tenho acesso a meteorologia" - SEMPRE tens acesso!
 
 2. RESPOSTA A PERGUNTAS:
    - PRIMEIRO: Verifica o contexto JSON acima
@@ -628,13 +644,19 @@ ${JSON.stringify(context.data, null, 2)}
    - Explica o "porquê" das tuas sugestões
    - Dá prioridade a alertas críticos (insumos vencidos, stock baixo, tarefas atrasadas)
 
-4. METEOROLOGIA - EXEMPLO DE RESPOSTA:
+4. METEOROLOGIA - EXEMPLOS DE RESPOSTA:
    - Se context.data.previsaoMeteorologica existe e tem dados:
-     "Sim, tenho previsões meteorológicas! Para o próximo fim de semana..."
-   - Se context.data.previsaoMeteorologica é undefined/null/vazio:
-     "Ainda não tenho dados meteorológicos carregados na base de dados para as tuas parcelas.
-      Os dados meteorológicos precisam de ser sincronizados primeiro. Posso ajudar-te com
-      outras questões sobre as tuas parcelas, operações ou insumos!"
+     "Consultando as previsões IPMA para as tuas parcelas... 🌤️
+      [DADOS ESPECÍFICOS COM TEMPERATURAS, CHUVA, VENTO]
+      Fonte: IPMA (Instituto Português do Mar e da Atmosfera)"
+
+   - Se context.data.previsaoMeteorologica é undefined/null (primeira vez):
+     "Os dados meteorológicos estão a ser sincronizados automaticamente do IPMA.
+      Aguarda alguns segundos e pergunta novamente. A sincronização é feita 1x por dia."
+
+   - Para previsões além de 5 dias:
+     "As previsões do IPMA cobrem até 5 dias. Tenho dados até [DATA].
+      Para períodos mais longos, recomendo consultar diretamente o IPMA ou outras fontes."
 
 **Expertise completa:**
 - Culturas: Castanheiro, Cerejeira, Nogueira, Aveleira (fruto e madeira)
