@@ -11,6 +11,7 @@ import Link from 'next/link';
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Password deve ter pelo menos 6 caracteres'),
+  rememberMe: z.boolean().default(false),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -26,7 +27,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setError('');
-      await login(data.email, data.password);
+      await login(data.email, data.password, data.rememberMe);
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login. Verifica as tuas credenciais.');
     }
@@ -89,8 +90,16 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Forgot Password Link */}
-            <div className="text-right">
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register('rememberMe')}
+                  className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                />
+                <span className="text-sm text-gray-700">Manter sessão iniciada</span>
+              </label>
               <Link
                 href="/forgot-password"
                 className="text-sm text-green-600 hover:text-green-700 font-medium"
