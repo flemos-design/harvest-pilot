@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import FloatingChat from './FloatingChat';
+import SWUpdateNotification from './SWUpdateNotification';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -13,7 +14,12 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const showAppLayout = !authPages.includes(pathname);
 
   if (!showAppLayout) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <SWUpdateNotification />
+      </>
+    );
   }
 
   return (
@@ -34,6 +40,9 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
       {/* Floating Chat - Acessível globalmente */}
       <FloatingChat />
+
+      {/* Service Worker Update Notification - Global */}
+      <SWUpdateNotification />
     </div>
   );
 }

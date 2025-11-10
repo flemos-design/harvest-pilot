@@ -4,18 +4,80 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
+    // API requests - NetworkFirst com fallback e background sync
     {
-      urlPattern: /^https:\/\/api\..*/i,
+      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas|propriedades).*/i,
       handler: 'NetworkFirst',
       options: {
-        cacheName: 'api-cache',
+        cacheName: 'api-data-cache',
         expiration: {
-          maxEntries: 32,
+          maxEntries: 64,
           maxAgeSeconds: 24 * 60 * 60, // 24 hours
         },
         networkTimeoutSeconds: 10,
+        plugins: [
+          {
+            handlerDidError: async () => {
+              // Fallback para cache quando network falha
+              return caches.match('/offline-fallback.json');
+            },
+          },
+        ],
       },
     },
+    // POST/PUT/DELETE requests - Background sync
+    {
+      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
+      method: 'POST',
+      handler: 'NetworkOnly',
+      options: {
+        backgroundSync: {
+          name: 'api-queue',
+          options: {
+            maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (in minutes)
+          },
+        },
+      },
+    },
+    {
+      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
+      method: 'PUT',
+      handler: 'NetworkOnly',
+      options: {
+        backgroundSync: {
+          name: 'api-queue',
+          options: {
+            maxRetentionTime: 24 * 60,
+          },
+        },
+      },
+    },
+    {
+      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
+      method: 'DELETE',
+      handler: 'NetworkOnly',
+      options: {
+        backgroundSync: {
+          name: 'api-queue',
+          options: {
+            maxRetentionTime: 24 * 60,
+          },
+        },
+      },
+    },
+    // Map tiles - CacheFirst para tiles de mapas
+    {
+      urlPattern: /^https:\/\/tile\.openstreetmap\.org\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'map-tiles-cache',
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+    // External images (Unsplash)
     {
       urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
       handler: 'CacheFirst',
@@ -27,14 +89,27 @@ const withPWA = require('next-pwa')({
         },
       },
     },
+    // Static images
     {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
       handler: 'CacheFirst',
       options: {
         cacheName: 'static-image-cache',
         expiration: {
-          maxEntries: 64,
+          maxEntries: 128,
           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        },
+      },
+    },
+    // Fonts
+    {
+      urlPattern: /\.(?:woff|woff2|ttf|eot)$/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'font-cache',
+        expiration: {
+          maxEntries: 32,
+          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
         },
       },
     },
