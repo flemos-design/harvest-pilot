@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { MapPreview } from '@/components/MapPreview';
+import { MapEditor } from '@/components/MapEditor';
 
 const parcelaSchema = z.object({
   nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -42,6 +43,8 @@ export default function NovaParcelaPage() {
   const [gettingLocation, setGettingLocation] = useState(false);
   const [uploadedGeometry, setUploadedGeometry] = useState<any>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [drawnGeometry, setDrawnGeometry] = useState<any>(null);
+  const [calculatedArea, setCalculatedArea] = useState<number>(0);
 
   const {
     register,
@@ -140,12 +143,24 @@ export default function NovaParcelaPage() {
     }
   };
 
+  const handleGeometryChange = (geometry: any, area: number) => {
+    setDrawnGeometry(geometry);
+    setCalculatedArea(area);
+    // Auto-fill area if drawn
+    if (area > 0) {
+      setValue('area', parseFloat(area.toFixed(4)));
+    }
+  };
+
   const onSubmit = async (data: ParcelaFormData) => {
     try {
-      // Prioridade: 1) Geometria importada, 2) GPS, 3) Default
+      // Prioridade: 1) Geometria desenhada, 2) Geometria importada, 3) GPS, 4) Default
       let geometria: any;
 
-      if (uploadedGeometry) {
+      if (drawnGeometry) {
+        // Usar geometria desenhada no mapa
+        geometria = drawnGeometry;
+      } else if (uploadedGeometry) {
         // Usar geometria do ficheiro importado
         geometria = uploadedGeometry;
       } else if (data.latitude && data.longitude) {
@@ -313,13 +328,29 @@ export default function NovaParcelaPage() {
               </select>
             </div>
 
+            {/* Map Editor - Draw Geometry */}
+            <div className="border-t pt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Desenhar Geometria do Terreno
+              </label>
+              <p className="text-xs text-gray-500 mb-4">
+                Desenhe o polígono que representa o terreno. A área é calculada automaticamente.
+              </p>
+              <MapEditor
+                initialGeometry={uploadedGeometry || undefined}
+                onGeometryChange={handleGeometryChange}
+                height="500px"
+                center={latitude && longitude ? [longitude, latitude] : undefined}
+              />
+            </div>
+
             {/* File Upload */}
             <div className="border-t pt-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Importar Geometria (GeoJSON/KML)
               </label>
               <p className="text-xs text-gray-500 mb-3">
-                Importa um ficheiro GeoJSON ou KML com a geometria exata do terreno
+                Alternativamente, importe um ficheiro GeoJSON ou KML com a geometria (será carregado no editor acima)
               </p>
 
               <div className="flex items-center gap-3">
@@ -423,19 +454,6 @@ export default function NovaParcelaPage() {
               )}
             </div>
 
-            {/* Map Preview */}
-            <div className="border-t pt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-green-600" />
-                Preview da Localização
-              </h3>
-              <MapPreview
-                latitude={latitude}
-                longitude={longitude}
-                height="350px"
-              />
-            </div>
-
             {/* Info Box */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex gap-3">
@@ -443,11 +461,13 @@ export default function NovaParcelaPage() {
                 <div className="text-sm text-blue-800">
                   <p className="font-medium mb-1">Sobre a Geometria da Parcela</p>
                   <p className="text-blue-700">
-                    {uploadedFileName
-                      ? 'A geometria será criada a partir do ficheiro importado.'
+                    {drawnGeometry
+                      ? 'Geometria desenhada no mapa será usada.'
+                      : uploadedFileName
+                      ? 'Geometria importada do ficheiro será usada.'
                       : useGPS
-                      ? 'A geometria será criada automaticamente como um polígono ao redor do ponto GPS.'
-                      : 'Importa um ficheiro GeoJSON/KML para definir a geometria exata, ou usa o GPS para criar um polígono simples.'}
+                      ? 'Polígono será criado ao redor do ponto GPS.'
+                      : 'Desenhe a geometria no mapa, importe um ficheiro GeoJSON/KML, ou use GPS para localização.'}
                   </p>
                 </div>
               </div>
