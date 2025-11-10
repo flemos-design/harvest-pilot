@@ -41,7 +41,7 @@ export default function LoginPage() {
             <img
               src="/logo.png"
               alt="HarvestPilot Logo"
-              className="h-20 w-auto"
+              className="h-60 w-auto"
             />
           </div>
         </div>
