@@ -1,0 +1,87 @@
+{
+  "type": "FeatureCollection",
+  "name": "Exemplo Terrenos Espinhosela",
+  "description": "Terrenos exemplo para teste de importação - Espinhosela, Bragança",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Terreno Norte - Castanheiros",
+        "tipoSolo": "Argiloso com pedras",
+        "altitude": 720
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.7850, 41.7980],
+            [-6.7840, 41.7980],
+            [-6.7840, 41.7990],
+            [-6.7850, 41.7990],
+            [-6.7850, 41.7980]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Terreno Sul - Cerejeiras",
+        "tipoSolo": "Franco-arenoso",
+        "altitude": 680
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.7860, 41.7960],
+            [-6.7850, 41.7960],
+            [-6.7850, 41.7970],
+            [-6.7860, 41.7970],
+            [-6.7860, 41.7960]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Terreno Nascente - Nogueiras",
+        "tipoSolo": "Franco-argiloso",
+        "altitude": 700
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.7830, 41.7975],
+            [-6.7820, 41.7975],
+            [-6.7820, 41.7985],
+            [-6.7830, 41.7985],
+            [-6.7830, 41.7975]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Terreno Poente - Avelãs",
+        "tipoSolo": "Franco",
+        "altitude": 710
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-6.7870, 41.7975],
+            [-6.7860, 41.7975],
+            [-6.7860, 41.7985],
+            [-6.7870, 41.7985],
+            [-6.7870, 41.7975]
+          ]
+        ]
+      }
+    }
+  ]
+}

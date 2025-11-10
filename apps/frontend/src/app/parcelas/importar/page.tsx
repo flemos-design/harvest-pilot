@@ -6,7 +6,7 @@ import { Upload, Loader2, Check, X, Edit2, Trash2, FileUp, ChevronDown, ChevronU
 import { useOrganizacoes } from '@/hooks/use-organizacoes';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
-import { parseKmzHierarchical, validateKmzFile, type ParsedPropriedade, type ParsedTerreno } from '@/lib/kmz-parser';
+import { parseGeoFile, validateKmzFile, type ParsedPropriedade, type ParsedTerreno } from '@/lib/kmz-parser';
 
 export default function ImportarParcelasPage() {
   const router = useRouter();
@@ -33,13 +33,13 @@ export default function ImportarParcelasPage() {
     setShowWelcome(false);
   };
 
-  // Parse KMZ mutation
+  // Parse file mutation (auto-detects KMZ/KML/GeoJSON)
   const parseMutation = useMutation({
     mutationFn: async (file: File) => {
       if (!orgId) {
         throw new Error('Nenhuma organização encontrada');
       }
-      return parseKmzHierarchical(file, orgId);
+      return parseGeoFile(file, orgId);
     },
     onSuccess: (data) => {
       setPropriedades(data.propriedades);
@@ -174,9 +174,9 @@ export default function ImportarParcelasPage() {
                   1
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Faça upload do ficheiro KMZ/KML</h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">Faça upload do ficheiro</h3>
                   <p className="text-sm text-gray-600">
-                    Selecione o ficheiro exportado do Google Maps. Pode ser .kmz ou .kml
+                    Formatos suportados: KMZ/KML (Google Maps/Earth) ou GeoJSON
                   </p>
                 </div>
               </div>
@@ -267,9 +267,9 @@ export default function ImportarParcelasPage() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Importar Terrenos (KMZ)</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Importar Terrenos</h1>
               <p className="text-gray-600 mt-1">
-                Importe terrenos do Google Maps ou Google Earth
+                Importe terrenos de KMZ, KML ou GeoJSON
               </p>
             </div>
             <button
@@ -298,11 +298,11 @@ export default function ImportarParcelasPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ficheiro KMZ/KML *
+              Ficheiro Geográfico *
             </label>
             <input
               type="file"
-              accept=".kmz,.kml"
+              accept=".kmz,.kml,.json,.geojson"
               onChange={handleFileChange}
               disabled={propriedades.length > 0}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"

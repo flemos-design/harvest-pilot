@@ -213,13 +213,104 @@ async function extractTerrenoFromPlacemark(placemark: Element): Promise<ParsedTe
 }
 
 /**
- * Validate KMZ file before uploading
+ * Parse GeoJSON file directly
+ */
+export async function parseGeoJsonHierarchical(
+  file: File,
+  organizacaoId: string
+): Promise<KmzImportResult> {
+  try {
+    const text = await file.text();
+    const geojson = JSON.parse(text);
+
+    // Validate GeoJSON structure
+    if (!geojson || typeof geojson !== 'object') {
+      throw new Error('Ficheiro GeoJSON inválido');
+    }
+
+    if (geojson.type !== 'FeatureCollection' && geojson.type !== 'Feature') {
+      throw new Error('GeoJSON deve ser FeatureCollection ou Feature');
+    }
+
+    const features = geojson.type === 'FeatureCollection'
+      ? geojson.features
+      : [geojson];
+
+    if (!features || features.length === 0) {
+      throw new Error('Nenhuma feature encontrada no GeoJSON');
+    }
+
+    // Group features into terrenos
+    const terrenos: ParsedTerreno[] = [];
+
+    for (const feature of features) {
+      const geometry = feature.geometry;
+
+      if (!geometry || (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon')) {
+        continue; // Skip non-polygon features
+      }
+
+      // Get name from properties (common field names)
+      const name = feature.properties?.name
+        || feature.properties?.nome
+        || feature.properties?.title
+        || `Terreno ${terrenos.length + 1}`;
+
+      // Calculate area
+      const areaM2 = turf.area(geometry);
+      const areaHa = areaM2 / 10000;
+
+      const terreno: ParsedTerreno = {
+        nome: name,
+        area: parseFloat(areaHa.toFixed(4)),
+        geometria: geometry,
+      };
+
+      // Extract additional properties
+      if (feature.properties?.altitude || feature.properties?.elevation) {
+        terreno.altitude = parseFloat(feature.properties.altitude || feature.properties.elevation);
+      }
+
+      if (feature.properties?.tipoSolo || feature.properties?.soil_type || feature.properties?.description) {
+        terreno.tipoSolo = feature.properties.tipoSolo
+          || feature.properties.soil_type
+          || feature.properties.description;
+      }
+
+      terrenos.push(terreno);
+    }
+
+    if (terrenos.length === 0) {
+      throw new Error('Nenhum polígono válido encontrado no GeoJSON');
+    }
+
+    // Create single property with all terrenos
+    const propriedades: ParsedPropriedade[] = [{
+      nome: geojson.name || 'Propriedade Importada',
+      descricao: geojson.description,
+      terrenos,
+    }];
+
+    return {
+      propriedades,
+      organizacaoId,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Erro ao processar GeoJSON: ${error.message}`);
+    }
+    throw new Error('Erro desconhecido ao processar GeoJSON');
+  }
+}
+
+/**
+ * Validate file before uploading (KMZ, KML, or GeoJSON)
  */
 export function validateKmzFile(file: File): string | null {
   // Check file extension
   const ext = file.name.toLowerCase().split('.').pop();
-  if (ext !== 'kmz' && ext !== 'kml') {
-    return 'Apenas ficheiros .kmz ou .kml são suportados';
+  if (ext !== 'kmz' && ext !== 'kml' && ext !== 'json' && ext !== 'geojson') {
+    return 'Apenas ficheiros .kmz, .kml, .json ou .geojson são suportados';
   }
 
   // Check file size (max 10MB)
@@ -229,4 +320,97 @@ export function validateKmzFile(file: File): string | null {
   }
 
   return null; // Valid
+}
+
+/**
+ * Validate geometry (check if it's a valid polygon/multipolygon)
+ */
+export function validateGeometry(geometry: any): { valid: boolean; error?: string } {
+  if (!geometry || typeof geometry !== 'object') {
+    return { valid: false, error: 'Geometria inválida ou inexistente' };
+  }
+
+  const validTypes = ['Polygon', 'MultiPolygon'];
+  if (!validTypes.includes(geometry.type)) {
+    return { valid: false, error: `Tipo de geometria não suportado: ${geometry.type}. Use Polygon ou MultiPolygon.` };
+  }
+
+  // Check if coordinates exist
+  if (!geometry.coordinates || !Array.isArray(geometry.coordinates)) {
+    return { valid: false, error: 'Coordenadas ausentes ou inválidas' };
+  }
+
+  // Basic validation for Polygon
+  if (geometry.type === 'Polygon') {
+    if (geometry.coordinates.length === 0) {
+      return { valid: false, error: 'Polígono vazio' };
+    }
+
+    const ring = geometry.coordinates[0];
+    if (!Array.isArray(ring) || ring.length < 4) {
+      return { valid: false, error: 'Polígono deve ter pelo menos 4 pontos' };
+    }
+
+    // Check if first and last coordinates are the same (closed ring)
+    const first = ring[0];
+    const last = ring[ring.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) {
+      return { valid: false, error: 'Polígono não está fechado (primeiro e último ponto devem ser iguais)' };
+    }
+  }
+
+  // Basic validation for MultiPolygon
+  if (geometry.type === 'MultiPolygon') {
+    if (geometry.coordinates.length === 0) {
+      return { valid: false, error: 'MultiPolígono vazio' };
+    }
+
+    for (let i = 0; i < geometry.coordinates.length; i++) {
+      const polygon = geometry.coordinates[i];
+      if (!Array.isArray(polygon) || polygon.length === 0) {
+        return { valid: false, error: `Polígono ${i + 1} inválido no MultiPolígono` };
+      }
+
+      const ring = polygon[0];
+      if (!Array.isArray(ring) || ring.length < 4) {
+        return { valid: false, error: `Polígono ${i + 1} deve ter pelo menos 4 pontos` };
+      }
+    }
+  }
+
+  // Calculate area to ensure it's not too small (at least 1m²)
+  try {
+    const area = turf.area(geometry);
+    if (area < 1) {
+      return { valid: false, error: 'Área muito pequena (mínimo 1m²)' };
+    }
+
+    // Check if area is reasonable (max 1000 km² = 100,000 hectares)
+    const maxAreaM2 = 1000 * 1000 * 1000; // 1000 km²
+    if (area > maxAreaM2) {
+      return { valid: false, error: 'Área muito grande (máximo 1000 km²)' };
+    }
+  } catch (error) {
+    return { valid: false, error: 'Erro ao calcular área da geometria' };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Parse file based on extension (auto-detect)
+ */
+export async function parseGeoFile(
+  file: File,
+  organizacaoId: string
+): Promise<KmzImportResult> {
+  const ext = file.name.toLowerCase().split('.').pop();
+
+  if (ext === 'json' || ext === 'geojson') {
+    return parseGeoJsonHierarchical(file, organizacaoId);
+  } else if (ext === 'kmz' || ext === 'kml') {
+    return parseKmzHierarchical(file, organizacaoId);
+  } else {
+    throw new Error('Formato de ficheiro não suportado');
+  }
 }
