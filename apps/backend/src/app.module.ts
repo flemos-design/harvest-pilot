@@ -24,6 +24,7 @@ import { CalendarioModule } from './modules/calendario/calendario.module';
 import { UtilizadoresModule } from './modules/utilizadores/utilizadores.module';
 import { EmailModule } from './modules/email/email.module';
 import { IaModule } from './modules/ia/ia.module';
+import { RelatoriosModule } from './modules/relatorios/relatorios.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { IaModule } from './modules/ia/ia.module';
     TarefasModule,
     CalendarioModule,
     IaModule,
+    RelatoriosModule,
     // SateliteModule,
   ],
   controllers: [AppController],
