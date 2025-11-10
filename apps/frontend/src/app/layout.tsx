@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'HarvestPilot',
   },
 };
@@ -31,6 +31,8 @@ export default function RootLayout({
   return (
     <html lang="pt" suppressHydrationWarning>
       <head>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="theme-color" content="#22c55e" />
         <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css" />
       </head>
       <body className={inter.className}>
