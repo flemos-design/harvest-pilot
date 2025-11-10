@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { CreateUtilizadorDto } from './dto/create-utilizador.dto';
@@ -15,6 +16,7 @@ export class UtilizadoresService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
+    private jwtService: JwtService,
   ) {}
 
   async create(createUtilizadorDto: CreateUtilizadorDto) {
@@ -275,6 +277,7 @@ export class UtilizadoresService {
           select: {
             id: true,
             nome: true,
+            slug: true,
           },
         },
       },
@@ -291,9 +294,23 @@ export class UtilizadoresService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    // Retornar dados do utilizador (sem password hash)
+    // Gerar JWT token
+    const payload = {
+      sub: utilizador.id,
+      email: utilizador.email,
+      papel: utilizador.papel,
+      organizacaoId: utilizador.organizacaoId,
+    };
+
+    const access_token = this.jwtService.sign(payload);
+
+    // Retornar dados do utilizador + token (sem password hash)
     const { passwordHash, ...userData } = utilizador;
-    return userData;
+
+    return {
+      access_token,
+      user: userData,
+    };
   }
 
   async getStats(organizacaoId?: string) {

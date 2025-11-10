@@ -9,13 +9,13 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor para adicionar token (quando implementarmos auth)
+// Request interceptor para adicionar token JWT
 apiClient.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const token = localStorage.getItem('harvestpilot_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
@@ -28,8 +28,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Redirecionar para login quando implementarmos auth
-      // window.location.href = '/login';
+      // Limpar token inválido
+      localStorage.removeItem('harvestpilot_token');
+      localStorage.removeItem('harvestpilot_user');
+
+      // Redirecionar para login (evitar loop infinito)
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

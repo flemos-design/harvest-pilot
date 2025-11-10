@@ -7,6 +7,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { PhotoGallery } from '@/components/upload/PhotoGallery';
+import type { UploadedImage } from '@/types/upload';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -239,17 +241,15 @@ export default function OperacaoDetailPage() {
             {/* Fotos */}
             {operacao.fotos && operacao.fotos.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Fotos</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {operacao.fotos.map((foto, idx) => (
-                    <div key={idx} className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
-                      <ImageIcon className="w-12 h-12 text-gray-400" />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 mt-3">
-                  Upload de fotos será implementado em breve
-                </p>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Fotografias</h2>
+                <PhotoGallery
+                  images={operacao.fotos.map((url, idx) => ({
+                    key: `foto-${idx}`,
+                    url: url,
+                    thumbnail: url,
+                  }))}
+                  readOnly={true}
+                />
               </div>
             )}
           </div>

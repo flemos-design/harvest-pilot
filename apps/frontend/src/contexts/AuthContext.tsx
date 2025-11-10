@@ -1,58 +1,35 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { User, AuthContextType, RegisterRequest } from '@/types/auth';
+import * as authApi from '@/lib/api/auth';
 import { useRouter } from 'next/navigation';
-
-interface User {
-  id: string;
-  nome: string;
-  email: string;
-  papel: 'ADMIN' | 'GESTOR' | 'OPERADOR';
-  organizacaoId: string | null;
-}
-
-interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
-
-interface RegisterData {
-  nome: string;
-  email: string;
-  password: string;
-  papel: 'ADMIN' | 'GESTOR' | 'OPERADOR';
-  organizacaoId?: string;
-}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
-
-  // Restaurar sessão do localStorage
+  // Load user and token from localStorage on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('harvestpilot_token');
+    const storedUser = localStorage.getItem('harvestpilot_user');
 
-    if (storedToken && storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+    if (storedToken && storedUser) {
       try {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error('Erro ao restaurar sessão do localStorage:', error);
-        // Limpar localStorage se houver dados corruptos
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('harvestpilot_token');
+        localStorage.removeItem('harvestpilot_user');
       }
     }
 
@@ -61,90 +38,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/utilizadores/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await authApi.login({ email, password });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Erro ao fazer login');
-      }
+      // Save to localStorage
+      localStorage.setItem('harvestpilot_token', response.access_token);
+      localStorage.setItem('harvestpilot_user', JSON.stringify(response.user));
 
-      const data = await response.json();
+      // Update state
+      setToken(response.access_token);
+      setUser(response.user);
 
-      // Guardar token e user
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      setToken(data.access_token);
-      setUser(data.user);
-
-      // Redirecionar para dashboard
+      // Redirect to dashboard
       router.push('/dashboard');
-    } catch (error) {
-      console.error('Erro no login:', error);
-      throw error;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw new Error(error.response?.data?.message || 'Erro ao fazer login');
     }
   };
 
-  const register = async (data: RegisterData) => {
+  const register = async (data: RegisterRequest) => {
     try {
-      const response = await fetch(`${API_URL}/utilizadores`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      await authApi.register(data);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Erro ao criar conta');
-      }
-
-      const result = await response.json();
-
-      // Após registo, fazer login automático
+      // Auto-login after registration
       await login(data.email, data.password);
-    } catch (error) {
-      console.error('Erro no registo:', error);
-      throw error;
+    } catch (error: any) {
+      console.error('Register error:', error);
+      throw new Error(error.response?.data?.message || 'Erro ao criar conta');
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // Clear localStorage
+    localStorage.removeItem('harvestpilot_token');
+    localStorage.removeItem('harvestpilot_user');
+
+    // Clear state
     setToken(null);
     setUser(null);
+
+    // Redirect to login
     router.push('/login');
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        login,
-        register,
-        logout,
-        isAuthenticated: !!token,
-        isLoading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('harvestpilot_user', JSON.stringify(updatedUser));
+  };
+
+  const value: AuthContextType = {
+    user,
+    token,
+    isLoading,
+    isAuthenticated: !!user && !!token,
+    login,
+    register,
+    logout,
+    updateUser,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// Hook to use auth context
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
   return context;
 }

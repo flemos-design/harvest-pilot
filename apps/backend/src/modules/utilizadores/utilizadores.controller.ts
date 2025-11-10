@@ -10,7 +10,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { UtilizadoresService } from './utilizadores.service';
 import { CreateUtilizadorDto } from './dto/create-utilizador.dto';
 import { UpdateUtilizadorDto } from './dto/update-utilizador.dto';
@@ -18,18 +18,22 @@ import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('utilizadores')
+@ApiBearerAuth()
 @Controller('utilizadores')
 export class UtilizadoresController {
   constructor(private readonly utilizadoresService: UtilizadoresService) {}
 
+  @Public()
   @Post()
-  @ApiOperation({ summary: 'Criar novo utilizador' })
+  @ApiOperation({ summary: 'Criar novo utilizador (registo)' })
   create(@Body() createUtilizadorDto: CreateUtilizadorDto) {
     return this.utilizadoresService.create(createUtilizadorDto);
   }
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login de utilizador' })
@@ -81,6 +85,7 @@ export class UtilizadoresController {
     return this.utilizadoresService.remove(id);
   }
 
+  @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Solicitar recuperação de password' })
@@ -88,6 +93,7 @@ export class UtilizadoresController {
     return this.utilizadoresService.forgotPassword(forgotPasswordDto);
   }
 
+  @Public()
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Redefinir password com token' })

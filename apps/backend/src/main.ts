@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe, RequestMethod } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { join } from 'path';
 import helmet from 'helmet';
 // import compression from 'compression'; // TODO: Fix compression import issue
@@ -51,6 +52,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // Global JWT Auth Guard
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   // Global prefix (exclude root and health endpoints)
   app.setGlobalPrefix('api/v1', {

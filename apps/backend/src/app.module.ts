@@ -8,6 +8,8 @@ import { AppService } from './app.service';
 import { PrismaModule } from './common/prisma/prisma.module';
 
 // Feature modules
+import { AuthModule } from './modules/auth/auth.module';
+import { UploadModule } from './modules/upload/upload.module';
 import { PropriedadesModule } from './modules/propriedades/propriedades.module';
 import { ParcelasModule } from './modules/parcelas/parcelas.module';
 import { OperacoesModule } from './modules/operacoes/operacoes.module';
@@ -49,6 +51,8 @@ import { IaModule } from './modules/ia/ia.module';
     PrismaModule,
 
     // Feature modules
+    AuthModule,
+    UploadModule,
     EmailModule,
     OrganizacoesModule,
     UtilizadoresModule,

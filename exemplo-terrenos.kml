@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Exemplo HarvestPilot</name>
+    <description>Ficheiro de exemplo com 2 propriedades e 5 terrenos</description>
+
+    <!-- PROPRIEDADE 1: Quinta do Norte -->
+    <Folder>
+      <name>Quinta do Norte</name>
+      <description>Propriedade localizada a norte da região</description>
+
+      <!-- Terreno 1 -->
+      <Placemark>
+        <name>Terreno Norte A</name>
+        <description>Solo argiloso, ideal para castanheiros</description>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+                -7.8500,41.5000,250
+                -7.8490,41.5000,250
+                -7.8490,41.5010,255
+                -7.8500,41.5010,255
+                -7.8500,41.5000,250
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+
+      <!-- Terreno 2 -->
+      <Placemark>
+        <name>Terreno Norte B</name>
+        <description>Solo franco, boa drenagem</description>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+                -7.8500,41.5010,255
+                -7.8490,41.5010,255
+                -7.8490,41.5020,260
+                -7.8500,41.5020,260
+                -7.8500,41.5010,255
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+
+      <!-- Terreno 3 -->
+      <Placemark>
+        <name>Terreno Norte C</name>
+        <description>Solo arenoso</description>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+                -7.8510,41.5000,245
+                -7.8500,41.5000,250
+                -7.8500,41.5010,255
+                -7.8510,41.5010,250
+                -7.8510,41.5000,245
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+
+    <!-- PROPRIEDADE 2: Quinta do Sul -->
+    <Folder>
+      <name>Quinta do Sul</name>
+      <description>Propriedade com terrenos de elevada produtividade</description>
+
+      <!-- Terreno 4 -->
+      <Placemark>
+        <name>Terreno Sul A</name>
+        <description>Solo calcário, pH alcalino</description>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+                -7.8520,41.4980,240
+                -7.8510,41.4980,240
+                -7.8510,41.4990,242
+                -7.8520,41.4990,242
+                -7.8520,41.4980,240
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+
+      <!-- Terreno 5 -->
+      <Placemark>
+        <name>Terreno Sul B</name>
+        <description>Solo argiloso profundo</description>
+        <Polygon>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>
+                -7.8530,41.4980,238
+                -7.8520,41.4980,240
+                -7.8520,41.4990,242
+                -7.8530,41.4990,240
+                -7.8530,41.4980,238
+              </coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

@@ -9,6 +9,8 @@ import { Loader2, Save, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { PhotoUpload } from '@/components/upload/PhotoUpload';
+import type { UploadedImage } from '@/types/upload';
 
 const operacaoSchema = z.object({
   tipo: z.enum(['PLANTACAO', 'REGA', 'ADUBACAO', 'TRATAMENTO', 'COLHEITA', 'INSPECAO', 'PODA', 'DESBASTE']),
@@ -41,6 +43,7 @@ export default function NovaOperacaoPage() {
   const createOperacao = useCreateOperacao();
   const [useGPS, setUseGPS] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [uploadedPhotos, setUploadedPhotos] = useState<UploadedImage[]>([]);
 
   const {
     register,
@@ -84,6 +87,7 @@ export default function NovaOperacaoPage() {
         data: new Date(data.data).toISOString(),
         latitude: useGPS ? data.latitude : undefined,
         longitude: useGPS ? data.longitude : undefined,
+        fotos: uploadedPhotos.map((photo) => photo.url), // Add photo URLs
       };
 
       await createOperacao.mutateAsync(operacaoData as any);
@@ -272,6 +276,58 @@ export default function NovaOperacaoPage() {
                 placeholder="Observações adicionais..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
               />
+            </div>
+
+            {/* Fotos */}
+            <div className="border-t pt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Fotografias
+              </label>
+              <PhotoUpload
+                folder="operacoes"
+                multiple={true}
+                maxFiles={10}
+                onUploadComplete={(images) => {
+                  if (Array.isArray(images)) {
+                    setUploadedPhotos((prev) => [...prev, ...images]);
+                  } else {
+                    setUploadedPhotos((prev) => [...prev, images]);
+                  }
+                }}
+                onError={(error) => {
+                  console.error('Erro ao fazer upload:', error);
+                  alert('Erro ao fazer upload das fotos. Tenta novamente.');
+                }}
+              />
+              {uploadedPhotos.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm text-gray-600 mb-2">
+                    {uploadedPhotos.length} foto(s) carregada(s)
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {uploadedPhotos.map((photo) => (
+                      <div key={photo.key} className="relative aspect-square">
+                        <img
+                          src={photo.thumbnail}
+                          alt="Preview"
+                          className="h-full w-full rounded object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUploadedPhotos((prev) =>
+                              prev.filter((p) => p.key !== photo.key)
+                            );
+                          }}
+                          className="absolute right-1 top-1 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
