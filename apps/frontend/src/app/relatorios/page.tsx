@@ -2,7 +2,7 @@
 
 import { useOperacoes } from '@/hooks/use-operacoes';
 import { useParcelas } from '@/hooks/use-parcelas';
-import { Loader2, TrendingUp, TrendingDown, DollarSign, Calendar, MapPin, Activity, FileText, Download } from 'lucide-react';
+import { Loader2, TrendingUp, TrendingDown, DollarSign, Calendar, MapPin, Activity, FileText, Download, ChevronDown, FileSpreadsheet } from 'lucide-react';
 import Link from 'next/link';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { relatoriosApi } from '@/lib/api';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -24,6 +25,10 @@ const TIPO_ICONS: Record<string, string> = {
 
 export default function RelatoriosPage() {
   const [periodo, setPeriodo] = useState<'30d' | '90d' | '6m' | '1y'>('90d');
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showCadernoModal, setShowCadernoModal] = useState(false);
+  const [selectedParcela, setSelectedParcela] = useState<string>('');
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: operacoes, isLoading: isLoadingOps } = useOperacoes();
   const { data: parcelas, isLoading: isLoadingParcelas } = useParcelas();
@@ -267,6 +272,66 @@ export default function RelatoriosPage() {
     doc.save(fileName);
   };
 
+  const downloadBackendPDF = async () => {
+    try {
+      setIsDownloading(true);
+      setShowExportMenu(false);
+
+      const blob = await relatoriosApi.downloadOperacoesPDF(dateRange.start, dateRange.end);
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `relatorio-operacoes-${format(dateRange.start, 'yyyy-MM-dd')}-${format(dateRange.end, 'yyyy-MM-dd')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erro ao baixar PDF:', error);
+      alert('Erro ao gerar PDF. Por favor, tente novamente.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const downloadCadernoCampo = async () => {
+    if (!selectedParcela) {
+      alert('Por favor, selecione uma parcela');
+      return;
+    }
+
+    try {
+      setIsDownloading(true);
+      setShowCadernoModal(false);
+
+      const blob = await relatoriosApi.downloadCadernoCampoPDF(
+        selectedParcela,
+        dateRange.start,
+        dateRange.end
+      );
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const parcelaNome = parcelas?.find(p => p.id === selectedParcela)?.nome || 'parcela';
+      link.download = `caderno-campo-${parcelaNome}-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setSelectedParcela('');
+    } catch (error) {
+      console.error('Erro ao baixar Caderno de Campo:', error);
+      alert('Erro ao gerar Caderno de Campo. Por favor, tente novamente.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   if (isLoadingOps || isLoadingParcelas) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -285,13 +350,70 @@ export default function RelatoriosPage() {
               <h1 className="text-3xl font-bold text-gray-900">Relatórios & Análises</h1>
               <p className="text-gray-600 mt-1">Insights sobre operações agrícolas e análise NDVI por satélite</p>
             </div>
-            <button
-              onClick={exportarPDF}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Exportar PDF
-            </button>
+
+            {/* Export Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                disabled={isDownloading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    A gerar PDF...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Exportar PDF
+                    <ChevronDown className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              {showExportMenu && !isDownloading && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border z-10">
+                  <div className="p-2">
+                    <button
+                      onClick={exportarPDF}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                    >
+                      <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-gray-900">Relatório Rápido</p>
+                        <p className="text-xs text-gray-500">Gerar no navegador (jsPDF)</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={downloadBackendPDF}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                    >
+                      <FileSpreadsheet className="w-5 h-5 text-green-600 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-gray-900">Relatório de Operações</p>
+                        <p className="text-xs text-gray-500">Formato profissional do servidor</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowExportMenu(false);
+                        setShowCadernoModal(true);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                    >
+                      <FileText className="w-5 h-5 text-purple-600 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-gray-900">Caderno de Campo</p>
+                        <p className="text-xs text-gray-500">Por parcela individual</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Period Selector */}
@@ -487,6 +609,75 @@ export default function RelatoriosPage() {
           </div>
         </div>
       </main>
+
+      {/* Caderno de Campo Modal */}
+      {showCadernoModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6 border-b">
+              <h3 className="text-lg font-semibold text-gray-900">Exportar Caderno de Campo</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Selecione a parcela para gerar o caderno de campo
+              </p>
+            </div>
+
+            <div className="p-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Parcela
+              </label>
+              <select
+                value={selectedParcela}
+                onChange={(e) => setSelectedParcela(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="">Selecione uma parcela</option>
+                {parcelas?.map((parcela) => (
+                  <option key={parcela.id} value={parcela.id}>
+                    {parcela.nome} ({parcela.area} ha)
+                  </option>
+                ))}
+              </select>
+
+              <div className="mt-4 text-sm text-gray-600">
+                <p>
+                  <strong>Período:</strong>{' '}
+                  {format(dateRange.start, "d MMM yyyy", { locale: ptBR })} -{' '}
+                  {format(dateRange.end, "d MMM yyyy", { locale: ptBR })}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowCadernoModal(false);
+                  setSelectedParcela('');
+                }}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={downloadCadernoCampo}
+                disabled={!selectedParcela || isDownloading}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    A gerar...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Gerar PDF
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

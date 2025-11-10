@@ -12,3 +12,4 @@ export * from './insumos';
 export * from './tarefas';
 export * from './calendario';
 export * from './ia';
+export * from './relatorios';
