@@ -13,7 +13,7 @@ const culturaSchema = z.object({
   especie: z.string().min(2, 'Espécie deve ter pelo menos 2 caracteres'),
   variedade: z.string().optional(),
   finalidade: z.enum(['FRUTO', 'MADEIRA']),
-  parcelaId: z.string().min(1, 'Parcela é obrigatória'),
+  parcelaId: z.string().min(1, 'Terreno é obrigatório'),
 });
 
 type CulturaFormData = z.infer<typeof culturaSchema>;
@@ -59,6 +59,11 @@ export default function NovaCulturaPage() {
 
   const finalidadeSelecionada = watch('finalidade');
   const especiesDisponiveis = finalidadeSelecionada === 'FRUTO' ? ESPECIES_FRUTO : ESPECIES_MADEIRA;
+
+  // Filtrar parcelas que ainda não têm culturas
+  const parcelasDisponiveis = parcelas?.filter(parcela =>
+    !parcela.culturas || parcela.culturas.length === 0
+  );
 
   const onSubmit = async (data: CulturaFormData) => {
     try {
@@ -184,17 +189,17 @@ export default function NovaCulturaPage() {
               )}
             </div>
 
-            {/* Parcela */}
+            {/* Terreno */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parcela *
+                Terreno *
               </label>
               <select
                 {...register('parcelaId')}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
-                <option value="">Seleciona a parcela</option>
-                {parcelas?.map((parcela) => (
+                <option value="">Seleciona o terreno</option>
+                {parcelasDisponiveis?.map((parcela) => (
                   <option key={parcela.id} value={parcela.id}>
                     {parcela.nome} ({parcela.area} ha)
                     {parcela.propriedade && ` - ${parcela.propriedade.nome}`}
@@ -205,7 +210,7 @@ export default function NovaCulturaPage() {
                 <p className="mt-1 text-sm text-red-600">{errors.parcelaId.message}</p>
               )}
               <p className="mt-1 text-xs text-gray-500">
-                Seleciona a parcela onde a cultura será plantada
+                Seleciona o terreno onde a cultura será plantada
               </p>
             </div>
 
