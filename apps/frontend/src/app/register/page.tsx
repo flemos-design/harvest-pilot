@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, UserPlus, Sprout } from 'lucide-react';
+import { Loader2, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 
 const registerSchema = z.object({
@@ -44,11 +44,13 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-full mb-4">
-            <Sprout className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <img
+              src="/logo.png"
+              alt="HarvestPilot Logo"
+              className="h-20 w-auto"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">HarvestPilot</h1>
-          <p className="text-gray-600 mt-2">Gestão Agrícola Inteligente</p>
         </div>
 
         {/* Form Card */}

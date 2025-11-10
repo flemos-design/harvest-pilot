@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import { Loader2, LogIn, Tractor } from 'lucide-react';
+import { Loader2, LogIn } from 'lucide-react';
 import Link from 'next/link';
 
 const loginSchema = z.object({
@@ -44,8 +44,6 @@ export default function LoginPage() {
               className="h-20 w-auto"
             />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">HarvestPilot</h1>
-          <p className="text-gray-600 mt-2">Gestão Agrícola Inteligente</p>
         </div>
 
         {/* Form Card */}
