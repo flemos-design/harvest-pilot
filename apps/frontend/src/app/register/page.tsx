@@ -47,7 +47,7 @@ export default function RegisterPage() {
           <img
             src="/logo.png"
             alt="HarvestPilot Logo"
-            className="h-96 w-auto mx-auto drop-shadow-2xl"
+            className="w-full max-w-md mx-auto drop-shadow-2xl"
           />
         </div>
 

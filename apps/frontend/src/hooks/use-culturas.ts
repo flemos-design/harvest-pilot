@@ -31,6 +31,8 @@ export function useCreateCultura() {
     mutationFn: (data: CreateCulturaDto) => culturasApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['culturas'] });
+      // Invalidar parcelas para atualizar lista de parcelas disponíveis
+      queryClient.invalidateQueries({ queryKey: ['parcelas'] });
     },
   });
 }

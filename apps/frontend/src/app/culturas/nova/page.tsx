@@ -60,10 +60,20 @@ export default function NovaCulturaPage() {
   const finalidadeSelecionada = watch('finalidade');
   const especiesDisponiveis = finalidadeSelecionada === 'FRUTO' ? ESPECIES_FRUTO : ESPECIES_MADEIRA;
 
-  // Filtrar parcelas que ainda não têm culturas
-  const parcelasDisponiveis = parcelas?.filter(parcela =>
-    !parcela.culturas || parcela.culturas.length === 0
-  );
+  // Filtrar parcelas que ainda não têm culturas ativas
+  // Uma parcela está disponível se não tem culturas ou se não tem ciclos ativos
+  const parcelasDisponiveis = parcelas?.filter(parcela => {
+    if (!parcela.culturas || parcela.culturas.length === 0) {
+      return true; // Parcela sem culturas
+    }
+
+    // Verificar se alguma cultura tem ciclos ativos
+    const temCiclosAtivos = parcela.culturas.some(cultura =>
+      cultura.ciclos && cultura.ciclos.length > 0
+    );
+
+    return !temCiclosAtivos; // Disponível se não tem ciclos ativos
+  });
 
   const onSubmit = async (data: CulturaFormData) => {
     try {
