@@ -43,14 +43,12 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="max-w-md w-full mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-            <img
-              src="/logo.png"
-              alt="HarvestPilot Logo"
-              className="h-32 w-auto mx-auto drop-shadow-lg"
-            />
-          </div>
+        <div className="text-center mb-8">
+          <img
+            src="/logo.png"
+            alt="HarvestPilot Logo"
+            className="h-96 w-auto mx-auto drop-shadow-2xl"
+          />
         </div>
 
         {/* Form Card */}
