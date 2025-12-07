@@ -5,7 +5,7 @@ import { useCalendarioByMes } from '@/hooks/use-calendario';
 import { Loader2, Calendar, ChevronLeft, ChevronRight, Filter, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useState, useMemo } from 'react';
 
 const TIPO_ICONS: Record<string, string> = {
@@ -143,7 +143,7 @@ export default function CalendarioPage() {
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <h2 className="text-2xl font-semibold text-gray-900 min-w-[200px] text-center">
-                {format(currentDate, "MMMM 'de' yyyy", { locale: ptBR })}
+                {format(currentDate, "MMMM 'de' yyyy", { locale: pt })}
               </h2>
               <button
                 onClick={handleNextMonth}
@@ -190,7 +190,7 @@ export default function CalendarioPage() {
             <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <p className="text-sm text-gray-600">Parcelas trabalhadas</p>
+            <p className="text-sm text-gray-600">Talhões trabalhados</p>
             <p className="text-2xl font-bold text-gray-900">{stats.parcelasUnicas}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border">
@@ -205,7 +205,7 @@ export default function CalendarioPage() {
             <div className="flex items-center gap-3 mb-4">
               <Lightbulb className="w-6 h-6 text-blue-600" />
               <h3 className="text-lg font-semibold text-gray-900">
-                Janelas Recomendadas para {format(currentDate, 'MMMM', { locale: ptBR })}
+                Janelas Recomendadas para {format(currentDate, 'MMMM', { locale: pt })}
               </h3>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -276,7 +276,7 @@ export default function CalendarioPage() {
                       {/* Date Column */}
                       <div className="flex-shrink-0 w-20 text-center">
                         <div className={`text-xs font-medium uppercase ${isToday ? 'text-blue-600' : 'text-gray-500'}`}>
-                          {format(dia, 'EEE', { locale: ptBR })}
+                          {format(dia, 'EEE', { locale: pt })}
                         </div>
                         <div className={`text-2xl font-bold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
                           {format(dia, 'd')}

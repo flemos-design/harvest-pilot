@@ -3,7 +3,7 @@
 import { useForecast, useHistoricoMeteo, useMeteoStats } from '@/hooks/use-meteorologia';
 import { Cloud, CloudRain, Wind, Droplets, Thermometer, Loader2, TrendingUp } from 'lucide-react';
 import { format, isToday, isTomorrow, addDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 interface MeteorologiaProps {
   parcelaId: string;
@@ -47,7 +47,7 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
     const date = new Date(dateString);
     if (isToday(date)) return 'Hoje';
     if (isTomorrow(date)) return 'Amanhã';
-    return format(date, "EEE, d 'de' MMM", { locale: ptBR });
+    return format(date, "EEE, d 'de' MMM", { locale: pt });
   };
 
   const getTempColor = (temp: number | null | undefined) => {
@@ -199,7 +199,7 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
                 className="flex items-center justify-between px-3 py-2 text-xs bg-gray-50 rounded"
               >
                 <span className="text-gray-600">
-                  {format(new Date(record.data), "dd/MM/yyyy", { locale: ptBR })}
+                  {format(new Date(record.data), "dd/MM/yyyy", { locale: pt })}
                 </span>
                 <div className="flex items-center gap-3">
                   {record.temperatura !== null && record.temperatura !== undefined && (

@@ -4,7 +4,7 @@ import { useUtilizadores, useDeleteUtilizador } from '@/hooks/use-utilizadores';
 import { Loader2, Users, Plus, Shield, Trash2, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 const PAPEL_COLORS: Record<string, string> = {
   ADMIN: 'bg-purple-100 text-purple-800',

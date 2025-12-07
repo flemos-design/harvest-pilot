@@ -4,7 +4,7 @@ import { useTarefa, useMarkTarefaConcluida, useUpdateTarefaEstado, useDeleteTare
 import { Loader2, ArrowLeft, Edit, Trash2, CheckCircle2, Clock, Circle, XCircle, Calendar, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { EstadoTarefa } from '@/types';
@@ -195,7 +195,7 @@ export default function TarefaDetailPage() {
                 <p className="font-semibold text-red-900">Tarefa Atrasada</p>
                 <p className="text-sm text-red-700">
                   Esta tarefa deveria ter começado em{' '}
-                  {format(new Date(tarefa.dataInicio), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                  {format(new Date(tarefa.dataInicio), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                 </p>
               </div>
             </div>
@@ -236,7 +236,7 @@ export default function TarefaDetailPage() {
                   <p className="text-sm text-gray-600 mb-1">Início Planeado</p>
                   <p className="font-medium text-gray-900 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    {format(new Date(tarefa.dataInicio), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                    {format(new Date(tarefa.dataInicio), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                   </p>
                 </div>
                 {tarefa.dataFim && (
@@ -244,7 +244,7 @@ export default function TarefaDetailPage() {
                     <p className="text-sm text-gray-600 mb-1">Fim Planeado</p>
                     <p className="font-medium text-gray-900 flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
-                      {format(new Date(tarefa.dataFim), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                      {format(new Date(tarefa.dataFim), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                     </p>
                   </div>
                 )}
@@ -253,7 +253,7 @@ export default function TarefaDetailPage() {
                     <p className="text-sm text-gray-600 mb-1">Data de Conclusão</p>
                     <p className="font-medium text-green-600 flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4" />
-                      {format(new Date(tarefa.dataConclusao), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                      {format(new Date(tarefa.dataConclusao), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                     </p>
                   </div>
                 )}
@@ -363,11 +363,11 @@ export default function TarefaDetailPage() {
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
               <p className="mb-1">
                 <span className="font-medium">Criada:</span>{' '}
-                {format(new Date(tarefa.createdAt), "d MMM, yyyy 'às' HH:mm", { locale: ptBR })}
+                {format(new Date(tarefa.createdAt), "d MMM, yyyy 'às' HH:mm", { locale: pt })}
               </p>
               <p>
                 <span className="font-medium">Atualizada:</span>{' '}
-                {format(new Date(tarefa.updatedAt), "d MMM, yyyy 'às' HH:mm", { locale: ptBR })}
+                {format(new Date(tarefa.updatedAt), "d MMM, yyyy 'às' HH:mm", { locale: pt })}
               </p>
             </div>
           </div>

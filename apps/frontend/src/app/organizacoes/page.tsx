@@ -4,7 +4,7 @@ import { useOrganizacoes, useOrganizacoesStats, useDeleteOrganizacao } from '@/h
 import { Loader2, Building2, Plus, Users, MapPin, Edit, Trash2, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 export default function OrganizacoesPage() {
   const { data: organizacoes, isLoading, error } = useOrganizacoes();
@@ -158,7 +158,7 @@ export default function OrganizacoesPage() {
 
                   {/* Meta */}
                   <div className="text-xs text-gray-500 mb-4">
-                    Criada em {format(new Date(org.createdAt), "d 'de' MMM yyyy", { locale: ptBR })}
+                    Criada em {format(new Date(org.createdAt), "d 'de' MMM yyyy", { locale: pt })}
                   </div>
 
                   {/* Actions */}

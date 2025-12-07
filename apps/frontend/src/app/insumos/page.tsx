@@ -11,7 +11,7 @@ import {
 import { Loader2, Package, TrendingDown, AlertTriangle, Plus, Filter, DollarSign, Box } from 'lucide-react';
 import Link from 'next/link';
 import { format, isPast, differenceInDays } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useState } from 'react';
 
 const CATEGORIA_ICONS: Record<string, string> = {
@@ -237,7 +237,7 @@ export default function InsumosPage() {
                             {insumo.nome}
                           </Link>
                           <span className="text-red-600 font-medium">
-                            {format(new Date(insumo.validade), "d 'de' MMM, yyyy", { locale: ptBR })}
+                            {format(new Date(insumo.validade), "d 'de' MMM, yyyy", { locale: pt })}
                           </span>
                         </li>
                       ))}
@@ -368,7 +368,7 @@ export default function InsumosPage() {
                           validadeStatus === 'expiring' ? 'text-orange-600' :
                           'text-gray-900'
                         }`}>
-                          {format(new Date(insumo.validade), 'd MMM yyyy', { locale: ptBR })}
+                          {format(new Date(insumo.validade), 'd MMM yyyy', { locale: pt })}
                           {validadeStatus === 'expired' && ' (Expirado!)'}
                           {validadeStatus === 'expiring' && ' (⚠️)'}
                         </span>

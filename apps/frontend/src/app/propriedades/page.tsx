@@ -5,7 +5,7 @@ import { useOrganizacoes } from '@/hooks/use-organizacoes';
 import { Loader2, Building, Plus, MapPin, Edit, Trash2, ExternalLink, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useState } from 'react';
 
 export default function PropriedadesPage() {
@@ -131,7 +131,7 @@ export default function PropriedadesPage() {
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-gray-500" />
                       <div>
-                        <p className="text-xs text-gray-600">Parcelas/Terrenos</p>
+                        <p className="text-xs text-gray-600">Talhões/Terrenos</p>
                         <p className="text-lg font-semibold text-gray-900">
                           {prop._count?.parcelas || 0}
                         </p>
@@ -141,7 +141,7 @@ export default function PropriedadesPage() {
 
                   {/* Meta */}
                   <div className="text-xs text-gray-500 mb-4">
-                    Criada em {format(new Date(prop.createdAt), "d 'de' MMM yyyy", { locale: ptBR })}
+                    Criada em {format(new Date(prop.createdAt), "d 'de' MMM yyyy", { locale: pt })}
                   </div>
 
                   {/* Actions */}

@@ -5,7 +5,7 @@ import { useCreateCiclo, useDeleteCiclo, useUpdateCiclo } from '@/hooks/use-cicl
 import { Loader2, Sprout, TreeDeciduous, Axe, ArrowLeft, Edit, Trash2, Calendar, MapPin, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -217,7 +217,7 @@ export default function CulturaDetailPage() {
             </div>
             <p className="text-2xl font-bold text-gray-900">{ciclosConcluidos}</p>
             <p className="text-xs text-gray-500 mt-1">
-              Criada em {format(new Date(cultura.createdAt), 'dd MMM yyyy', { locale: ptBR })}
+              Criada em {format(new Date(cultura.createdAt), 'dd MMM yyyy', { locale: pt })}
             </p>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function CulturaDetailPage() {
                 <dt className="text-sm font-medium text-gray-600">Criada em</dt>
                 <dd className="mt-1 text-sm text-gray-900">
                   {format(new Date(cultura.createdAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-                    locale: ptBR,
+                    locale: pt,
                   })}
                 </dd>
               </div>
@@ -269,7 +269,7 @@ export default function CulturaDetailPage() {
                 <dt className="text-sm font-medium text-gray-600">Última atualização</dt>
                 <dd className="mt-1 text-sm text-gray-900">
                   {format(new Date(cultura.updatedAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-                    locale: ptBR,
+                    locale: pt,
                   })}
                 </dd>
               </div>
@@ -413,9 +413,9 @@ export default function CulturaDetailPage() {
                           </span>
                         </div>
                         <div className="text-sm text-gray-600 space-y-1">
-                          <p>Início: {format(new Date(ciclo.dataInicio), 'dd/MM/yyyy', { locale: ptBR })}</p>
+                          <p>Início: {format(new Date(ciclo.dataInicio), 'dd/MM/yyyy', { locale: pt })}</p>
                           {ciclo.dataFim && (
-                            <p>Fim: {format(new Date(ciclo.dataFim), 'dd/MM/yyyy', { locale: ptBR })}</p>
+                            <p>Fim: {format(new Date(ciclo.dataFim), 'dd/MM/yyyy', { locale: pt })}</p>
                           )}
                         </div>
                       </div>

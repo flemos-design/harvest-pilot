@@ -6,7 +6,7 @@ import { Loader2, MapPin, TrendingUp, DollarSign, Calendar, Activity } from 'luc
 import Link from 'next/link';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   // Operações por mês (últimos 6 meses)
   const operacoesPorMes = operacoes?.reduce((acc, op) => {
-    const mes = format(new Date(op.data), 'MMM yyyy', { locale: ptBR });
+    const mes = format(new Date(op.data), 'MMM yyyy', { locale: pt });
     const existing = acc.find(item => item.mes === mes);
     if (existing) {
       existing.total += 1;
@@ -192,7 +192,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {format(new Date(operacao.data), "d MMM, yyyy", { locale: ptBR })}
+                          {format(new Date(operacao.data), "d MMM, yyyy", { locale: pt })}
                         </span>
                         {operacao.parcela && (
                           <span>{operacao.parcela.nome}</span>

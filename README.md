@@ -87,7 +87,7 @@ Sistema completo de gestão agrícola com monitorização por satélite e alerta
 - **State:** TanStack Query v5 + Zustand
 - **Forms:** React Hook Form + Zod
 - **Charts:** Recharts 2.15
-- **Data:** date-fns (com locale pt-BR)
+- **Data:** date-fns (locale pt-PT)
 - **PWA:** Workbox + localForage
 
 ### Backend

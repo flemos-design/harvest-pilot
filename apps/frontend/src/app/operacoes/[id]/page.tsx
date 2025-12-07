@@ -4,7 +4,7 @@ import { useOperacoes, useDeleteOperacao } from '@/hooks/use-operacoes';
 import { Loader2, Calendar, MapPin, User, DollarSign, ArrowLeft, Edit, Image as ImageIcon, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PhotoGallery } from '@/components/upload/PhotoGallery';
@@ -105,7 +105,7 @@ export default function OperacaoDetailPage() {
                     </span>
                   </div>
                   <p className="text-gray-600 mt-1">
-                    {format(new Date(operacao.data), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    {format(new Date(operacao.data), "d 'de' MMMM 'de' yyyy", { locale: pt })}
                   </p>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default function OperacaoDetailPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Data</p>
                   <p className="font-medium text-gray-900">
-                    {format(new Date(operacao.data), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}
+                    {format(new Date(operacao.data), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: pt })}
                   </p>
                 </div>
                 <div>
@@ -182,7 +182,7 @@ export default function OperacaoDetailPage() {
               </div>
             </div>
 
-            {/* Parcela */}
+            {/* Talhão */}
             {operacao.parcela && (
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Terreno</h2>
@@ -265,7 +265,7 @@ export default function OperacaoDetailPage() {
                   <div>
                     <p className="text-xs text-gray-600">Data</p>
                     <p className="text-sm font-medium text-gray-900">
-                      {format(new Date(operacao.data), "dd/MM/yyyy", { locale: ptBR })}
+                      {format(new Date(operacao.data), "dd/MM/yyyy", { locale: pt })}
                     </p>
                   </div>
                 </div>
@@ -318,11 +318,11 @@ export default function OperacaoDetailPage() {
             <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600 space-y-2">
               <div>
                 <span className="font-medium">Criado:</span>{' '}
-                {format(new Date(operacao.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                {format(new Date(operacao.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
               </div>
               <div>
                 <span className="font-medium">Atualizado:</span>{' '}
-                {format(new Date(operacao.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                {format(new Date(operacao.updatedAt), "dd/MM/yyyy HH:mm", { locale: pt })}
               </div>
             </div>
 
@@ -335,7 +335,7 @@ export default function OperacaoDetailPage() {
                     href={`/parcelas/${operacao.parcela.id}`}
                     className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
                   >
-                    🗺️ Ver Parcela
+                    🗺️ Ver Talhão
                   </Link>
                 )}
                 <Link

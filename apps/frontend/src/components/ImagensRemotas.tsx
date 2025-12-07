@@ -3,7 +3,7 @@
 import { useLatestImagemRemota, useImagensRemotas } from '@/hooks/use-imagens-remotas';
 import { Satellite, Cloud, TrendingUp, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 interface ImagensRemotasProps {
   parcelaId: string;
@@ -69,7 +69,7 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-blue-900">Última Captura</h3>
               <span className="text-xs text-blue-700">
-                {format(new Date(latestImage.data), "d 'de' MMMM, yyyy", { locale: ptBR })}
+                {format(new Date(latestImage.data), "d 'de' MMMM, yyyy", { locale: pt })}
               </span>
             </div>
 
@@ -143,7 +143,7 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-gray-500">
-                      {format(new Date(image.data), "dd/MM/yyyy", { locale: ptBR })}
+                      {format(new Date(image.data), "dd/MM/yyyy", { locale: pt })}
                     </span>
                     <div className="flex gap-2 text-xs">
                       {image.ndvi !== null && image.ndvi !== undefined && (

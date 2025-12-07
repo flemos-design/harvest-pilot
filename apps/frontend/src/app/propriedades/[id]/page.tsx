@@ -5,7 +5,7 @@ import { Loader2, Building, Edit, Trash2, ArrowLeft, MapPin, Calendar, ExternalL
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 export default function PropriedadeDetalhesPage() {
   const params = useParams();
@@ -116,7 +116,7 @@ export default function PropriedadeDetalhesPage() {
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Parcelas/Terrenos</span>
+                  <span className="text-gray-600">Talhões/Terrenos</span>
                   <span className="font-medium text-gray-900">{propriedade._count?.parcelas || 0}</span>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function PropriedadeDetalhesPage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900">{propriedade._count?.parcelas || 0}</p>
-                  <p className="text-xs text-gray-600">Parcelas/Terrenos</p>
+                  <p className="text-xs text-gray-600">Talhões/Terrenos</p>
                 </div>
               </div>
             </div>
@@ -168,14 +168,14 @@ export default function PropriedadeDetalhesPage() {
                   <p className="text-gray-600 mb-1">Criada</p>
                   <div className="flex items-center gap-2 text-gray-900">
                     <Calendar className="w-4 h-4" />
-                    <span>{format(new Date(propriedade.createdAt), "d/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                    <span>{format(new Date(propriedade.createdAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Atualizada</p>
                   <div className="flex items-center gap-2 text-gray-900">
                     <Calendar className="w-4 h-4" />
-                    <span>{format(new Date(propriedade.updatedAt), "d/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                    <span>{format(new Date(propriedade.updatedAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@ import { Loader2, Building2, Edit, Trash2, ArrowLeft, MapPin, Users, Calendar, E
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 export default function OrganizacaoDetalhesPage() {
   const params = useParams();
@@ -117,7 +117,7 @@ export default function OrganizacaoDetalhesPage() {
                 <div className="flex justify-between py-2">
                   <span className="text-gray-600">Criada em</span>
                   <span className="font-medium text-gray-900">
-                    {format(new Date(organizacao.createdAt), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                    {format(new Date(organizacao.createdAt), "d 'de' MMMM 'de' yyyy", { locale: pt })}
                   </span>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function OrganizacaoDetalhesPage() {
                             <p className="text-sm text-gray-600 mt-1">{prop.descricao}</p>
                           )}
                           <p className="text-xs text-gray-500 mt-2">
-                            Criada em {format(new Date(prop.createdAt), "d 'de' MMM yyyy", { locale: ptBR })}
+                            Criada em {format(new Date(prop.createdAt), "d 'de' MMM yyyy", { locale: pt })}
                           </p>
                         </div>
                         <Link
@@ -233,14 +233,14 @@ export default function OrganizacaoDetalhesPage() {
                   <p className="text-gray-600 mb-1">Criada</p>
                   <div className="flex items-center gap-2 text-gray-900">
                     <Calendar className="w-4 h-4" />
-                    <span>{format(new Date(organizacao.createdAt), "d/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                    <span>{format(new Date(organizacao.createdAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>
                 </div>
                 <div>
                   <p className="text-gray-600 mb-1">Atualizada</p>
                   <div className="flex items-center gap-2 text-gray-900">
                     <Calendar className="w-4 h-4" />
-                    <span>{format(new Date(organizacao.updatedAt), "d/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                    <span>{format(new Date(organizacao.updatedAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>
                 </div>
               </div>

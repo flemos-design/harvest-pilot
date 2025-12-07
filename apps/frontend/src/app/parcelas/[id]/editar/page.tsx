@@ -117,8 +117,8 @@ export default function EditarParcelaPage() {
       await updateParcela.mutateAsync({ id, data: updateData });
       router.push(`/parcelas/${id}`);
     } catch (error) {
-      console.error('Erro ao atualizar parcela:', error);
-      alert('Erro ao atualizar parcela. Verifica os dados e tenta novamente.');
+      console.error('Erro ao atualizar talhão:', error);
+      alert('Erro ao atualizar talhão. Verifica os dados e tenta novamente.');
     }
   };
 
@@ -134,10 +134,10 @@ export default function EditarParcelaPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar parcela</h2>
-          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Parcela não encontrada'}</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar talhão</h2>
+          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
           <Link href="/parcelas" className="mt-4 inline-block text-green-600 hover:text-green-700">
-            ← Voltar paro terrenos
+            ← Voltar aos talhões
           </Link>
         </div>
       </div>
@@ -172,12 +172,12 @@ export default function EditarParcelaPage() {
             {/* Nome */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nome da Parcela *
+                Nome do Talhão *
               </label>
               <input
                 type="text"
                 {...register('nome')}
-                placeholder="Ex: Parcela Norte - Castanheiro"
+                placeholder="Ex: Talhão Norte - Castanheiro"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               {errors.nome && (

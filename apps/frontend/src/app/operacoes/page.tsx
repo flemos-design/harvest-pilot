@@ -4,7 +4,7 @@ import { useOperacoes } from '@/hooks/use-operacoes';
 import { Loader2, ClipboardList, Calendar, DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -153,13 +153,13 @@ export default function OperacoesPage() {
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>
-                              {format(new Date(operacao.data), "d 'de' MMMM, yyyy", { locale: ptBR })}
+                              {format(new Date(operacao.data), "d 'de' MMMM, yyyy", { locale: pt })}
                             </span>
                           </div>
 
                           {operacao.parcela && (
                             <div className="flex items-center gap-1">
-                              <span className="font-medium">Parcela:</span>
+                              <span className="font-medium">Talhão:</span>
                               <span>{operacao.parcela.nome}</span>
                             </div>
                           )}

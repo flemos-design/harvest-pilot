@@ -82,7 +82,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
           type: 'Feature',
           geometry: geometry as GeoJSON.Geometry,
           properties: {
-            name: parcelName || 'Parcela',
+            name: parcelName || 'Talhão',
           },
         },
       ],

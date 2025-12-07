@@ -5,7 +5,7 @@ import { useParcelas } from '@/hooks/use-parcelas';
 import { Loader2, TrendingUp, TrendingDown, DollarSign, Calendar, MapPin, Activity, FileText, Download, ChevronDown, FileSpreadsheet } from 'lucide-react';
 import Link from 'next/link';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import jsPDF from 'jspdf';
@@ -131,7 +131,7 @@ export default function RelatoriosPage() {
     const monthsMap: Record<string, { count: number; custo: number }> = {};
 
     operacoesFiltradas.forEach(op => {
-      const monthKey = format(new Date(op.data), 'MMM yyyy', { locale: ptBR });
+      const monthKey = format(new Date(op.data), 'MMM yyyy', { locale: pt });
       if (!monthsMap[monthKey]) {
         monthsMap[monthKey] = { count: 0, custo: 0 };
       }
@@ -171,9 +171,9 @@ export default function RelatoriosPage() {
     // Period
     doc.setFontSize(10);
     doc.setTextColor(100);
-    const periodoTexto = `Período: ${format(dateRange.start, "d MMM yyyy", { locale: ptBR })} - ${format(dateRange.end, "d MMM yyyy", { locale: ptBR })}`;
+    const periodoTexto = `Período: ${format(dateRange.start, "d MMM yyyy", { locale: pt })} - ${format(dateRange.end, "d MMM yyyy", { locale: pt })}`;
     doc.text(periodoTexto, 14, 30);
-    doc.text(`Gerado em: ${format(new Date(), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })}`, 14, 36);
+    doc.text(`Gerado em: ${format(new Date(), "d 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: pt })}`, 14, 36);
 
     // KPIs Section
     doc.setFontSize(14);
@@ -187,7 +187,7 @@ export default function RelatoriosPage() {
         ['Total de Operações', `${kpis.total} (${kpis.opsPorMes}/mês)`],
         ['Custo Total', `${kpis.custoTotal.toFixed(2)}€`],
         ['Custo Médio por Operação', `${kpis.custoMedio.toFixed(2)}€`],
-        ['Parcelas Ativas', `${kpis.parcelasAtivas} de ${parcelas?.length || 0}`],
+        ['Talhões Ativos', `${kpis.parcelasAtivas} de ${parcelas?.length || 0}`],
         ['Custo por Hectare', `${eficiencia.custoPorHa.toFixed(2)}€/ha`],
         ['Operações por Hectare', `${eficiencia.opsPorHa.toFixed(1)} ops/ha`],
       ],
@@ -211,14 +211,14 @@ export default function RelatoriosPage() {
       headStyles: { fillColor: [22, 163, 74] },
     });
 
-    // Operations by Parcela
+    // Operations by Talhão
     finalY = (doc as any).lastAutoTable.finalY || 200;
     doc.setFontSize(14);
-    doc.text('Atividade por Parcela', 14, finalY + 10);
+    doc.text('Atividade por Talhão', 14, finalY + 10);
 
     autoTable(doc, {
       startY: finalY + 14,
-      head: [['Parcela', 'Operações', 'Custo Total']],
+      head: [['Talhão', 'Operações', 'Custo Total']],
       body: opsPorParcela.map(item => [
         item.nome,
         item.count.toString(),
@@ -249,7 +249,7 @@ export default function RelatoriosPage() {
       }
 
       if (opsPorParcela[0]) {
-        doc.text(`Parcela Mais Trabalhada: ${opsPorParcela[0].nome} (${opsPorParcela[0].count} operações)`, 14, summaryY);
+        doc.text(`Talhão Mais Trabalhado: ${opsPorParcela[0].nome} (${opsPorParcela[0].count} operações)`, 14, summaryY);
       }
     }
 
@@ -298,7 +298,7 @@ export default function RelatoriosPage() {
 
   const downloadCadernoCampo = async () => {
     if (!selectedParcela) {
-      alert('Por favor, selecione uma parcela');
+      alert('Por favor, seleciona um talhão');
       return;
     }
 
@@ -316,7 +316,7 @@ export default function RelatoriosPage() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      const parcelaNome = parcelas?.find(p => p.id === selectedParcela)?.nome || 'parcela';
+      const parcelaNome = parcelas?.find(p => p.id === selectedParcela)?.nome || 'talhao';
       link.download = `caderno-campo-${parcelaNome}-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
       document.body.appendChild(link);
       link.click();
@@ -440,7 +440,7 @@ export default function RelatoriosPage() {
               ))}
             </div>
             <span className="text-sm text-gray-500 ml-4">
-              {format(dateRange.start, "d MMM yyyy", { locale: ptBR })} - {format(dateRange.end, "d MMM yyyy", { locale: ptBR })}
+              {format(dateRange.start, "d MMM yyyy", { locale: pt })} - {format(dateRange.end, "d MMM yyyy", { locale: pt })}
             </span>
           </div>
         </div>
@@ -471,7 +471,7 @@ export default function RelatoriosPage() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3 mb-2">
               <MapPin className="w-5 h-5 text-purple-600" />
-              <p className="text-sm text-gray-600 font-medium">Parcelas Ativas</p>
+              <p className="text-sm text-gray-600 font-medium">Talhões Ativos</p>
             </div>
             <p className="text-3xl font-bold text-gray-900">{kpis.parcelasAtivas}</p>
             <p className="text-xs text-gray-500 mt-1">de {parcelas?.length || 0} totais</p>
@@ -547,10 +547,10 @@ export default function RelatoriosPage() {
             </div>
           </div>
 
-          {/* Operations by Parcela */}
+          {/* Operations by Talhão */}
           <div className="bg-white rounded-lg shadow-sm border">
             <div className="p-6 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">Atividade por Parcela</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Atividade por Talhão</h2>
             </div>
             <div className="p-6">
               <div className="space-y-3">
@@ -598,7 +598,7 @@ export default function RelatoriosPage() {
               )}
             </div>
             <div>
-              <p className="text-green-100 text-sm mb-1">Parcela Mais Trabalhada</p>
+              <p className="text-green-100 text-sm mb-1">Talhão Mais Trabalhado</p>
               <p className="text-2xl font-bold">
                 {opsPorParcela[0]?.nome || 'N/A'}
               </p>
@@ -617,20 +617,20 @@ export default function RelatoriosPage() {
             <div className="p-6 border-b">
               <h3 className="text-lg font-semibold text-gray-900">Exportar Caderno de Campo</h3>
               <p className="text-sm text-gray-600 mt-1">
-                Selecione a parcela para gerar o caderno de campo
+                Seleciona o talhão para gerar o caderno de campo
               </p>
             </div>
 
             <div className="p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parcela
+                Talhão
               </label>
               <select
                 value={selectedParcela}
                 onChange={(e) => setSelectedParcela(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               >
-                <option value="">Selecione uma parcela</option>
+                <option value="">Seleciona um talhão</option>
                 {parcelas?.map((parcela) => (
                   <option key={parcela.id} value={parcela.id}>
                     {parcela.nome} ({parcela.area} ha)
@@ -641,8 +641,8 @@ export default function RelatoriosPage() {
               <div className="mt-4 text-sm text-gray-600">
                 <p>
                   <strong>Período:</strong>{' '}
-                  {format(dateRange.start, "d MMM yyyy", { locale: ptBR })} -{' '}
-                  {format(dateRange.end, "d MMM yyyy", { locale: ptBR })}
+                  {format(dateRange.start, "d MMM yyyy", { locale: pt })} -{' '}
+                  {format(dateRange.end, "d MMM yyyy", { locale: pt })}
                 </p>
               </div>
             </div>

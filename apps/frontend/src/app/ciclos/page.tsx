@@ -4,7 +4,7 @@ import { useCiclos, useDeleteCiclo } from '@/hooks/use-ciclos';
 import { Loader2, RefreshCw, Plus, Trash2, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 
 const ESTADO_COLORS: Record<string, string> = {
   ATIVO: 'bg-green-100 text-green-800',
@@ -98,12 +98,12 @@ export default function CiclosPage() {
                 <div className="space-y-2 text-sm mb-4">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Calendar className="w-4 h-4" />
-                    <span>Início: {format(new Date(ciclo.dataInicio), "d 'de' MMM yyyy", { locale: ptBR })}</span>
+                    <span>Início: {format(new Date(ciclo.dataInicio), "d 'de' MMM yyyy", { locale: pt })}</span>
                   </div>
                   {ciclo.dataFim && (
                     <div className="flex items-center gap-2 text-gray-600">
                       <Calendar className="w-4 h-4" />
-                      <span>Fim: {format(new Date(ciclo.dataFim), "d 'de' MMM yyyy", { locale: ptBR })}</span>
+                      <span>Fim: {format(new Date(ciclo.dataFim), "d 'de' MMM yyyy", { locale: pt })}</span>
                     </div>
                   )}
                 </div>

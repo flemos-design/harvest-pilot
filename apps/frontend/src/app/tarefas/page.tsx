@@ -4,7 +4,7 @@ import { useTarefas, useTarefasStats, useUpdateTarefaEstado, useDeleteTarefa } f
 import { Loader2, CheckCircle2, Circle, Clock, XCircle, AlertCircle, Plus, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useState } from 'react';
 import { EstadoTarefa, PrioridadeTarefa, TipoTarefa } from '@/types';
 
@@ -299,14 +299,14 @@ export default function TarefasPage() {
                           <div>
                             <span className="font-medium">Início:</span>{' '}
                             {format(new Date(tarefa.dataInicio), "d MMM 'às' HH:mm", {
-                              locale: ptBR,
+                              locale: pt,
                             })}
                           </div>
                           {tarefa.dataFim && (
                             <div>
                               <span className="font-medium">Fim:</span>{' '}
                               {format(new Date(tarefa.dataFim), "d MMM 'às' HH:mm", {
-                                locale: ptBR,
+                                locale: pt,
                               })}
                             </div>
                           )}
@@ -314,7 +314,7 @@ export default function TarefasPage() {
                             <div className="text-green-600">
                               <span className="font-medium">Concluída:</span>{' '}
                               {format(new Date(tarefa.dataConclusao), "d MMM 'às' HH:mm", {
-                                locale: ptBR,
+                                locale: pt,
                               })}
                             </div>
                           )}

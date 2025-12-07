@@ -4,7 +4,7 @@ import { useImagensRemotas } from '@/hooks/use-imagens-remotas';
 import { useParcelas } from '@/hooks/use-parcelas';
 import { Loader2, Satellite, Cloud, TrendingUp, Filter, Calendar, MapPin, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 
@@ -224,7 +224,7 @@ export default function SateliteGaleriaPage() {
                       {imagem.parcela?.nome || 'Terreno'}
                     </Link>
                     <p className="text-xs text-gray-500 mt-1">
-                      {format(new Date(imagem.data), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                      {format(new Date(imagem.data), "d 'de' MMMM 'de' yyyy", { locale: pt })}
                     </p>
                   </div>
 

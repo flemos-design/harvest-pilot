@@ -14,7 +14,7 @@ const operacaoSchema = z.object({
   tipo: z.enum(['PLANTACAO', 'REGA', 'ADUBACAO', 'TRATAMENTO', 'COLHEITA', 'INSPECAO', 'PODA', 'DESBASTE']),
   data: z.string().min(1, 'Data é obrigatória'),
   descricao: z.string().optional(),
-  parcelaId: z.string().min(1, 'Parcela é obrigatória'),
+  parcelaId: z.string().min(1, 'Talhão é obrigatório'),
   operadorId: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
@@ -212,16 +212,16 @@ export default function EditarOperacaoPage() {
               )}
             </div>
 
-            {/* Parcela */}
+            {/* Talhão */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parcela *
+                Talhão *
               </label>
               <select
                 {...register('parcelaId')}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
-                <option value="">Seleciona o terreno</option>
+                <option value="">Seleciona o talhão</option>
                 {parcelas?.map((parcela) => (
                   <option key={parcela.id} value={parcela.id}>
                     {parcela.nome} ({parcela.area} ha)

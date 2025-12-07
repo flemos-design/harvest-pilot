@@ -2,15 +2,16 @@
 
 import { useParcela, useDeleteParcela } from '@/hooks/use-parcelas';
 import { useOperacoes } from '@/hooks/use-operacoes';
-import { Loader2, MapPin, TrendingUp, Calendar, ArrowLeft, Edit, Sprout, Trash2 } from 'lucide-react';
+import { Loader2, MapPin, TrendingUp, Calendar, ArrowLeft, Edit, Sprout, Trash2, Download } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { pt } from 'date-fns/locale';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { MapSingle } from '@/components/MapSingle';
 import { ImagensRemotas } from '@/components/ImagensRemotas';
 import { Meteorologia } from '@/components/Meteorologia';
+import { parcelaToKmlBlob, parcelaToKmzBlob, sanitizeFileName } from '@/lib/export-geo';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -28,6 +29,7 @@ export default function ParcelaDetailPage() {
   const router = useRouter();
   const id = params.id as string;
   const [isDeleting, setIsDeleting] = useState(false);
+  const [exporting, setExporting] = useState<'kml' | 'kmz' | null>(null);
 
   const { data: parcela, isLoading: isLoadingParcela, error: parcelaError } = useParcela(id);
   const { data: todasOperacoes, isLoading: isLoadingOperacoes } = useOperacoes();
@@ -46,8 +48,8 @@ export default function ParcelaDetailPage() {
       await deleteParcela.mutateAsync(id);
       router.push('/parcelas');
     } catch (error) {
-      console.error('Erro ao eliminar parcela:', error);
-      alert('Erro ao eliminar parcela. Tenta novamente.');
+      console.error('Erro ao eliminar talhão:', error);
+      alert('Erro ao eliminar talhão. Tenta novamente.');
       setIsDeleting(false);
     }
   };
@@ -64,20 +66,57 @@ export default function ParcelaDetailPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar parcela</h2>
-          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Parcela não encontrada'}</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar talhão</h2>
+          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
           <Link href="/parcelas" className="mt-4 inline-block text-green-600 hover:text-green-700">
-            ← Voltar paro terrenos
+            ← Voltar aos talhões
           </Link>
         </div>
       </div>
     );
   }
 
-  // Filtrar operações desto terreno
+  // Filtrar operações deste talhão
   const operacoesParcela = todasOperacoes?.filter(op => op.parcelaId === id) || [];
   const totalOperacoes = operacoesParcela.length;
   const custoTotal = operacoesParcela.reduce((sum, op) => sum + (op.custoTotal || 0), 0);
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportKml = async () => {
+    try {
+      setExporting('kml');
+      const blob = parcelaToKmlBlob(parcela);
+      downloadBlob(blob, `${sanitizeFileName(parcela.nome)}.kml`);
+    } catch (error) {
+      console.error('Erro ao exportar KML', error);
+      alert('Erro ao exportar KML. Tenta novamente.');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  const handleExportKmz = async () => {
+    try {
+      setExporting('kmz');
+      const blob = await parcelaToKmzBlob(parcela);
+      downloadBlob(blob, `${sanitizeFileName(parcela.nome)}.kmz`);
+    } catch (error) {
+      console.error('Erro ao exportar KMZ', error);
+      alert('Erro ao exportar KMZ. Tenta novamente.');
+    } finally {
+      setExporting(null);
+    }
+  };
 
   // Operações recentes (últimas 10)
   const operacoesRecentes = operacoesParcela
@@ -109,6 +148,42 @@ export default function ParcelaDetailPage() {
               </div>
             </div>
             <div className="flex gap-3">
+              <div className="flex gap-2">
+                <button
+                  onClick={handleExportKml}
+                  disabled={exporting !== null}
+                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition inline-flex items-center gap-2 disabled:opacity-50"
+                >
+                  {exporting === 'kml' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      A gerar KML...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      Exportar KML
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={handleExportKmz}
+                  disabled={exporting !== null}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2 disabled:opacity-50"
+                >
+                  {exporting === 'kmz' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      A gerar KMZ...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      Exportar KMZ
+                    </>
+                  )}
+                </button>
+              </div>
               <Link
                 href={`/parcelas/${id}/editar`}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2"
@@ -203,13 +278,13 @@ export default function ParcelaDetailPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Criada em</p>
                   <p className="font-medium text-gray-900">
-                    {format(new Date(parcela.createdAt), "d 'de' MMMM, yyyy", { locale: ptBR })}
+                    {format(new Date(parcela.createdAt), "d 'de' MMMM, yyyy", { locale: pt })}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Última atualização</p>
                   <p className="font-medium text-gray-900">
-                    {format(new Date(parcela.updatedAt), "d 'de' MMMM, yyyy", { locale: ptBR })}
+                    {format(new Date(parcela.updatedAt), "d 'de' MMMM, yyyy", { locale: pt })}
                   </p>
                 </div>
               </div>
@@ -297,7 +372,7 @@ export default function ParcelaDetailPage() {
                             )}
                             <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                               <span>
-                                {format(new Date(operacao.data), "d MMM, yyyy", { locale: ptBR })}
+                                {format(new Date(operacao.data), "d MMM, yyyy", { locale: pt })}
                               </span>
                               {operacao.operador && (
                                 <span>Por: {operacao.operador.nome}</span>
