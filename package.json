@@ -11,9 +11,11 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm run dev --workspace=@harvestpilot/backend",
     "dev:frontend": "npm run dev --workspace=@harvestpilot/frontend",
+    "dev:desktop": "tauri dev",
     "build": "npm run build --workspaces",
     "build:backend": "npm run build --workspace=apps/backend",
     "build:frontend": "npm run build --workspace=apps/frontend",
+    "build:desktop": "tauri build",
     "test": "npm run test --workspaces",
     "test:production": "npx playwright test --reporter=list",
     "lint": "npm run lint --workspaces",
@@ -24,6 +26,7 @@
     "db:studio": "npm run db:studio --workspace=apps/backend"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.6.1",
     "concurrently": "^8.2.2"
   },
   "engines": {

@@ -1,0 +1,31 @@
+{
+  "package": {
+    "productName": "HarvestPilot Desktop",
+    "version": "0.1.0"
+  },
+  "build": {
+    "beforeDevCommand": "cd .. && npm run dev:frontend",
+    "devPath": "http://localhost:3000",
+    "beforeBuildCommand": "cd .. && npm run build:export --workspace=@harvestpilot/frontend",
+    "distDir": "../apps/frontend/out"
+  },
+  "tauri": {
+    "allowlist": {
+      "shell": {
+        "open": true
+      }
+    },
+    "bundle": {
+      "identifier": "online.harvestpilot.desktop",
+      "targets": "all"
+    },
+    "windows": [
+      {
+        "title": "HarvestPilot",
+        "width": 1280,
+        "height": 800,
+        "resizable": true
+      }
+    ]
+  }
+}

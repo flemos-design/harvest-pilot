@@ -307,6 +307,12 @@ npm test
 
 # Linting
 npm run lint
+
+# Desktop (Tauri)
+# Pré-requisitos: Rust/cargo + toolchains de plataforma (Xcode no macOS; Visual Studio Build Tools no Windows)
+npm install
+npm run dev:desktop   # dev: abre Tauri + Next em http://localhost:3000
+npm run build:desktop # build: usa next export para gerar bundle desktop
 ```
 
 ### Docker
