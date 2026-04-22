@@ -8,17 +8,19 @@ import { v4 as uuidv4 } from 'uuid';
 export class UploadService {
   private s3Client: S3Client;
   private bucketName: string;
+  private s3Enabled: boolean;
 
   constructor() {
-    const isProduction = process.env.NODE_ENV === 'production';
     const s3AccessKey = process.env.S3_ACCESS_KEY;
     const s3SecretKey = process.env.S3_SECRET_KEY;
-
-    if (isProduction && (!s3AccessKey || !s3SecretKey)) {
-      throw new Error('S3_ACCESS_KEY and S3_SECRET_KEY are required in production');
-    }
+    const isProduction = process.env.NODE_ENV === 'production';
 
     this.bucketName = process.env.S3_BUCKET || 'harvestpilot';
+    this.s3Enabled = !!(s3AccessKey && s3SecretKey);
+
+    if (isProduction && !this.s3Enabled) {
+      console.warn('[UploadService] S3_ACCESS_KEY and S3_SECRET_KEY are not set. Upload functionality is disabled.');
+    }
 
     // Configurar S3 client (MinIO compatible)
     this.s3Client = new S3Client({
@@ -32,6 +34,12 @@ export class UploadService {
     });
   }
 
+  private ensureS3Enabled(): void {
+    if (!this.s3Enabled) {
+      throw new BadRequestException('Upload service is not configured. Set S3_ACCESS_KEY and S3_SECRET_KEY environment variables.');
+    }
+  }
+
   /**
    * Upload de imagem com compressão automática
    */
@@ -40,6 +48,8 @@ export class UploadService {
     url: string;
     thumbnail: string;
   }> {
+    this.ensureS3Enabled();
+
     if (!file) {
       throw new BadRequestException('Nenhum ficheiro fornecido');
     }
@@ -119,6 +129,7 @@ export class UploadService {
    * Upload múltiplo de imagens
    */
   async uploadMultipleImages(files: Express.Multer.File[], folder: string = 'images') {
+    this.ensureS3Enabled();
     const uploadPromises = files.map((file) => this.uploadImage(file, folder));
     return Promise.all(uploadPromises);
   }
@@ -127,6 +138,7 @@ export class UploadService {
    * Remover imagem do S3
    */
   async deleteImage(key: string): Promise<void> {
+    this.ensureS3Enabled();
     try {
       // Remover imagem original
       await this.s3Client.send(
@@ -158,6 +170,7 @@ export class UploadService {
    * Obter URL assinado (válido por 1 hora)
    */
   async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    this.ensureS3Enabled();
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
       Key: key,
