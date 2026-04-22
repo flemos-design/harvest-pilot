@@ -6,7 +6,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { join } from 'path';
 import helmet from 'helmet';
-// import compression from 'compression'; // TODO: Fix compression import issue
+import compression from 'compression';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -18,7 +19,7 @@ async function bootstrap() {
 
   // Security
   app.use(helmet());
-  // app.use(compression()); // TODO: Re-enable after fixing import
+  app.use(compression());
 
   // CORS - Allow multiple origins
   const allowedOrigins = [
@@ -35,7 +36,7 @@ async function bootstrap() {
       if (!origin) return callback(null, true);
 
       // Check if origin is allowed or matches Railway pattern
-      if (allowedOrigins.includes(origin) || origin.endsWith('.up.railway.app')) {
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
@@ -92,16 +93,9 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
   await app.listen(port);
 
-  console.log(`
-  ╔═══════════════════════════════════════════════════════╗
-  ║                                                       ║
-  ║   🌾 HarvestPilot API                                ║
-  ║                                                       ║
-  ║   Server running on: http://localhost:${port}        ║
-  ║   API Documentation: http://localhost:${port}/api/docs ║
-  ║                                                       ║
-  ╚═══════════════════════════════════════════════════════╝
-  `);
+  const logger = new Logger('Bootstrap');
+  logger.log(`🌾 HarvestPilot API running on http://localhost:${port}`);
+  logger.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

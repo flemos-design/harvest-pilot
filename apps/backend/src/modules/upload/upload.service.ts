@@ -10,6 +10,14 @@ export class UploadService {
   private bucketName: string;
 
   constructor() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const s3AccessKey = process.env.S3_ACCESS_KEY;
+    const s3SecretKey = process.env.S3_SECRET_KEY;
+
+    if (isProduction && (!s3AccessKey || !s3SecretKey)) {
+      throw new Error('S3_ACCESS_KEY and S3_SECRET_KEY are required in production');
+    }
+
     this.bucketName = process.env.S3_BUCKET || 'harvestpilot';
 
     // Configurar S3 client (MinIO compatible)
@@ -17,8 +25,8 @@ export class UploadService {
       endpoint: process.env.S3_ENDPOINT || 'http://localhost:9000',
       region: process.env.S3_REGION || 'us-east-1',
       credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY || 'minioadmin',
-        secretAccessKey: process.env.S3_SECRET_KEY || 'minioadmin',
+        accessKeyId: s3AccessKey || 'minioadmin',
+        secretAccessKey: s3SecretKey || 'minioadmin',
       },
       forcePathStyle: true, // Necessário para MinIO
     });
@@ -102,7 +110,7 @@ export class UploadService {
 
       return { key, url, thumbnail };
     } catch (error) {
-      console.error('Erro ao fazer upload:', error);
+      // Error logged by NestJS exception filter
       throw new BadRequestException('Erro ao processar a imagem');
     }
   }

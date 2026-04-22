@@ -13,20 +13,34 @@ export default function SWUpdateNotification() {
       'serviceWorker' in navigator &&
       process.env.NODE_ENV === 'production'
     ) {
+      let refreshing = false;
+
+      const handleControllerChange = () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      };
+
+      // Escutar mensagens do SW (controllerchange)
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
       // Escutar por updates do Service Worker
       navigator.serviceWorker.ready.then((reg) => {
-        reg.addEventListener('updatefound', () => {
+        const handleUpdateFound = () => {
           const newWorker = reg.installing;
           if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
+            const handleStateChange = () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Novo Service Worker instalado e há um antigo ativo
                 setShowUpdate(true);
                 setRegistration(reg);
               }
-            });
+            };
+            newWorker.addEventListener('statechange', handleStateChange);
           }
-        });
+        };
+
+        reg.addEventListener('updatefound', handleUpdateFound);
 
         // Verificar se já há uma atualização waiting
         if (reg.waiting) {
@@ -35,14 +49,9 @@ export default function SWUpdateNotification() {
         }
       });
 
-      // Escutar mensagens do SW (controllerchange)
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
+      return () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      };
     }
   }, []);
 

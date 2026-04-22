@@ -398,18 +398,21 @@ export class UtilizadoresService {
     }
 
     // Gerar token de reset único e seguro
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const rawResetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = await bcrypt.hash(rawResetToken, 10);
     const resetTokenExpiry = new Date();
     resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1); // Válido por 1 hora
 
-    // Guardar o token na base de dados
+    // Guardar o hash do token na base de dados
     await this.prisma.utilizador.update({
       where: { id: utilizador.id },
       data: {
-        resetToken,
+        resetToken: resetTokenHash,
         resetTokenExpiry,
       },
     });
+
+    const resetToken = rawResetToken;
 
     // Enviar email com o link de reset
     try {
@@ -430,15 +433,27 @@ export class UtilizadoresService {
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    // Procurar utilizador com o token válido
-    const utilizador = await this.prisma.utilizador.findUnique({
-      where: { resetToken: resetPasswordDto.token },
+    // Procurar utilizadores com token de reset pendente
+    const utilizadores = await this.prisma.utilizador.findMany({
+      where: {
+        resetToken: { not: null },
+        resetTokenExpiry: { gt: new Date() },
+      },
       select: {
         id: true,
         resetToken: true,
         resetTokenExpiry: true,
       },
     });
+
+    // Comparar o token fornecido com os hashes armazenados
+    let utilizador: typeof utilizadores[0] | null = null;
+    for (const u of utilizadores) {
+      if (u.resetToken && await bcrypt.compare(resetPasswordDto.token, u.resetToken)) {
+        utilizador = u;
+        break;
+      }
+    }
 
     if (!utilizador || !utilizador.resetTokenExpiry) {
       throw new BadRequestException('Token inválido ou expirado');

@@ -112,7 +112,7 @@
 }
 
 /* MapLibre GL styles */
-/* @import 'maplibre-gl/dist/maplibre-gl.css'; */
+@import 'maplibre-gl/dist/maplibre-gl.css';
 
 /* Animation for dropdowns */
 @keyframes slideDown {

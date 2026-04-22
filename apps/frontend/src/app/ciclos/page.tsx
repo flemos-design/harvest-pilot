@@ -39,7 +39,7 @@ export default function CiclosPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">{(error as Error).message}</p>
+          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );

@@ -12,8 +12,11 @@
   "tauri": {
     "allowlist": {
       "shell": {
-        "open": true
+        "open": "^https://(app|bo)\\.harvestpilot\\.online/.*"
       }
+    },
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' http://localhost:3001 https://*.harvestpilot.online; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:;"
     },
     "bundle": {
       "identifier": "online.harvestpilot.desktop",

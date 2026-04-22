@@ -92,8 +92,10 @@ export default function FloatingChat() {
   }, [messages]);
 
   // Mensagem de boas-vindas automática (só se não houver histórico)
+  const hasWelcomedRef = useRef(false);
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && messages.length === 0 && !hasWelcomedRef.current) {
+      hasWelcomedRef.current = true;
       setMessages([
         {
           role: 'assistant',

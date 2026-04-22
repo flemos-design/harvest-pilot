@@ -5,7 +5,7 @@ import maplibregl from 'maplibre-gl';
 import { MapPin } from 'lucide-react';
 
 interface MapThumbnailProps {
-  geometry: any;
+  geometry: GeoJSON.Geometry | null;
   height?: string;
 }
 

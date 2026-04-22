@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 
 interface MapSingleProps {
-  geometry: any;
+  geometry: GeoJSON.Geometry | null;
   parcelName?: string;
   height?: string;
   showControls?: boolean;
@@ -66,7 +66,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
         map.current = null;
       }
     };
-  }, [showControls, geometry]);
+  }, [showControls]);
 
   // Add parcel layer when map is loaded
   useEffect(() => {

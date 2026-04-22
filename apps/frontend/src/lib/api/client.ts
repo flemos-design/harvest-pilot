@@ -9,6 +9,8 @@ export const apiClient = axios.create({
   },
 });
 
+let isRedirecting = false;
+
 // Request interceptor para adicionar token JWT
 apiClient.interceptors.request.use(
   (config) => {
@@ -31,9 +33,12 @@ apiClient.interceptors.response.use(
       // Limpar token inválido
       localStorage.removeItem('harvestpilot_token');
       localStorage.removeItem('harvestpilot_user');
+      sessionStorage.removeItem('harvestpilot_token');
+      sessionStorage.removeItem('harvestpilot_user');
 
       // Redirecionar para login (evitar loop infinito)
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+      if (typeof window !== 'undefined' && !isRedirecting && !window.location.pathname.includes('/login')) {
+        isRedirecting = true;
         window.location.href = '/login';
       }
     }

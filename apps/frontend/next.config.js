@@ -158,11 +158,8 @@ const nextConfig = {
   },
 
   // Webpack configuration for MapLibre
+  // Note: maplibre-gl ESM bundle is used by default for better tree-shaking
   webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'maplibre-gl': 'maplibre-gl/dist/maplibre-gl.js',
-    };
     return config;
   },
 };

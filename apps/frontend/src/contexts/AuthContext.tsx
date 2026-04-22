@@ -67,9 +67,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Redirect to dashboard
       router.push('/dashboard');
-    } catch (error: any) {
-      console.error('Login error:', error);
-      throw new Error(error.response?.data?.message || 'Erro ao fazer login');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro ao fazer login';
+      throw new Error(message);
     }
   };
 
@@ -79,9 +79,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Auto-login after registration
       await login(data.email, data.password);
-    } catch (error: any) {
-      console.error('Register error:', error);
-      throw new Error(error.response?.data?.message || 'Erro ao criar conta');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro ao criar conta';
+      throw new Error(message);
     }
   };
 

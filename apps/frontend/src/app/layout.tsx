@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Sistema de gestão agrícola com monitorização por satélite e alertas meteorológicos para produção de frutos secos',
   manifest: '/manifest.json',
   themeColor: '#22c55e',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: '/icons/icon-192x192.png',
     apple: '/icons/icon-192x192.png',
@@ -33,7 +33,7 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#22c55e" />
-        <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css" />
+
       </head>
       <body className={inter.className}>
         <Providers>

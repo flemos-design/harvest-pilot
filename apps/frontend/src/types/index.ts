@@ -152,7 +152,7 @@ export interface Operacao {
   latitude?: number;
   longitude?: number;
   fotos?: string[];
-  insumos?: any;
+  insumos?: InsumoOperacao[];
   custoTotal?: number;
   parcelaId: string;
   cicloId?: string;
@@ -172,6 +172,13 @@ export interface Operacao {
 }
 
 // DTOs para criação
+export interface InsumoOperacao {
+  produto: string;
+  dose: number;
+  unidade: string;
+  custo?: number;
+}
+
 export interface CreatePropriedadeDto {
   nome: string;
   descricao?: string;
@@ -195,7 +202,7 @@ export interface CreateOperacaoDto {
   latitude?: number;
   longitude?: number;
   fotos?: string[];
-  insumos?: any;
+  insumos?: InsumoOperacao[];
   custoTotal?: number;
   parcelaId: string;
   cicloId?: string;
@@ -225,7 +232,7 @@ export interface CreateImagemRemotaDto {
   ndre?: number;
   evi?: number;
   urlImagem?: string;
-  metadados?: any;
+  metadados?: Record<string, unknown>;
   parcelaId: string;
 }
 
@@ -417,7 +424,7 @@ export interface ImagemRemota {
   ndre?: number;
   evi?: number;
   urlImagem?: string;
-  metadados?: any;
+  metadados?: Record<string, unknown>;
   createdAt: string;
   parcela?: {
     id: string;

@@ -108,7 +108,7 @@ export default function TarefaDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar tarefa</h2>
-          <p className="text-gray-600">{error ? (error as Error).message : 'Tarefa não encontrada'}</p>
+          <p className="text-gray-600">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Tarefa não encontrada'}</p>
           <Link href="/tarefas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar para tarefas
           </Link>

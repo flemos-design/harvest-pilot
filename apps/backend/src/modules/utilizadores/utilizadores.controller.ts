@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { UtilizadoresService } from './utilizadores.service';
 import { CreateUtilizadorDto } from './dto/create-utilizador.dto';
@@ -27,6 +28,7 @@ export class UtilizadoresController {
   constructor(private readonly utilizadoresService: UtilizadoresService) {}
 
   @Public()
+  @Throttle(5, 60)
   @Post()
   @ApiOperation({ summary: 'Criar novo utilizador (registo)' })
   create(@Body() createUtilizadorDto: CreateUtilizadorDto) {
@@ -34,6 +36,7 @@ export class UtilizadoresController {
   }
 
   @Public()
+  @Throttle(5, 60)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login de utilizador' })
@@ -86,6 +89,7 @@ export class UtilizadoresController {
   }
 
   @Public()
+  @Throttle(3, 60)
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Solicitar recuperação de password' })
@@ -94,6 +98,7 @@ export class UtilizadoresController {
   }
 
   @Public()
+  @Throttle(5, 60)
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Redefinir password com token' })

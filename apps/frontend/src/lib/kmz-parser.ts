@@ -1,12 +1,12 @@
 import JSZip from 'jszip';
 import { kml } from '@tmcw/togeojson';
-// @ts-ignore - Turf types have package.json exports issue
+// @ts-expect-error - Turf types have package.json exports issue; tracked in issue #42
 import * as turf from '@turf/turf';
 
 export interface ParsedTerreno {
   nome: string;
   area: number; // hectares
-  geometria: any; // GeoJSON
+  geometria: GeoJSON.Geometry;
   altitude?: number;
   tipoSolo?: string;
 }
@@ -325,7 +325,7 @@ export function validateKmzFile(file: File): string | null {
 /**
  * Validate geometry (check if it's a valid polygon/multipolygon)
  */
-export function validateGeometry(geometry: any): { valid: boolean; error?: string } {
+export function validateGeometry(geometry: GeoJSON.Geometry | unknown): { valid: boolean; error?: string } {
   if (!geometry || typeof geometry !== 'object') {
     return { valid: false, error: 'Geometria inválida ou inexistente' };
   }

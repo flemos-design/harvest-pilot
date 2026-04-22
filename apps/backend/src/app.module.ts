@@ -69,7 +69,7 @@ import { RelatoriosModule } from './modules/relatorios/relatorios.module';
     CalendarioModule,
     IaModule,
     RelatoriosModule,
-    // SateliteModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

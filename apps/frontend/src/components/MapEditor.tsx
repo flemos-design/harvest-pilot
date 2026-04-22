@@ -9,8 +9,8 @@ import * as turf from '@turf/turf';
 import { Edit3, Trash2, Square, Save, X } from 'lucide-react';
 
 interface MapEditorProps {
-  initialGeometry?: any; // GeoJSON geometry
-  onGeometryChange: (geometry: any, area: number) => void;
+  initialGeometry?: GeoJSON.Geometry;
+  onGeometryChange: (geometry: GeoJSON.Geometry | null, area: number) => void;
   height?: string;
   center?: [number, number];
   zoom?: number;
@@ -125,13 +125,20 @@ export function MapEditor({
     });
 
     // Handle draw events
-    map.current.on('draw.create', updateGeometry);
-    map.current.on('draw.update', updateGeometry);
-    map.current.on('draw.delete', updateGeometry);
+    const onDrawCreate = () => updateGeometry();
+    const onDrawUpdate = () => updateGeometry();
+    const onDrawDelete = () => updateGeometry();
+
+    map.current.on('draw.create', onDrawCreate);
+    map.current.on('draw.update', onDrawUpdate);
+    map.current.on('draw.delete', onDrawDelete);
 
     // Cleanup
     return () => {
       if (map.current) {
+        map.current.off('draw.create', onDrawCreate);
+        map.current.off('draw.update', onDrawUpdate);
+        map.current.off('draw.delete', onDrawDelete);
         map.current.remove();
         map.current = null;
       }
@@ -167,8 +174,8 @@ export function MapEditor({
           padding: 50,
         });
       }
-    } catch (error) {
-      console.error('Error loading initial geometry:', error);
+    } catch {
+      // Silently ignore geometry loading errors
     }
   }, [isLoaded, initialGeometry]);
 

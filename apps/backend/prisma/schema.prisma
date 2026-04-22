@@ -78,6 +78,7 @@ model Parcela {
   imagensRemotas ImagemRemota[]
   meteo          MeteoParcela[]
 
+  @@index([propriedadeId])
   @@map("parcelas")
 }
 
@@ -137,6 +138,9 @@ model Operacao {
   ciclo    Ciclo?      @relation(fields: [cicloId], references: [id], onDelete: SetNull)
   operador Utilizador  @relation(fields: [operadorId], references: [id])
 
+  @@index([parcelaId])
+  @@index([operadorId])
+  @@index([data])
   @@map("operacoes")
 }
 
@@ -159,6 +163,8 @@ model Tarefa {
 
   responsavel Utilizador? @relation(fields: [responsavelId], references: [id])
 
+  @@index([responsavelId])
+  @@index([dataInicio])
   @@map("tarefas")
 }
 
@@ -181,6 +187,8 @@ model MeteoParcela {
   parcela Parcela @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
 
   @@unique([parcelaId, data, fonte])
+  @@index([parcelaId])
+  @@index([data])
   @@map("meteo_parcelas")
 }
 
@@ -202,6 +210,7 @@ model ImagemRemota {
   parcela Parcela @relation(fields: [parcelaId], references: [id], onDelete: Cascade)
 
   @@unique([parcelaId, data, fonte])
+  @@index([parcelaId])
   @@map("imagens_remotas")
 }
 

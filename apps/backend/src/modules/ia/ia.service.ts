@@ -592,8 +592,10 @@ export class IaService {
           context.sources.push('Estatísticas de vigor vegetativo');
         }
       }
-    } catch (error) {
-      this.logger.error(`Error building context: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error building context: ${message}`);
+      context.incomplete = true;
     }
 
     return context;

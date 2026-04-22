@@ -18,6 +18,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
   const [hoveredParcelaId, setHoveredParcelaId] = useState<string | null>(null);
   const { data: parcelas, isLoading } = useParcelas();
   const router = useRouter();
+  const handlersRef = useRef<{ [key: string]: (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => void }>({});
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -158,8 +159,8 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         },
       });
 
-      // Add hover effect
-      mapInstance.on('mouseenter', 'parcelas-fill', (e) => {
+      // Define handlers and store refs for cleanup
+      const onMouseEnter = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => {
         mapInstance.getCanvas().style.cursor = 'pointer';
         if (e.features && e.features.length > 0) {
           const parcelaId = e.features[0].properties?.id;
@@ -168,16 +169,15 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
             mapInstance.setFilter('parcelas-highlight', ['==', 'id', parcelaId]);
           }
         }
-      });
+      };
 
-      mapInstance.on('mouseleave', 'parcelas-fill', () => {
+      const onMouseLeave = () => {
         mapInstance.getCanvas().style.cursor = '';
         setHoveredParcelaId(null);
         mapInstance.setFilter('parcelas-highlight', ['==', 'id', '']);
-      });
+      };
 
-      // Add click handler
-      mapInstance.on('click', 'parcelas-fill', (e) => {
+      const onClick = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => {
         if (e.features && e.features.length > 0 && e.lngLat) {
           const feature = e.features[0];
           const properties = feature.properties;
@@ -197,9 +197,11 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
                       <p style="margin: 4px 0;"><strong>Cultura:</strong> ${properties.cultura}</p>
                       <p style="margin: 4px 0;"><strong>Solo:</strong> ${properties.tipoSolo}</p>
                     </div>
-                    <button
-                      onclick="window.location.href='/parcelas/${properties.id}'"
+                    <a
+                      href="/parcelas/${properties.id}"
                       style="
+                        display: block;
+                        text-align: center;
                         margin-top: 12px;
                         padding: 6px 12px;
                         background-color: #22c55e;
@@ -209,19 +211,34 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
                         cursor: pointer;
                         font-size: 14px;
                         width: 100%;
+                        text-decoration: none;
                       "
                     >
                       Ver Detalhes
-                    </button>
+                    </a>
                   </div>
                 `)
                 .addTo(mapInstance);
-            } catch (error) {
-              console.error('Error creating popup:', error);
+            } catch {
+              // Silently ignore popup errors
             }
           }
         }
-      });
+      };
+
+      handlersRef.current = { mouseenter: onMouseEnter, mouseleave: onMouseLeave, click: onClick };
+
+      mapInstance.on('mouseenter', 'parcelas-fill', onMouseEnter);
+      mapInstance.on('mouseleave', 'parcelas-fill', onMouseLeave);
+      mapInstance.on('click', 'parcelas-fill', onClick);
+
+      return () => {
+        if (mapInstance.getLayer('parcelas-fill')) {
+          mapInstance.off('mouseenter', 'parcelas-fill', onMouseEnter);
+          mapInstance.off('mouseleave', 'parcelas-fill', onMouseLeave);
+          mapInstance.off('click', 'parcelas-fill', onClick);
+        }
+      };
     } else {
       // Update existing source
       const source = mapInstance.getSource('parcelas') as maplibregl.GeoJSONSource;

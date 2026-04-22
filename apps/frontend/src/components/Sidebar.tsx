@@ -124,6 +124,7 @@ export function Sidebar() {
                         : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                     }`}
                     title={collapsed ? item.label : undefined}
+                    aria-label={item.label}
                   >
                     <Icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
                     {!collapsed && (

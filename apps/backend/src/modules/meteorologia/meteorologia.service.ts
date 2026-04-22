@@ -26,7 +26,7 @@ export class MeteorologiaService {
   }
 
   async findAll(parcelaId?: string, fonte?: string) {
-    const where: any = {};
+    const where: { parcelaId?: string; fonte?: string } = {};
     if (parcelaId) where.parcelaId = parcelaId;
     if (fonte) where.fonte = fonte;
 

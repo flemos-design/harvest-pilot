@@ -90,21 +90,23 @@ export default function TarefasPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar tarefas</h2>
-          <p className="text-gray-600">{(error as Error).message}</p>
+          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
-  const sortedTarefas = [...(tarefas || [])].sort((a, b) => {
-    // Prioridade: Urgente > Alta > Média > Baixa
-    const prioridadeOrder = { URGENTE: 0, ALTA: 1, MEDIA: 2, BAIXA: 3 };
-    const prioDiff = prioridadeOrder[a.prioridade] - prioridadeOrder[b.prioridade];
-    if (prioDiff !== 0) return prioDiff;
+  const sortedTarefas = React.useMemo(() => {
+    return [...(tarefas || [])].sort((a, b) => {
+      // Prioridade: Urgente > Alta > Média > Baixa
+      const prioridadeOrder = { URGENTE: 0, ALTA: 1, MEDIA: 2, BAIXA: 3 };
+      const prioDiff = prioridadeOrder[a.prioridade] - prioridadeOrder[b.prioridade];
+      if (prioDiff !== 0) return prioDiff;
 
-    // Por data de início
-    return new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime();
-  });
+      // Por data de início
+      return new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime();
+    });
+  }, [tarefas]);
 
   return (
     <div className="min-h-screen bg-gray-50">

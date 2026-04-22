@@ -142,7 +142,7 @@ export class OperacoesService {
   }
 
   async getResumo(parcelaId?: string, dataInicio?: Date, dataFim?: Date) {
-    const where: any = {};
+    const where: { parcelaId?: string; data?: { gte?: Date; lte?: Date } } = {};
     if (parcelaId) where.parcelaId = parcelaId;
     if (dataInicio || dataFim) {
       where.data = {};
