@@ -146,8 +146,8 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
     const bounds = new maplibregl.LngLatBounds();
 
     if (geometry.type === 'Polygon') {
-      geometry.coordinates[0].forEach((coord: [number, number]) => {
-        bounds.extend(coord);
+      geometry.coordinates[0].forEach((coord) => {
+        bounds.extend(coord as [number, number]);
       });
     } else if (geometry.type === 'Point') {
       bounds.extend(geometry.coordinates as [number, number]);

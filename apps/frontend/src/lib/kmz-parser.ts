@@ -330,23 +330,26 @@ export function validateGeometry(geometry: GeoJSON.Geometry | unknown): { valid:
     return { valid: false, error: 'Geometria inválida ou inexistente' };
   }
 
-  const validTypes = ['Polygon', 'MultiPolygon'];
-  if (!validTypes.includes(geometry.type)) {
-    return { valid: false, error: `Tipo de geometria não suportado: ${geometry.type}. Use Polygon ou MultiPolygon.` };
+  const geo = geometry as GeoJSON.Geometry;
+  if (geo.type !== 'Polygon' && geo.type !== 'MultiPolygon') {
+    return { valid: false, error: `Tipo de geometria não suportado: ${geo.type}. Use Polygon ou MultiPolygon.` };
   }
 
+  // At this point geo is narrowed to Polygon | MultiPolygon
+  const polygonGeo = geo as GeoJSON.Polygon | GeoJSON.MultiPolygon;
+
   // Check if coordinates exist
-  if (!geometry.coordinates || !Array.isArray(geometry.coordinates)) {
+  if (!polygonGeo.coordinates || !Array.isArray(polygonGeo.coordinates)) {
     return { valid: false, error: 'Coordenadas ausentes ou inválidas' };
   }
 
   // Basic validation for Polygon
-  if (geometry.type === 'Polygon') {
-    if (geometry.coordinates.length === 0) {
+  if (polygonGeo.type === 'Polygon') {
+    if (polygonGeo.coordinates.length === 0) {
       return { valid: false, error: 'Polígono vazio' };
     }
 
-    const ring = geometry.coordinates[0];
+    const ring = polygonGeo.coordinates[0];
     if (!Array.isArray(ring) || ring.length < 4) {
       return { valid: false, error: 'Polígono deve ter pelo menos 4 pontos' };
     }
@@ -360,13 +363,13 @@ export function validateGeometry(geometry: GeoJSON.Geometry | unknown): { valid:
   }
 
   // Basic validation for MultiPolygon
-  if (geometry.type === 'MultiPolygon') {
-    if (geometry.coordinates.length === 0) {
+  if (polygonGeo.type === 'MultiPolygon') {
+    if (polygonGeo.coordinates.length === 0) {
       return { valid: false, error: 'MultiPolígono vazio' };
     }
 
-    for (let i = 0; i < geometry.coordinates.length; i++) {
-      const polygon = geometry.coordinates[i];
+    for (let i = 0; i < polygonGeo.coordinates.length; i++) {
+      const polygon = polygonGeo.coordinates[i];
       if (!Array.isArray(polygon) || polygon.length === 0) {
         return { valid: false, error: `Polígono ${i + 1} inválido no MultiPolígono` };
       }
@@ -380,7 +383,7 @@ export function validateGeometry(geometry: GeoJSON.Geometry | unknown): { valid:
 
   // Calculate area to ensure it's not too small (at least 1m²)
   try {
-    const area = turf.area(geometry);
+    const area = turf.area(polygonGeo);
     if (area < 1) {
       return { valid: false, error: 'Área muito pequena (mínimo 1m²)' };
     }

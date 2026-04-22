@@ -87,7 +87,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         .filter(p => p.geometria)
         .map(parcela => ({
           type: 'Feature',
-          geometry: parseGeometrySafe(parcela.geometria),
+          geometry: parseGeometrySafe(parcela.geometria)!,
           properties: {
             id: parcela.id,
             nome: parcela.nome,
