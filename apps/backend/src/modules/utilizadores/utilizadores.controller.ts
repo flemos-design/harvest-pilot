@@ -28,7 +28,7 @@ export class UtilizadoresController {
   constructor(private readonly utilizadoresService: UtilizadoresService) {}
 
   @Public()
-  @Throttle(5, 60)
+  @Throttle({ limit: 5, ttl: 60000 })
   @Post()
   @ApiOperation({ summary: 'Criar novo utilizador (registo)' })
   create(@Body() createUtilizadorDto: CreateUtilizadorDto) {
@@ -36,7 +36,7 @@ export class UtilizadoresController {
   }
 
   @Public()
-  @Throttle(5, 60)
+  @Throttle({ limit: 5, ttl: 60000 })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login de utilizador' })
@@ -89,7 +89,7 @@ export class UtilizadoresController {
   }
 
   @Public()
-  @Throttle(3, 60)
+  @Throttle({ limit: 3, ttl: 60000 })
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Solicitar recuperação de password' })
@@ -98,7 +98,7 @@ export class UtilizadoresController {
   }
 
   @Public()
-  @Throttle(5, 60)
+  @Throttle({ limit: 5, ttl: 60000 })
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Redefinir password com token' })
