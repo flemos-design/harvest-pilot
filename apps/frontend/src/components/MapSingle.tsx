@@ -23,6 +23,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
       container: mapContainer.current,
       style: {
         version: 8,
+        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',

@@ -29,6 +29,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       container: mapContainer.current,
       style: {
         version: 8,
+        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -234,10 +235,14 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       mapInstance.on('click', 'parcelas-fill', onClick);
 
       return () => {
-        if (mapInstance.getLayer('parcelas-fill')) {
-          mapInstance.off('mouseenter', 'parcelas-fill', onMouseEnter);
-          mapInstance.off('mouseleave', 'parcelas-fill', onMouseLeave);
-          mapInstance.off('click', 'parcelas-fill', onClick);
+        try {
+          if (mapInstance.getLayer('parcelas-fill')) {
+            mapInstance.off('mouseenter', 'parcelas-fill', onMouseEnter);
+            mapInstance.off('mouseleave', 'parcelas-fill', onMouseLeave);
+            mapInstance.off('click', 'parcelas-fill', onClick);
+          }
+        } catch {
+          // Map may have been destroyed
         }
       };
     } else {
