@@ -19,7 +19,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
   const [hoveredParcelaId, setHoveredParcelaId] = useState<string | null>(null);
   const { data: parcelas, isLoading } = useParcelas();
   const router = useRouter();
-  const handlersRef = useRef<{ [key: string]: (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => void }>({});
+  const handlersRef = useRef<{ [key: string]: (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => void }>({});
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -161,7 +161,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       });
 
       // Define handlers and store refs for cleanup
-      const onMouseEnter = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => {
+      const onMouseEnter = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
         mapInstance.getCanvas().style.cursor = 'pointer';
         if (e.features && e.features.length > 0) {
           const parcelaId = e.features[0].properties?.id;
@@ -178,7 +178,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         mapInstance.setFilter('parcelas-highlight', ['==', 'id', '']);
       };
 
-      const onClick = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapboxGeoJSONFeature[] }) => {
+      const onClick = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
         if (e.features && e.features.length > 0 && e.lngLat) {
           const feature = e.features[0];
           const properties = feature.properties;
