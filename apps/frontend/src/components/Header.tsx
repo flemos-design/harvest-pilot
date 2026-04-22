@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Menu,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 // Map routes to breadcrumb labels
@@ -40,6 +40,8 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const { user, logout } = useAuth();
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Get user initials
   const getUserInitials = () => {
@@ -74,6 +76,40 @@ export function Header() {
     breadcrumbs.unshift({ href: '/dashboard', label: 'Home' });
   }
 
+  // Close menus on Escape and click outside
+  const closeMenus = useCallback(() => {
+    setShowUserMenu(false);
+    setShowNotifications(false);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeMenus();
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(target) &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(target)
+      ) {
+        closeMenus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [closeMenus]);
+
   return (
     <header className="h-16 bg-white border-b border-gray-200 sticky top-0 z-30">
       <div className="h-full px-6 flex items-center justify-between">
@@ -83,12 +119,14 @@ export function Header() {
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
 
-          <nav className="hidden sm:flex items-center gap-2 text-sm">
+          <nav className="hidden sm:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
             {breadcrumbs.map((crumb, index) => (
               <div key={crumb.href} className="flex items-center gap-2">
                 {index > 0 && <ChevronRight className="w-4 h-4 text-gray-400" />}
                 {index === breadcrumbs.length - 1 ? (
-                  <span className="font-medium text-gray-900">{crumb.label}</span>
+                  <span className="font-medium text-gray-900" aria-current="page">
+                    {crumb.label}
+                  </span>
                 ) : (
                   <Link
                     href={crumb.href}
@@ -118,36 +156,44 @@ export function Header() {
           </div>
 
           {/* Notifications */}
-          <div className="relative">
+          <div className="relative" ref={notificationsRef}>
             <button
               onClick={() => {
                 setShowNotifications(!showNotifications);
                 setShowUserMenu(false);
               }}
               className="relative p-2 hover:bg-gray-100 rounded-lg transition"
+              aria-expanded={showNotifications}
+              aria-haspopup="menu"
+              aria-controls="notifications-menu"
+              aria-label="Notificações"
             >
               <Bell className="w-5 h-5 text-gray-600" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" aria-hidden="true"></span>
             </button>
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-slide-down">
+              <div
+                id="notifications-menu"
+                role="menu"
+                className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-slide-down"
+              >
                 <div className="px-4 py-2 border-b border-gray-200">
                   <h3 className="font-semibold text-gray-900">Notificações</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
-                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100" role="menuitem">
                     <p className="text-sm font-medium text-gray-900">Nova tarefa atribuída</p>
                     <p className="text-xs text-gray-500 mt-1">Rega programada para amanhã às 8h</p>
                     <p className="text-xs text-gray-400 mt-1">Há 2 horas</p>
                   </div>
-                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100">
+                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100" role="menuitem">
                     <p className="text-sm font-medium text-gray-900">Alerta meteorológico</p>
                     <p className="text-xs text-gray-500 mt-1">Possibilidade de chuva na próxima semana</p>
                     <p className="text-xs text-gray-400 mt-1">Há 5 horas</p>
                   </div>
-                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                  <div className="px-4 py-3 hover:bg-gray-50 cursor-pointer" role="menuitem">
                     <p className="text-sm font-medium text-gray-900">Stock baixo de insumos</p>
                     <p className="text-xs text-gray-500 mt-1">Fertilizante orgânico abaixo do mínimo</p>
                     <p className="text-xs text-gray-400 mt-1">Ontem</p>
@@ -163,13 +209,17 @@ export function Header() {
           </div>
 
           {/* User Profile */}
-          <div className="relative">
+          <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => {
                 setShowUserMenu(!showUserMenu);
                 setShowNotifications(false);
               }}
               className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-lg transition"
+              aria-expanded={showUserMenu}
+              aria-haspopup="menu"
+              aria-controls="user-menu"
+              aria-label="Menu do utilizador"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">{getUserInitials()}</span>
@@ -182,16 +232,20 @@ export function Header() {
 
             {/* User Menu Dropdown */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-slide-down">
+              <div
+                id="user-menu"
+                role="menu"
+                className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 animate-slide-down"
+              >
                 <div className="px-4 py-3 border-b border-gray-200">
                   <p className="text-sm font-semibold text-gray-900">{user?.nome || 'Utilizador'}</p>
                   <p className="text-xs text-gray-500">{user?.email || ''}</p>
                 </div>
-                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2" role="menuitem">
                   <User className="w-4 h-4" />
                   Meu Perfil
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2" role="menuitem">
                   <Settings className="w-4 h-4" />
                   Definições
                 </button>
@@ -199,6 +253,7 @@ export function Header() {
                 <button
                   onClick={logout}
                   className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                  role="menuitem"
                 >
                   <LogOut className="w-4 h-4" />
                   Terminar Sessão

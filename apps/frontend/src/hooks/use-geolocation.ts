@@ -78,7 +78,9 @@ export function useGeolocation(): UseGeolocationReturn {
 
   const handleStopTracking = useCallback(() => {
     if (watchIdRef.current) {
-      clearWatch(watchIdRef.current);
+      clearWatch(watchIdRef.current).catch(() => {
+        // Ignore cleanup errors
+      });
       watchIdRef.current = null;
       setIsTracking(false);
     }
@@ -111,7 +113,9 @@ export function useGeolocation(): UseGeolocationReturn {
   useEffect(() => {
     return () => {
       if (watchIdRef.current) {
-        clearWatch(watchIdRef.current);
+        clearWatch(watchIdRef.current).catch(() => {
+          // Ignore cleanup errors on unmount
+        });
       }
     };
   }, []);

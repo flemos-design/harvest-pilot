@@ -184,40 +184,126 @@ export class IaService {
    * Acesso completo a TODOS os dados da plataforma da organização
    */
   private async buildContext(organizacaoId: string, parcelaId?: string) {
-    const context: any = {
+    const context: {
+      sources: string[];
+      data: Record<string, unknown>;
+      incomplete?: boolean;
+    } = {
       sources: [],
       data: {},
     };
 
     try {
-      // 1. ORGANIZAÇÃO - Dados gerais
-      const org = await this.prisma.organizacao.findUnique({
-        where: { id: organizacaoId },
-        include: {
-          propriedades: {
-            include: {
-              parcelas: {
-                include: {
-                  culturas: {
-                    include: {
-                      ciclos: {
-                        orderBy: { createdAt: 'desc' },
+      // BATCH 1: Todas as queries independentes em paralelo
+      const [
+        org,
+        parcela,
+        operacoesRecentes,
+        tarefas,
+        insumos,
+        calendarioRegras,
+        meteoRecente,
+        meteoHistorico,
+        todasImagens,
+      ] = await Promise.all([
+        // 1. ORGANIZAÇÃO
+        this.prisma.organizacao.findUnique({
+          where: { id: organizacaoId },
+          include: {
+            propriedades: {
+              include: {
+                parcelas: {
+                  include: {
+                    culturas: {
+                      include: {
+                        ciclos: { orderBy: { createdAt: 'desc' } },
                       },
                     },
                   },
                 },
               },
             },
+            utilizadores: { select: { nome: true, papel: true } },
           },
-          utilizadores: {
-            select: {
-              nome: true,
-              papel: true,
+        }),
+        // 2. PARCELA ESPECÍFICA
+        parcelaId
+          ? this.prisma.parcela.findUnique({
+              where: { id: parcelaId },
+              include: {
+                propriedade: true,
+                culturas: {
+                  include: {
+                    ciclos: { orderBy: { createdAt: 'desc' } },
+                  },
+                },
+                operacoes: {
+                  orderBy: { data: 'desc' },
+                  include: { operador: { select: { nome: true } } },
+                },
+                imagensRemotas: { orderBy: { data: 'desc' }, take: 10 },
+                meteo: { orderBy: { data: 'desc' }, take: 14 },
+              },
+            })
+          : Promise.resolve(null),
+        // 3. OPERAÇÕES RECENTES
+        this.prisma.operacao.findMany({
+          where: {
+            parcela: { propriedade: { organizacaoId } },
+            data: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+          },
+          include: {
+            parcela: { select: { nome: true } },
+            operador: { select: { nome: true } },
+          },
+          orderBy: { data: 'desc' },
+        }),
+        // 4. TAREFAS
+        this.prisma.tarefa.findMany({
+          where: { responsavel: { organizacaoId } },
+          include: { responsavel: { select: { nome: true } } },
+          orderBy: { dataInicio: 'asc' },
+        }),
+        // 5. INSUMOS
+        this.prisma.insumo.findMany({ orderBy: { nome: 'asc' } }),
+        // 6. CALENDÁRIO
+        this.prisma.calendarioRegra.findMany({
+          orderBy: [{ cultura: 'asc' }, { mesInicio: 'asc' }],
+        }),
+        // 7a. METEO RECENTE
+        this.prisma.meteoParcela.findMany({
+          where: {
+            parcela: { propriedade: { organizacaoId } },
+            data: { gte: new Date() },
+          },
+          include: { parcela: { select: { nome: true } } },
+          orderBy: { data: 'asc' },
+          take: 50,
+        }),
+        // 7b. METEO HISTÓRICO
+        this.prisma.meteoParcela.findMany({
+          where: {
+            parcela: { propriedade: { organizacaoId } },
+            data: {
+              lt: new Date(),
+              gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
             },
           },
-        },
-      });
+          orderBy: { data: 'desc' },
+          take: 30,
+        }),
+        // 8. IMAGENS NDVI
+        this.prisma.imagemRemota.findMany({
+          where: {
+            parcela: { propriedade: { organizacaoId } },
+            ndvi: { not: null },
+          },
+          orderBy: { data: 'desc' },
+          take: 100,
+        }),
+      ]);
 
+      // Processar ORGANIZAÇÃO
       if (org) {
         const totalParcelas = org.propriedades.reduce((sum, p) => sum + p.parcelas.length, 0);
         const totalAreaHa = org.propriedades.reduce(
@@ -248,103 +334,53 @@ export class IaService {
         context.sources.push('Organização completa');
       }
 
-      // 2. PARCELA ESPECÍFICA - Detalhes completos
-      if (parcelaId) {
-        const parcela = await this.prisma.parcela.findUnique({
-          where: { id: parcelaId },
-          include: {
-            propriedade: true,
-            culturas: {
-              include: {
-                ciclos: {
-                  orderBy: { createdAt: 'desc' },
-                },
-              },
-            },
-            operacoes: {
-              orderBy: { data: 'desc' },
-              include: {
-                operador: {
-                  select: { nome: true },
-                },
-              },
-            },
-            imagensRemotas: {
-              orderBy: { data: 'desc' },
-              take: 10,
-            },
-            meteo: {
-              orderBy: { data: 'desc' },
-              take: 14,
-            },
+      // Processar PARCELA
+      if (parcela) {
+        const culturaAtiva = parcela.culturas.find((c) =>
+          c.ciclos.some((ci) => ci.estado === 'ATIVO'),
+        );
+        const cicloAtivo = culturaAtiva?.ciclos.find((c) => c.estado === 'ATIVO');
+
+        context.data.parcela = {
+          nome: parcela.nome,
+          area: parcela.area,
+          altitude: parcela.altitude,
+          tipoSolo: parcela.tipoSolo,
+          propriedade: parcela.propriedade.nome,
+          cultura: {
+            especie: culturaAtiva?.especie || 'Sem cultura',
+            variedade: culturaAtiva?.variedade,
+            finalidade: culturaAtiva?.finalidade,
+            cicloAtual: cicloAtivo?.epoca,
+            dataInicioCiclo: cicloAtivo?.dataInicio,
           },
-        });
-
-        if (parcela) {
-          const culturaAtiva = parcela.culturas.find((c) =>
-            c.ciclos.some((ci) => ci.estado === 'ATIVO'),
-          );
-          const cicloAtivo = culturaAtiva?.ciclos.find((c) => c.estado === 'ATIVO');
-
-          context.data.parcela = {
-            nome: parcela.nome,
-            area: parcela.area,
-            altitude: parcela.altitude,
-            tipoSolo: parcela.tipoSolo,
-            propriedade: parcela.propriedade.nome,
-            cultura: {
-              especie: culturaAtiva?.especie || 'Sem cultura',
-              variedade: culturaAtiva?.variedade,
-              finalidade: culturaAtiva?.finalidade,
-              cicloAtual: cicloAtivo?.epoca,
-              dataInicioCiclo: cicloAtivo?.dataInicio,
-            },
-            operacoes: parcela.operacoes.map((op) => ({
-              tipo: op.tipo,
-              data: op.data,
-              descricao: op.descricao,
-              operador: op.operador.nome,
-              insumos: op.insumos,
-              custoTotal: op.custoTotal,
+          operacoes: parcela.operacoes.map((op) => ({
+            tipo: op.tipo,
+            data: op.data,
+            descricao: op.descricao,
+            operador: op.operador.nome,
+            insumos: op.insumos,
+            custoTotal: op.custoTotal,
+          })),
+          ndvi: parcela.imagensRemotas
+            .filter((img) => img.ndvi !== null)
+            .map((img) => ({
+              data: img.data,
+              valor: img.ndvi,
+              nuvens: img.nuvens,
             })),
-            ndvi: parcela.imagensRemotas
-              .filter((img) => img.ndvi !== null)
-              .map((img) => ({
-                data: img.data,
-                valor: img.ndvi,
-                nuvens: img.nuvens,
-              })),
-            meteo: parcela.meteo.map((m) => ({
-              data: m.data,
-              temp: m.temperatura,
-              precipitacao: m.precipitacao,
-              vento: m.vento,
-              probChuva: m.probChuva,
-            })),
-          };
-          context.sources.push('Parcela completa (histórico total)');
-        }
+          meteo: parcela.meteo.map((m) => ({
+            data: m.data,
+            temp: m.temperatura,
+            precipitacao: m.precipitacao,
+            vento: m.vento,
+            probChuva: m.probChuva,
+          })),
+        };
+        context.sources.push('Parcela completa (histórico total)');
       }
 
-      // 3. TODAS AS OPERAÇÕES RECENTES (últimos 30 dias)
-      const operacoesRecentes = await this.prisma.operacao.findMany({
-        where: {
-          parcela: {
-            propriedade: {
-              organizacaoId,
-            },
-          },
-          data: {
-            gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          },
-        },
-        include: {
-          parcela: { select: { nome: true } },
-          operador: { select: { nome: true } },
-        },
-        orderBy: { data: 'desc' },
-      });
-
+      // Processar OPERAÇÕES
       if (operacoesRecentes.length > 0) {
         context.data.operacoesRecentes = operacoesRecentes.map((op) => ({
           parcela: op.parcela.nome,
@@ -356,28 +392,14 @@ export class IaService {
         context.sources.push('Operações recentes (30 dias)');
       }
 
-      // 4. TODAS AS TAREFAS (pendentes, em curso, atrasadas)
-      const tarefas = await this.prisma.tarefa.findMany({
-        where: {
-          responsavel: {
-            organizacaoId,
-          },
-        },
-        include: {
-          responsavel: {
-            select: { nome: true },
-          },
-        },
-        orderBy: { dataInicio: 'asc' },
-      });
-
-      const tarefasPendentes = tarefas.filter((t) => t.estado === 'PLANEADA');
-      const tarefasEmCurso = tarefas.filter((t) => t.estado === 'EM_CURSO');
-      const tarefasAtrasadas = tarefas.filter(
-        (t) => t.estado !== 'CONCLUIDA' && t.dataFim && t.dataFim < new Date(),
-      );
-
+      // Processar TAREFAS
       if (tarefas.length > 0) {
+        const tarefasPendentes = tarefas.filter((t) => t.estado === 'PLANEADA');
+        const tarefasEmCurso = tarefas.filter((t) => t.estado === 'EM_CURSO');
+        const tarefasAtrasadas = tarefas.filter(
+          (t) => t.estado !== 'CONCLUIDA' && t.dataFim && t.dataFim < new Date(),
+        );
+
         context.data.tarefas = {
           total: tarefas.length,
           pendentes: tarefasPendentes.map((t) => ({
@@ -405,11 +427,7 @@ export class IaService {
         context.sources.push('Todas as tarefas');
       }
 
-      // 5. INVENTÁRIO DE INSUMOS
-      const insumos = await this.prisma.insumo.findMany({
-        orderBy: { nome: 'asc' },
-      });
-
+      // Processar INSUMOS
       if (insumos.length > 0) {
         const insumosAbaixoMinimo = insumos.filter(
           (i) => i.stockMinimo && i.stock < i.stockMinimo,
@@ -446,11 +464,7 @@ export class IaService {
         context.sources.push('Inventário completo de insumos');
       }
 
-      // 6. CALENDÁRIO AGRÍCOLA - Regras e janelas ideais
-      const calendarioRegras = await this.prisma.calendarioRegra.findMany({
-        orderBy: [{ cultura: 'asc' }, { mesInicio: 'asc' }],
-      });
-
+      // Processar CALENDÁRIO
       if (calendarioRegras.length > 0) {
         const mesAtual = new Date().getMonth() + 1;
         const regrasAtuais = calendarioRegras.filter(
@@ -479,38 +493,14 @@ export class IaService {
         context.sources.push('Calendário agrícola completo');
       }
 
-      // 7. METEOROLOGIA GLOBAL - Previsões para todas as parcelas
+      // Processar METEOROLOGIA (só se org existe)
       if (org) {
-        const meteoRecente = await this.prisma.meteoParcela.findMany({
-          where: {
-            parcela: {
-              propriedade: {
-                organizacaoId,
-              },
-            },
-            data: {
-              gte: new Date(), // Apenas previsões futuras
-            },
-          },
-          include: {
-            parcela: {
-              select: { nome: true },
-            },
-          },
-          orderBy: { data: 'asc' },
-          take: 50, // Próximos dias para várias parcelas
-        });
-
-        this.logger.debug(`Meteorologia: ${meteoRecente.length} previsões futuras encontradas para org ${organizacaoId}`);
-
         if (meteoRecente.length > 0) {
-          // Agrupar por parcela
-          const meteoGrouped: Record<string, any[]> = {};
+          const meteoGrouped: Record<string, unknown[]> = {};
           meteoRecente.forEach((m) => {
-            if (!meteoGrouped[m.parcela.nome]) {
-              meteoGrouped[m.parcela.nome] = [];
-            }
-            meteoGrouped[m.parcela.nome].push({
+            const nome = m.parcela.nome;
+            if (!meteoGrouped[nome]) meteoGrouped[nome] = [];
+            meteoGrouped[nome].push({
               data: m.data,
               temp: m.temperatura,
               tempMin: m.tempMin,
@@ -524,7 +514,7 @@ export class IaService {
 
           context.data.previsaoMeteorologica = {
             parcelas: meteoGrouped,
-            proximosDias: Object.values(meteoGrouped)[0]?.slice(0, 7) || [], // Próximos 7 dias
+            proximosDias: Object.values(meteoGrouped)[0]?.slice(0, 7) || [],
             resumo: {
               totalPrevisoes: meteoRecente.length,
               dataInicio: meteoRecente[0]?.data,
@@ -533,23 +523,6 @@ export class IaService {
           };
           context.sources.push('Previsões meteorológicas (próximos dias)');
         }
-
-        // Meteorologia histórica recente (últimos 7 dias)
-        const meteoHistorico = await this.prisma.meteoParcela.findMany({
-          where: {
-            parcela: {
-              propriedade: {
-                organizacaoId,
-              },
-            },
-            data: {
-              lt: new Date(),
-              gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            },
-          },
-          orderBy: { data: 'desc' },
-          take: 30,
-        });
 
         if (meteoHistorico.length > 0) {
           const tempMedia = meteoHistorico.reduce((sum, m) => sum + (m.temperatura || 0), 0) / meteoHistorico.length;
@@ -567,30 +540,15 @@ export class IaService {
         }
       }
 
-      // 8. ESTATÍSTICAS GLOBAIS DE NDVI
-      if (org) {
-        const todasImagens = await this.prisma.imagemRemota.findMany({
-          where: {
-            parcela: {
-              propriedade: {
-                organizacaoId,
-              },
-            },
-            ndvi: { not: null },
-          },
-          orderBy: { data: 'desc' },
-          take: 100,
-        });
-
-        if (todasImagens.length > 0) {
-          const ndviMedio = todasImagens.reduce((sum, img) => sum + (img.ndvi || 0), 0) / todasImagens.length;
-          context.data.estatisticasNDVI = {
-            numImagens: todasImagens.length,
-            ndviMedio,
-            interpretacao: this.interpretNDVI(ndviMedio),
-          };
-          context.sources.push('Estatísticas de vigor vegetativo');
-        }
+      // Processar NDVI (só se org existe)
+      if (org && todasImagens.length > 0) {
+        const ndviMedio = todasImagens.reduce((sum, img) => sum + (img.ndvi || 0), 0) / todasImagens.length;
+        context.data.estatisticasNDVI = {
+          numImagens: todasImagens.length,
+          ndviMedio,
+          interpretacao: this.interpretNDVI(ndviMedio),
+        };
+        context.sources.push('Estatísticas de vigor vegetativo');
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
