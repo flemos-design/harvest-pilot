@@ -5,7 +5,7 @@ import { Loader2, CheckCircle2, Circle, Clock, XCircle, AlertCircle, Plus, Filte
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { EstadoTarefa, PrioridadeTarefa, TipoTarefa } from '@/types';
 
 const TIPO_ICONS: Record<string, string> = {
@@ -96,7 +96,7 @@ export default function TarefasPage() {
     );
   }
 
-  const sortedTarefas = React.useMemo(() => {
+  const sortedTarefas = useMemo(() => {
     return [...(tarefas || [])].sort((a, b) => {
       // Prioridade: Urgente > Alta > Média > Baixa
       const prioridadeOrder = { URGENTE: 0, ALTA: 1, MEDIA: 2, BAIXA: 3 };
