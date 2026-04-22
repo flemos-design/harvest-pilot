@@ -341,14 +341,14 @@ export default function RelatoriosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Relatórios & Análises</h1>
-              <p className="text-gray-600 mt-1">Insights sobre operações agrícolas e análise NDVI por satélite</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Relatórios & Análises</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Insights sobre operações agrícolas e análise NDVI por satélite</p>
             </div>
 
             {/* Export Dropdown */}
@@ -373,27 +373,27 @@ export default function RelatoriosPage() {
               </button>
 
               {showExportMenu && !isDownloading && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border z-10">
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border z-10">
                   <div className="p-2">
                     <button
                       onClick={exportarPDF}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 rounded-lg transition flex items-start gap-3"
                     >
                       <FileText className="w-5 h-5 text-blue-600 mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900">Relatório Rápido</p>
-                        <p className="text-xs text-gray-500">Gerar no navegador (jsPDF)</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">Relatório Rápido</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Gerar no navegador (jsPDF)</p>
                       </div>
                     </button>
 
                     <button
                       onClick={downloadBackendPDF}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 rounded-lg transition flex items-start gap-3"
                     >
                       <FileSpreadsheet className="w-5 h-5 text-green-600 mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900">Relatório de Operações</p>
-                        <p className="text-xs text-gray-500">Formato profissional do servidor</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">Relatório de Operações</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Formato profissional do servidor</p>
                       </div>
                     </button>
 
@@ -402,12 +402,12 @@ export default function RelatoriosPage() {
                         setShowExportMenu(false);
                         setShowCadernoModal(true);
                       }}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-lg transition flex items-start gap-3"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 rounded-lg transition flex items-start gap-3"
                     >
                       <FileText className="w-5 h-5 text-purple-600 mt-0.5" />
                       <div>
-                        <p className="font-medium text-gray-900">Caderno de Campo</p>
-                        <p className="text-xs text-gray-500">Por parcela individual</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">Caderno de Campo</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Por parcela individual</p>
                       </div>
                     </button>
                   </div>
@@ -418,7 +418,7 @@ export default function RelatoriosPage() {
 
           {/* Period Selector */}
           <div className="mt-4 flex items-center gap-2">
-            <span className="text-sm text-gray-600">Período:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">Período:</span>
             <div className="flex gap-2">
               {[
                 { value: '30d' as const, label: '30 dias' },
@@ -432,14 +432,14 @@ export default function RelatoriosPage() {
                   className={`px-3 py-1 text-sm rounded-lg transition ${
                     periodo === p.value
                       ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                   }`}
                 >
                   {p.label}
                 </button>
               ))}
             </div>
-            <span className="text-sm text-gray-500 ml-4">
+            <span className="text-sm text-gray-500 dark:text-gray-400 ml-4">
               {format(dateRange.start, "d MMM yyyy", { locale: pt })} - {format(dateRange.end, "d MMM yyyy", { locale: pt })}
             </span>
           </div>
@@ -450,48 +450,48 @@ export default function RelatoriosPage() {
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* KPI Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3 mb-2">
               <Activity className="w-5 h-5 text-green-600" />
-              <p className="text-sm text-gray-600 font-medium">Total Operações</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Total Operações</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{kpis.total}</p>
-            <p className="text-xs text-gray-500 mt-1">{kpis.opsPorMes} por mês</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{kpis.total}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{kpis.opsPorMes} por mês</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3 mb-2">
               <DollarSign className="w-5 h-5 text-blue-600" />
-              <p className="text-sm text-gray-600 font-medium">Custo Total</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Custo Total</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{kpis.custoTotal.toFixed(2)}€</p>
-            <p className="text-xs text-gray-500 mt-1">Média: {kpis.custoMedio.toFixed(2)}€/op</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{kpis.custoTotal.toFixed(2)}€</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Média: {kpis.custoMedio.toFixed(2)}€/op</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3 mb-2">
               <MapPin className="w-5 h-5 text-purple-600" />
-              <p className="text-sm text-gray-600 font-medium">Talhões Ativos</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Talhões Ativos</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{kpis.parcelasAtivas}</p>
-            <p className="text-xs text-gray-500 mt-1">de {parcelas?.length || 0} totais</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{kpis.parcelasAtivas}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">de {parcelas?.length || 0} totais</p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3 mb-2">
               <TrendingUp className="w-5 h-5 text-amber-600" />
-              <p className="text-sm text-gray-600 font-medium">Custo por Hectare</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Custo por Hectare</p>
             </div>
-            <p className="text-3xl font-bold text-gray-900">{eficiencia.custoPorHa.toFixed(0)}€</p>
-            <p className="text-xs text-gray-500 mt-1">{eficiencia.opsPorHa.toFixed(1)} ops/ha</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{eficiencia.custoPorHa.toFixed(0)}€</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{eficiencia.opsPorHa.toFixed(1)} ops/ha</p>
           </div>
         </div>
 
         {/* Charts Row */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Monthly Trend */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tendência Mensal</h2>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tendência Mensal</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={tendenciaMensal}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -507,8 +507,8 @@ export default function RelatoriosPage() {
           </div>
 
           {/* Operations by Type */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Operações por Tipo</h2>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Operações por Tipo</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={opsPorTipo}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -524,9 +524,9 @@ export default function RelatoriosPage() {
         {/* Tables Row */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Cost by Type */}
-          <div className="bg-white rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border">
             <div className="p-6 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">Custos por Tipo de Operação</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Custos por Tipo de Operação</h2>
             </div>
             <div className="p-6">
               <div className="space-y-3">
@@ -534,10 +534,10 @@ export default function RelatoriosPage() {
                   <p className="text-sm text-gray-400 text-center py-4">Sem dados de custo</p>
                 ) : (
                   custoPorTipo.map((item) => (
-                    <div key={item.tipo} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={item.tipo} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{TIPO_ICONS[item.tipo] || '📋'}</span>
-                        <span className="font-medium text-gray-900">{item.tipo}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{item.tipo}</span>
                       </div>
                       <span className="text-lg font-bold text-green-600">{item.custo.toFixed(2)}€</span>
                     </div>
@@ -548,9 +548,9 @@ export default function RelatoriosPage() {
           </div>
 
           {/* Operations by Talhão */}
-          <div className="bg-white rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border">
             <div className="p-6 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">Atividade por Talhão</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Atividade por Talhão</h2>
             </div>
             <div className="p-6">
               <div className="space-y-3">
@@ -558,10 +558,10 @@ export default function RelatoriosPage() {
                   <p className="text-sm text-gray-400 text-center py-4">Sem dados</p>
                 ) : (
                   opsPorParcela.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{item.nome}</p>
-                        <p className="text-xs text-gray-500">{item.count} operações</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{item.nome}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{item.count} operações</p>
                       </div>
                       <span className="text-sm font-semibold text-green-600">{item.custo.toFixed(2)}€</span>
                     </div>
@@ -613,16 +613,16 @@ export default function RelatoriosPage() {
       {/* Caderno de Campo Modal */}
       {showCadernoModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold text-gray-900">Exportar Caderno de Campo</h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Exportar Caderno de Campo</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Seleciona o talhão para gerar o caderno de campo
               </p>
             </div>
 
             <div className="p-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Talhão
               </label>
               <select
@@ -638,7 +638,7 @@ export default function RelatoriosPage() {
                 ))}
               </select>
 
-              <div className="mt-4 text-sm text-gray-600">
+              <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
                 <p>
                   <strong>Período:</strong>{' '}
                   {format(dateRange.start, "d MMM yyyy", { locale: pt })} -{' '}
@@ -653,7 +653,7 @@ export default function RelatoriosPage() {
                   setShowCadernoModal(false);
                   setSelectedParcela('');
                 }}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 transition"
               >
                 Cancelar
               </button>

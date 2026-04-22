@@ -39,13 +39,13 @@ export default function NovoCicloPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Novo Ciclo</h1>
-              <p className="text-gray-600 mt-1">Registar novo ciclo de cultivo</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Novo Ciclo</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Registar novo ciclo de cultivo</p>
             </div>
             <Link href="/ciclos" className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition inline-flex items-center gap-2">
               <X className="w-4 h-4" />
@@ -57,27 +57,27 @@ export default function NovoCicloPage() {
 
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b">
               <div className="p-3 bg-green-100 rounded-lg">
                 <RefreshCw className="w-8 h-8 text-green-600" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Informações do Ciclo</h2>
-                <p className="text-sm text-gray-600">Preenche os dados</p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Informações do Ciclo</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Preenche os dados</p>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Época *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Época *</label>
               <input type="text" {...register('epoca')} placeholder="Ex: Primavera 2024" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" />
               {errors.epoca && <p className="mt-1 text-sm text-red-600">{errors.epoca.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Cultura *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cultura *</label>
               {loadingCulturas ? (
-                <div className="flex items-center gap-2 text-gray-500">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>A carregar...</span>
                 </div>
@@ -94,19 +94,19 @@ export default function NovoCicloPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Data Início *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data Início *</label>
                 <input type="date" {...register('dataInicio')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" />
                 {errors.dataInicio && <p className="mt-1 text-sm text-red-600">{errors.dataInicio.message}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data Fim</label>
                 <input type="date" {...register('dataFim')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado *</label>
               <select {...register('estado')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                 <option value="ATIVO">Ativo</option>
                 <option value="CONCLUIDO">Concluído</option>
@@ -132,7 +132,7 @@ export default function NovoCicloPage() {
                   </>
                 )}
               </button>
-              <Link href="/ciclos" className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium">
+              <Link href="/ciclos" className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium">
                 Cancelar
               </Link>
             </div>

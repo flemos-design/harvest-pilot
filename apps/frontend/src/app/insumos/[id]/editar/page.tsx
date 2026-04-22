@@ -71,7 +71,7 @@ export default function EditarInsumoPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">Insumo não encontrado</p>
+          <p className="text-gray-600 dark:text-gray-400">Insumo não encontrado</p>
           <Link href="/insumos" className="mt-4 inline-block text-green-600">← Voltar</Link>
         </div>
       </div>
@@ -79,13 +79,13 @@ export default function EditarInsumoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Editar Insumo</h1>
-              <p className="text-gray-600 mt-1">{insumo.nome}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Editar Insumo</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{insumo.nome}</p>
             </div>
             <Link href="/insumos" className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition inline-flex items-center gap-2">
               <X className="w-4 h-4" />
@@ -97,9 +97,9 @@ export default function EditarInsumoPage() {
 
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nome *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome *</label>
               <input
                 type="text"
                 {...register('nome')}
@@ -110,7 +110,7 @@ export default function EditarInsumoPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
                 <select
                   {...register('categoria')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
@@ -123,7 +123,7 @@ export default function EditarInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Unidade *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade *</label>
                 <input
                   type="text"
                   {...register('unidade')}
@@ -134,7 +134,7 @@ export default function EditarInsumoPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stock</label>
                 <input
                   type="number"
                   step="0.01"
@@ -144,7 +144,7 @@ export default function EditarInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Stock Mínimo</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stock Mínimo</label>
                 <input
                   type="number"
                   step="0.01"
@@ -155,7 +155,7 @@ export default function EditarInsumoPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Custo Unitário (€)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custo Unitário (€)</label>
               <input
                 type="number"
                 step="0.01"
@@ -166,7 +166,7 @@ export default function EditarInsumoPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Validade</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Validade</label>
                 <input
                   type="date"
                   {...register('validade')}
@@ -175,7 +175,7 @@ export default function EditarInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Lote</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Lote</label>
                 <input
                   type="text"
                   {...register('lote')}
@@ -202,7 +202,7 @@ export default function EditarInsumoPage() {
                   </>
                 )}
               </button>
-              <Link href="/insumos" className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium">
+              <Link href="/insumos" className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium">
                 Cancelar
               </Link>
             </div>

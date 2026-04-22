@@ -49,16 +49,16 @@ export default function ForgotPasswordPage() {
               className="h-20 w-auto"
             />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">HarvestPilot</h1>
-          <p className="text-gray-600 mt-2">Recuperação de Password</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">HarvestPilot</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Recuperação de Password</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
           {!success ? (
             <>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Esqueceste-te da password?</h2>
-              <p className="text-sm text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Esqueceste-te da password?</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                 Introduz o teu email e enviaremos um link para redefinires a password.
               </p>
 
@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email
                   </label>
                   <input
@@ -108,11 +108,11 @@ export default function ForgotPasswordPage() {
           ) : (
             <div className="text-center py-4">
               <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Email enviado!</h2>
-              <p className="text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Email enviado!</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Se o email existir na nossa base de dados, receberás um link de recuperação em breve.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Não te esqueças de verificar a pasta de spam.
               </p>
             </div>
@@ -131,7 +131,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Sistema de Gestão Agrícola com Satélite e Meteo
         </p>
       </div>

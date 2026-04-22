@@ -41,7 +41,7 @@ export default function PropriedadeDetalhesPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">Propriedade não encontrada</p>
+          <p className="text-gray-600 dark:text-gray-400">Propriedade não encontrada</p>
           <Link href="/propriedades" className="mt-4 inline-block text-green-600">← Voltar</Link>
         </div>
       </div>
@@ -49,18 +49,18 @@ export default function PropriedadeDetalhesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/propriedades" className="p-2 hover:bg-gray-100 rounded-lg transition">
+              <Link href="/propriedades" className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
                 <div className="flex items-center gap-3">
                   <Building className="w-8 h-8 text-blue-600" />
-                  <h1 className="text-3xl font-bold text-gray-900">{propriedade.nome}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{propriedade.nome}</h1>
                 </div>
                 {propriedade.organizacao && (
                   <div className="mt-2">
@@ -96,28 +96,28 @@ export default function PropriedadeDetalhesPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Informações Gerais */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Informações Gerais</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Informações Gerais</h2>
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Nome</span>
-                  <span className="font-medium text-gray-900">{propriedade.nome}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Nome</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{propriedade.nome}</span>
                 </div>
                 {propriedade.descricao && (
                   <div className="py-2 border-b">
-                    <span className="text-gray-600 block mb-1">Descrição</span>
-                    <p className="text-gray-900">{propriedade.descricao}</p>
+                    <span className="text-gray-600 dark:text-gray-400 block mb-1">Descrição</span>
+                    <p className="text-gray-900 dark:text-gray-100">{propriedade.descricao}</p>
                   </div>
                 )}
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-gray-600">Organização</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-gray-600 dark:text-gray-400">Organização</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
                     {propriedade.organizacao?.nome || 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Talhões/Terrenos</span>
-                  <span className="font-medium text-gray-900">{propriedade._count?.parcelas || 0}</span>
+                  <span className="text-gray-600 dark:text-gray-400">Talhões/Terrenos</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{propriedade._count?.parcelas || 0}</span>
                 </div>
               </div>
             </div>
@@ -126,22 +126,22 @@ export default function PropriedadeDetalhesPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Stats Card */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Estatísticas</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Estatísticas</h3>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <MapPin className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{propriedade._count?.parcelas || 0}</p>
-                  <p className="text-xs text-gray-600">Talhões/Terrenos</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{propriedade._count?.parcelas || 0}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Talhões/Terrenos</p>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Ações Rápidas</h3>
               <div className="space-y-2">
                 <Link
                   href={`/propriedades/${id}/editar`}
@@ -161,19 +161,19 @@ export default function PropriedadeDetalhesPage() {
             </div>
 
             {/* Meta Info */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Informação do Sistema</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Informação do Sistema</h3>
               <div className="space-y-3 text-sm">
                 <div>
-                  <p className="text-gray-600 mb-1">Criada</p>
-                  <div className="flex items-center gap-2 text-gray-900">
+                  <p className="text-gray-600 dark:text-gray-400 mb-1">Criada</p>
+                  <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                     <Calendar className="w-4 h-4" />
                     <span>{format(new Date(propriedade.createdAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-gray-600 mb-1">Atualizada</p>
-                  <div className="flex items-center gap-2 text-gray-900">
+                  <p className="text-gray-600 dark:text-gray-400 mb-1">Atualizada</p>
+                  <div className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                     <Calendar className="w-4 h-4" />
                     <span>{format(new Date(propriedade.updatedAt), "d/MM/yyyy 'às' HH:mm", { locale: pt })}</span>
                   </div>

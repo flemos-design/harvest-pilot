@@ -47,13 +47,13 @@ export default function NovoInsumoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Novo Insumo</h1>
-              <p className="text-gray-600 mt-1">Adicionar produto ao inventário</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Novo Insumo</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Adicionar produto ao inventário</p>
             </div>
             <Link
               href="/insumos"
@@ -68,10 +68,10 @@ export default function NovoInsumoPage() {
 
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nome *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome *</label>
               <input
                 type="text"
                 {...register('nome')}
@@ -84,7 +84,7 @@ export default function NovoInsumoPage() {
             {/* Categoria e Unidade */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoria *</label>
                 <select
                   {...register('categoria')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
@@ -99,7 +99,7 @@ export default function NovoInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Unidade *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unidade *</label>
                 <input
                   type="text"
                   {...register('unidade')}
@@ -113,7 +113,7 @@ export default function NovoInsumoPage() {
             {/* Stock */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Stock Inicial</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stock Inicial</label>
                 <input
                   type="number"
                   step="0.01"
@@ -124,7 +124,7 @@ export default function NovoInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Stock Mínimo (alerta)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stock Mínimo (alerta)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -137,7 +137,7 @@ export default function NovoInsumoPage() {
 
             {/* Custo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Custo Unitário (€)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custo Unitário (€)</label>
               <input
                 type="number"
                 step="0.01"
@@ -151,7 +151,7 @@ export default function NovoInsumoPage() {
             {/* Validade e Lote */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Data de Validade</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data de Validade</label>
                 <input
                   type="date"
                   {...register('validade')}
@@ -161,7 +161,7 @@ export default function NovoInsumoPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nº Lote</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nº Lote</label>
                 <input
                   type="text"
                   {...register('lote')}
@@ -208,7 +208,7 @@ export default function NovoInsumoPage() {
               </button>
               <Link
                 href="/insumos"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
               >
                 Cancelar
               </Link>

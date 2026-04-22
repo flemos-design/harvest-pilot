@@ -24,7 +24,7 @@ const ESTADO_COLORS: Record<EstadoTarefa, string> = {
   PLANEADA: 'bg-blue-100 text-blue-800 border-blue-300',
   EM_CURSO: 'bg-yellow-100 text-yellow-800 border-yellow-300',
   CONCLUIDA: 'bg-green-100 text-green-800 border-green-300',
-  CANCELADA: 'bg-gray-100 text-gray-800 border-gray-300',
+  CANCELADA: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300',
 };
 
 const ESTADO_ICONS: Record<EstadoTarefa, any> = {
@@ -35,7 +35,7 @@ const ESTADO_ICONS: Record<EstadoTarefa, any> = {
 };
 
 const PRIORIDADE_COLORS: Record<string, string> = {
-  BAIXA: 'bg-gray-100 text-gray-700',
+  BAIXA: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
   MEDIA: 'bg-blue-100 text-blue-700',
   ALTA: 'bg-orange-100 text-orange-700',
   URGENTE: 'bg-red-100 text-red-700',
@@ -108,7 +108,7 @@ export default function TarefaDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar tarefa</h2>
-          <p className="text-gray-600">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Tarefa não encontrada'}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Tarefa não encontrada'}</p>
           <Link href="/tarefas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar para tarefas
           </Link>
@@ -125,20 +125,20 @@ export default function TarefaDetailPage() {
   const podeEditar = tarefa.estado !== 'CONCLUIDA' && tarefa.estado !== 'CANCELADA';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/tarefas" className="p-2 hover:bg-gray-100 rounded-lg transition">
+              <Link href="/tarefas" className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div className="flex items-center gap-3">
                 <span className="text-4xl">{TIPO_ICONS[tarefa.tipo] || '📋'}</span>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{tarefa.titulo}</h1>
-                  <p className="text-gray-600 mt-1">Detalhes da tarefa</p>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{tarefa.titulo}</h1>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">Detalhes da tarefa</p>
                 </div>
               </div>
             </div>
@@ -206,51 +206,51 @@ export default function TarefaDetailPage() {
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Descrição */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Descrição</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Descrição</h2>
               {tarefa.descricao ? (
-                <p className="text-gray-700 whitespace-pre-wrap">{tarefa.descricao}</p>
+                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{tarefa.descricao}</p>
               ) : (
                 <p className="text-gray-400 italic">Sem descrição</p>
               )}
             </div>
 
             {/* Informações */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Informações</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Informações</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Tipo</p>
-                  <p className="font-medium text-gray-900 flex items-center gap-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tipo</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
                     <span>{TIPO_ICONS[tarefa.tipo]}</span>
                     {tarefa.tipo}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Prioridade</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Prioridade</p>
                   <span className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${PRIORIDADE_COLORS[tarefa.prioridade]}`}>
                     {tarefa.prioridade}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Início Planeado</p>
-                  <p className="font-medium text-gray-900 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Início Planeado</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     {format(new Date(tarefa.dataInicio), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                   </p>
                 </div>
                 {tarefa.dataFim && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Fim Planeado</p>
-                    <p className="font-medium text-gray-900 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-500" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Fim Planeado</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       {format(new Date(tarefa.dataFim), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
                     </p>
                   </div>
                 )}
                 {tarefa.dataConclusao && (
                   <div className="md:col-span-2">
-                    <p className="text-sm text-gray-600 mb-1">Data de Conclusão</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data de Conclusão</p>
                     <p className="font-medium text-green-600 flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4" />
                       {format(new Date(tarefa.dataConclusao), "d 'de' MMMM 'às' HH:mm", { locale: pt })}
@@ -262,31 +262,31 @@ export default function TarefaDetailPage() {
 
             {/* Janela Meteo (se disponível) */}
             {tarefa.janelaMeteo && Object.keys(tarefa.janelaMeteo).length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Condições Meteorológicas</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Condições Meteorológicas</h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   {tarefa.janelaMeteo.score && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Avaliação Geral</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Avaliação Geral</p>
                       <p className="text-2xl font-bold text-green-600">{tarefa.janelaMeteo.score}%</p>
                     </div>
                   )}
                   {tarefa.janelaMeteo.temp && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Temperatura</p>
-                      <p className="font-medium text-gray-900">{tarefa.janelaMeteo.temp}°C</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Temperatura</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{tarefa.janelaMeteo.temp}°C</p>
                     </div>
                   )}
                   {tarefa.janelaMeteo.chuva !== undefined && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Probabilidade de Chuva</p>
-                      <p className="font-medium text-gray-900">{tarefa.janelaMeteo.chuva}%</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Probabilidade de Chuva</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{tarefa.janelaMeteo.chuva}%</p>
                     </div>
                   )}
                   {tarefa.janelaMeteo.vento && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Vento</p>
-                      <p className="font-medium text-gray-900">{tarefa.janelaMeteo.vento} km/h</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Vento</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{tarefa.janelaMeteo.vento} km/h</p>
                     </div>
                   )}
                 </div>
@@ -297,8 +297,8 @@ export default function TarefaDetailPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Estado */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Estado</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Estado</h3>
               <div className="space-y-3">
                 <div className={`p-4 rounded-lg border-2 ${ESTADO_COLORS[tarefa.estado]}`}>
                   <div className="flex items-center gap-2">
@@ -309,7 +309,7 @@ export default function TarefaDetailPage() {
 
                 {podeEditar && (
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600 mb-2">Alterar estado:</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Alterar estado:</p>
                     {tarefa.estado !== 'EM_CURSO' && (
                       <button
                         onClick={() => handleEstadoChange('EM_CURSO')}
@@ -346,13 +346,13 @@ export default function TarefaDetailPage() {
               <div className="space-y-2">
                 <Link
                   href="/tarefas"
-                  className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                  className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                 >
                   📋 Ver Todas as Tarefas
                 </Link>
                 <Link
                   href="/tarefas/nova"
-                  className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                  className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                 >
                   ➕ Nova Tarefa
                 </Link>
@@ -360,7 +360,7 @@ export default function TarefaDetailPage() {
             </div>
 
             {/* Timestamps */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 text-sm text-gray-600 dark:text-gray-400">
               <p className="mb-1">
                 <span className="font-medium">Criada:</span>{' '}
                 {format(new Date(tarefa.createdAt), "d MMM, yyyy 'às' HH:mm", { locale: pt })}

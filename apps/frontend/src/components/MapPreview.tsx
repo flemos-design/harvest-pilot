@@ -157,21 +157,21 @@ export function MapPreview({ latitude, longitude, height = '300px' }: MapPreview
   }, [latitude, longitude, isLoaded]);
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50">
+    <div className="relative w-full rounded-lg overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 dark:bg-gray-900">
       <div ref={mapContainer} style={{ height }} className="w-full" />
 
       {!latitude || !longitude ? (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black bg-opacity-10">
-          <div className="bg-white px-4 py-2 rounded-lg shadow-md">
-            <p className="text-sm text-gray-600 font-medium">
+          <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-md">
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               Captura o GPS para ver o preview
             </p>
           </div>
         </div>
       ) : (
-        <div className="absolute top-3 left-3 bg-white px-3 py-2 rounded-lg shadow-md text-xs">
+        <div className="absolute top-3 left-3 bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md text-xs">
           <p className="font-semibold text-green-600">Preview da Localização</p>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
             {latitude.toFixed(6)}, {longitude.toFixed(6)}
           </p>
         </div>

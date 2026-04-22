@@ -136,7 +136,7 @@ export default function EditarParcelaPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar talhão</h2>
-          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
+          <p className="text-gray-600 dark:text-gray-400">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
           <Link href="/parcelas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar aos talhões
           </Link>
@@ -146,14 +146,14 @@ export default function EditarParcelaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Editar Terreno</h1>
-              <p className="text-gray-600 mt-1">{parcela.nome}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Editar Terreno</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{parcela.nome}</p>
             </div>
             <Link
               href={`/parcelas/${id}`}
@@ -169,10 +169,10 @@ export default function EditarParcelaPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nome do Talhão *
               </label>
               <input
@@ -188,7 +188,7 @@ export default function EditarParcelaPage() {
 
             {/* Propriedade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Propriedade *
               </label>
               <select
@@ -209,7 +209,7 @@ export default function EditarParcelaPage() {
 
             {/* Área */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Área (hectares) *
               </label>
               <input
@@ -223,12 +223,12 @@ export default function EditarParcelaPage() {
               {errors.area && (
                 <p className="mt-1 text-sm text-red-600">{errors.area.message}</p>
               )}
-              <p className="mt-1 text-xs text-gray-500">1 hectare = 10.000 m²</p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">1 hectare = 10.000 m²</p>
             </div>
 
             {/* Altitude */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Altitude (metros)
               </label>
               <input
@@ -242,7 +242,7 @@ export default function EditarParcelaPage() {
 
             {/* Tipo de Solo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Solo
               </label>
               <select
@@ -260,7 +260,7 @@ export default function EditarParcelaPage() {
 
             {/* Map Preview */}
             <div className="border-t pt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-green-600" />
                 Localização Atual
               </h3>
@@ -276,10 +276,10 @@ export default function EditarParcelaPage() {
             <div className="border-t pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Atualizar Localização GPS
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Opcional: Atualiza o centro do terreno e regenera a geometria
                   </p>
                 </div>
@@ -306,7 +306,7 @@ export default function EditarParcelaPage() {
               {useGPS && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Latitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Latitude</label>
                     <input
                       type="number"
                       step="any"
@@ -316,7 +316,7 @@ export default function EditarParcelaPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Longitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Longitude</label>
                     <input
                       type="number"
                       step="any"
@@ -364,7 +364,7 @@ export default function EditarParcelaPage() {
               </button>
               <Link
                 href={`/parcelas/${id}`}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
               >
                 Cancelar
               </Link>

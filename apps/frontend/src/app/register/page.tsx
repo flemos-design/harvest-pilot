@@ -52,8 +52,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Criar Conta</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Criar Conta</h2>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -64,7 +64,7 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nome Completo *
               </label>
               <input
@@ -80,7 +80,7 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email *
               </label>
               <input
@@ -96,7 +96,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password *
               </label>
               <input
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Confirmar Password *
               </label>
               <input
@@ -148,7 +148,7 @@ export default function RegisterPage() {
 
           {/* Login Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Já tens conta?{' '}
               <Link href="/login" className="text-green-600 hover:text-green-700 font-medium">
                 Fazer login
@@ -158,7 +158,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Sistema de Gestão Agrícola com Satélite e Meteo
         </p>
       </div>

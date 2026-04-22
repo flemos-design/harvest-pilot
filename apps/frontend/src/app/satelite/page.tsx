@@ -80,31 +80,31 @@ export default function SateliteGaleriaPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                 <Satellite className="w-8 h-8 text-blue-600" />
                 Galeria de Satélite
               </h1>
-              <p className="text-gray-600 mt-1">Visualização de imagens remotas de todos os terrenos</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Visualização de imagens remotas de todos os terrenos</p>
             </div>
           </div>
 
           {/* Filters */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-600" />
+              <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <select
                 value={parcelaFilter}
                 onChange={(e) => setParcelaFilter(e.target.value)}
@@ -120,7 +120,7 @@ export default function SateliteGaleriaPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Ordenar por:</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Ordenar por:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -138,36 +138,36 @@ export default function SateliteGaleriaPage() {
       {/* Stats */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <ImageIcon className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total de Imagens</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total de Imagens</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-100 rounded-lg">
                 <MapPin className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Terrenos Cobertos</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.parcelas}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Terrenos Cobertos</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.parcelas}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Cloud className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Qualidade Média</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.mediaQualidade}%</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Qualidade Média</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.mediaQualidade}%</p>
               </div>
             </div>
           </div>
@@ -177,10 +177,10 @@ export default function SateliteGaleriaPage() {
       {/* Gallery */}
       <main className="container mx-auto px-4 pb-8">
         {!imagensFiltradas || imagensFiltradas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <Satellite className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhuma imagem disponível</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nenhuma imagem disponível</h3>
+            <p className="text-gray-600 dark:text-gray-400">
               {parcelaFilter
                 ? 'Nenhuma imagem encontrada para este terreno'
                 : 'Ainda não há imagens de satélite no sistema'}
@@ -191,7 +191,7 @@ export default function SateliteGaleriaPage() {
             {imagensFiltradas.map((imagem: any) => (
               <div
                 key={imagem.id}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-lg transition overflow-hidden"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-lg transition overflow-hidden"
               >
                 {/* Image Preview */}
                 {imagem.urlImagem ? (
@@ -223,47 +223,47 @@ export default function SateliteGaleriaPage() {
                       <MapPin className="w-3 h-3" />
                       {imagem.parcela?.nome || 'Terreno'}
                     </Link>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {format(new Date(imagem.data), "d 'de' MMMM 'de' yyyy", { locale: pt })}
                     </p>
                   </div>
 
                   {/* Indices */}
                   <div className="grid grid-cols-2 gap-3 mb-3">
-                    <div className="bg-gray-50 rounded p-2">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
-                        <TrendingUp className="w-3 h-3 text-gray-500" />
-                        <span className="text-xs text-gray-600">NDVI</span>
+                        <TrendingUp className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">NDVI</span>
                       </div>
                       <p className={`text-lg font-bold ${getIndexColor(imagem.ndvi)}`}>
                         {imagem.ndvi !== null && imagem.ndvi !== undefined ? imagem.ndvi.toFixed(2) : 'N/A'}
                       </p>
                     </div>
 
-                    <div className="bg-gray-50 rounded p-2">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
-                        <TrendingUp className="w-3 h-3 text-gray-500" />
-                        <span className="text-xs text-gray-600">NDRE</span>
+                        <TrendingUp className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">NDRE</span>
                       </div>
                       <p className={`text-lg font-bold ${getIndexColor(imagem.ndre)}`}>
                         {imagem.ndre !== null && imagem.ndre !== undefined ? imagem.ndre.toFixed(2) : 'N/A'}
                       </p>
                     </div>
 
-                    <div className="bg-gray-50 rounded p-2">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
-                        <TrendingUp className="w-3 h-3 text-gray-500" />
-                        <span className="text-xs text-gray-600">EVI</span>
+                        <TrendingUp className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">EVI</span>
                       </div>
                       <p className={`text-lg font-bold ${getIndexColor(imagem.evi)}`}>
                         {imagem.evi !== null && imagem.evi !== undefined ? imagem.evi.toFixed(2) : 'N/A'}
                       </p>
                     </div>
 
-                    <div className="bg-gray-50 rounded p-2">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded p-2">
                       <div className="flex items-center gap-1 mb-1">
-                        <Cloud className="w-3 h-3 text-gray-500" />
-                        <span className="text-xs text-gray-600">Nuvens</span>
+                        <Cloud className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Nuvens</span>
                       </div>
                       <p className={`text-lg font-bold ${getCloudColor(imagem.nuvens)}`}>
                         {imagem.nuvens !== null && imagem.nuvens !== undefined ? `${imagem.nuvens}%` : 'N/A'}
@@ -274,8 +274,8 @@ export default function SateliteGaleriaPage() {
                   {/* Footer */}
                   {imagem.fonte && (
                     <div className="pt-3 border-t">
-                      <p className="text-xs text-gray-500">
-                        Fonte: <span className="font-medium text-gray-700">{imagem.fonte}</span>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Fonte: <span className="font-medium text-gray-700 dark:text-gray-300">{imagem.fonte}</span>
                       </p>
                     </div>
                   )}

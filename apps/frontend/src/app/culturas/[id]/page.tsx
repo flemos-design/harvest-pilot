@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 const CICLO_STATUS_COLORS = {
   ATIVO: 'bg-green-100 text-green-800',
-  CONCLUIDO: 'bg-gray-100 text-gray-800',
+  CONCLUIDO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
   CANCELADO: 'bg-red-100 text-red-800',
 };
 
@@ -123,7 +123,7 @@ export default function CulturaDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar cultura</h2>
-          <p className="text-gray-600">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Cultura não encontrada'}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Cultura não encontrada'}</p>
           <Link href="/culturas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar para culturas
           </Link>
@@ -137,15 +137,15 @@ export default function CulturaDetailPage() {
   const totalCiclos = cultura.ciclos?.length || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href="/culturas"
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
@@ -156,9 +156,9 @@ export default function CulturaDetailPage() {
                   <Axe className="w-10 h-10 text-amber-600" />
                 )}
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{cultura.especie}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{cultura.especie}</h1>
                   {cultura.variedade && (
-                    <p className="text-gray-600 mt-1">{cultura.variedade}</p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">{cultura.variedade}</p>
                   )}
                 </div>
               </div>
@@ -190,33 +190,33 @@ export default function CulturaDetailPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Info Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
               <Sprout className="w-6 h-6 text-green-600" />
-              <p className="text-sm text-gray-600 font-medium">Finalidade</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Finalidade</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{cultura.finalidade}</p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{cultura.finalidade}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {cultura.finalidade === 'FRUTO' ? 'Produção de frutos' : 'Produção madeireira'}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
               <Calendar className="w-6 h-6 text-blue-600" />
-              <p className="text-sm text-gray-600 font-medium">Ciclos Ativos</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Ciclos Ativos</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{ciclosAtivos}</p>
-            <p className="text-xs text-gray-500 mt-1">{totalCiclos} total</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{ciclosAtivos}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{totalCiclos} total</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
-              <Calendar className="w-6 h-6 text-gray-600" />
-              <p className="text-sm text-gray-600 font-medium">Ciclos Concluídos</p>
+              <Calendar className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Ciclos Concluídos</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{ciclosConcluidos}</p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{ciclosConcluidos}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Criada em {format(new Date(cultura.createdAt), 'dd MMM yyyy', { locale: pt })}
             </p>
           </div>
@@ -225,21 +225,21 @@ export default function CulturaDetailPage() {
         {/* Detalhes e Ciclos */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Detalhes */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Detalhes</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Detalhes</h2>
             <dl className="space-y-4">
               <div>
-                <dt className="text-sm font-medium text-gray-600">Espécie</dt>
-                <dd className="mt-1 text-lg text-gray-900">{cultura.especie}</dd>
+                <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Espécie</dt>
+                <dd className="mt-1 text-lg text-gray-900 dark:text-gray-100">{cultura.especie}</dd>
               </div>
               {cultura.variedade && (
                 <div>
-                  <dt className="text-sm font-medium text-gray-600">Variedade</dt>
-                  <dd className="mt-1 text-lg text-gray-900">{cultura.variedade}</dd>
+                  <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Variedade</dt>
+                  <dd className="mt-1 text-lg text-gray-900 dark:text-gray-100">{cultura.variedade}</dd>
                 </div>
               )}
               <div>
-                <dt className="text-sm font-medium text-gray-600">Finalidade</dt>
+                <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Finalidade</dt>
                 <dd className="mt-1">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
@@ -258,16 +258,16 @@ export default function CulturaDetailPage() {
                 </dd>
               </div>
               <div className="pt-4 border-t">
-                <dt className="text-sm font-medium text-gray-600">Criada em</dt>
-                <dd className="mt-1 text-sm text-gray-900">
+                <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Criada em</dt>
+                <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                   {format(new Date(cultura.createdAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
                     locale: pt,
                   })}
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-gray-600">Última atualização</dt>
-                <dd className="mt-1 text-sm text-gray-900">
+                <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Última atualização</dt>
+                <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                   {format(new Date(cultura.updatedAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
                     locale: pt,
                   })}
@@ -277,12 +277,12 @@ export default function CulturaDetailPage() {
           </div>
 
           {/* Ciclos */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Ciclos</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Ciclos</h2>
               <div className="flex items-center gap-3">
                 {totalCiclos > 0 && (
-                  <span className="text-sm text-gray-500">{totalCiclos} {totalCiclos === 1 ? 'ciclo' : 'ciclos'}</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{totalCiclos} {totalCiclos === 1 ? 'ciclo' : 'ciclos'}</span>
                 )}
                 <button
                   onClick={() => setShowNovoCiclo(!showNovoCiclo)}
@@ -305,11 +305,11 @@ export default function CulturaDetailPage() {
 
             {/* Formulário Novo Ciclo */}
             {showNovoCiclo && (
-              <form onSubmit={handleCreateCiclo} className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="font-medium text-gray-900 mb-4">Criar Novo Ciclo</h3>
+              <form onSubmit={handleCreateCiclo} className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4">Criar Novo Ciclo</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Época *
                     </label>
                     <input
@@ -323,7 +323,7 @@ export default function CulturaDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Estado
                     </label>
                     <select
@@ -338,7 +338,7 @@ export default function CulturaDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Data Início *
                     </label>
                     <input
@@ -351,7 +351,7 @@ export default function CulturaDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Data Fim
                     </label>
                     <input
@@ -367,7 +367,7 @@ export default function CulturaDetailPage() {
                   <button
                     type="button"
                     onClick={() => setShowNovoCiclo(false)}
-                    className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                    className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition"
                   >
                     Cancelar
                   </button>
@@ -395,24 +395,24 @@ export default function CulturaDetailPage() {
             {!cultura.ciclos || cultura.ciclos.length === 0 ? (
               <div className="text-center py-8">
                 <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-600">Nenhum ciclo registado</p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-gray-600 dark:text-gray-400">Nenhum ciclo registado</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Clica em "Novo Ciclo" para criar o primeiro ciclo
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
                 {cultura.ciclos.map((ciclo) => (
-                  <div key={ciclo.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition">
+                  <div key={ciclo.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-gray-300 transition">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
-                          <p className="font-medium text-gray-900">{ciclo.epoca}</p>
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{ciclo.epoca}</p>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${CICLO_STATUS_COLORS[ciclo.estado]}`}>
                             {ciclo.estado}
                           </span>
                         </div>
-                        <div className="text-sm text-gray-600 space-y-1">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                           <p>Início: {format(new Date(ciclo.dataInicio), 'dd/MM/yyyy', { locale: pt })}</p>
                           {ciclo.dataFim && (
                             <p>Fim: {format(new Date(ciclo.dataFim), 'dd/MM/yyyy', { locale: pt })}</p>
@@ -423,7 +423,7 @@ export default function CulturaDetailPage() {
                         {ciclo.estado === 'ATIVO' && (
                           <button
                             onClick={() => handleUpdateCicloEstado(ciclo.id, 'CONCLUIDO')}
-                            className="p-1.5 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded transition"
+                            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition"
                             title="Marcar como concluído"
                           >
                             <Calendar className="w-4 h-4" />
@@ -432,7 +432,7 @@ export default function CulturaDetailPage() {
                         <button
                           onClick={() => handleDeleteCiclo(ciclo.id, ciclo.epoca)}
                           disabled={deleteCiclo.isPending}
-                          className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition disabled:opacity-50"
+                          className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition disabled:opacity-50"
                           title="Eliminar ciclo"
                         >
                           <Trash2 className="w-4 h-4" />

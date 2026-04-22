@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { useTheme } from '@/contexts/ThemeContext';
 import FloatingChat from './FloatingChat';
 import SWUpdateNotification from './SWUpdateNotification';
 
@@ -22,8 +23,10 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
+  const { theme } = useTheme();
+
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={`flex h-screen bg-gray-50 dark:bg-gray-900 dark:bg-gray-900 transition-colors ${theme}`}>
       {/* Sidebar */}
       <Sidebar />
 

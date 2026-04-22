@@ -38,21 +38,21 @@ export default function PropriedadesPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar propriedades</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Propriedades</h1>
-              <p className="text-gray-600 mt-1">Gestão de propriedades e localidades</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Propriedades</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Gestão de propriedades e localidades</p>
             </div>
             <Link
               href="/propriedades/nova"
@@ -65,7 +65,7 @@ export default function PropriedadesPage() {
 
           {/* Filter */}
           <div className="flex items-center gap-3">
-            <Filter className="w-4 h-4 text-gray-600" />
+            <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
             <select
               value={organizacaoFilter}
               onChange={(e) => setOrganizacaoFilter(e.target.value)}
@@ -83,10 +83,10 @@ export default function PropriedadesPage() {
       {/* Propriedades List */}
       <main className="container mx-auto px-4 py-8">
         {!propriedades || propriedades.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhuma propriedade</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nenhuma propriedade</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               {organizacaoFilter
                 ? 'Nenhuma propriedade encontrada para esta organização'
                 : 'Começa por criar a tua primeira propriedade'}
@@ -104,20 +104,20 @@ export default function PropriedadesPage() {
             {propriedades.map((prop) => (
               <div
                 key={prop.id}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-md transition"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <Building className="w-6 h-6 text-blue-600" />
-                        <h3 className="text-xl font-bold text-gray-900">{prop.nome}</h3>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{prop.nome}</h3>
                       </div>
                       {prop.descricao && (
-                        <p className="text-sm text-gray-600 mb-3">{prop.descricao}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{prop.descricao}</p>
                       )}
                       {prop.organizacao && (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                           <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
                             {prop.organizacao.nome}
                           </span>
@@ -127,12 +127,12 @@ export default function PropriedadesPage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-1 gap-3 mb-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-1 gap-3 mb-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <MapPin className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       <div>
-                        <p className="text-xs text-gray-600">Talhões/Terrenos</p>
-                        <p className="text-lg font-semibold text-gray-900">
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Talhões/Terrenos</p>
+                        <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                           {prop._count?.parcelas || 0}
                         </p>
                       </div>
@@ -140,7 +140,7 @@ export default function PropriedadesPage() {
                   </div>
 
                   {/* Meta */}
-                  <div className="text-xs text-gray-500 mb-4">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                     Criada em {format(new Date(prop.createdAt), "d 'de' MMM yyyy", { locale: pt })}
                   </div>
 
@@ -155,7 +155,7 @@ export default function PropriedadesPage() {
                     </Link>
                     <Link
                       href={`/propriedades/${prop.id}/editar`}
-                      className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-sm inline-flex items-center gap-2"
+                      className="px-3 py-2 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition text-sm inline-flex items-center gap-2"
                     >
                       <Edit className="w-4 h-4" />
                     </Link>

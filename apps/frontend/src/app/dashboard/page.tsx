@@ -35,7 +35,7 @@ const PRIORITY_COLORS: Record<string, string> = {
   URGENTE: 'text-red-600 bg-red-50 border-red-200',
   ALTA: 'text-amber-600 bg-amber-50 border-amber-200',
   MEDIA: 'text-blue-600 bg-blue-50 border-blue-200',
-  BAIXA: 'text-gray-600 bg-gray-50 border-gray-200',
+  BAIXA: 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700',
 };
 
 export default function DashboardPage() {
@@ -114,14 +114,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
                 Visão geral da exploração agrícola com monitorização de vigor por satélite (Sentinel Hub) e alertas meteorológicos (IPMA)
               </p>
             </div>
@@ -132,11 +132,11 @@ export default function DashboardPage() {
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* ========== ALERTAS & INSIGHTS ========== */}
         {(insights && insights.length > 0) || (criticalParcelas && criticalParcelas.length > 0) ? (
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-2 mb-4">
               <Brain className="w-5 h-5 text-purple-600" />
-              <h2 className="text-lg font-semibold text-gray-900">Alertas Inteligentes</h2>
-              <span className="text-xs text-gray-500 ml-auto">Via Assistente IA</span>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Alertas Inteligentes</h2>
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">Via Assistente IA</span>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {insights?.slice(0, 3).map((insight, idx) => (
@@ -207,9 +207,9 @@ export default function DashboardPage() {
         {/* ========== PREVISÃO DETALHADA + TAREFAS + INSUMOS ========== */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Previsão Meteorológica */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Sun className="w-5 h-5 text-amber-500" />
                 Previsão {primeiraParcela ? `— ${primeiraParcela.nome}` : 'Meteorológica'}
               </h3>
@@ -217,17 +217,17 @@ export default function DashboardPage() {
             {forecast && forecast.length > 0 ? (
               <div className="space-y-3">
                 {forecast.slice(0, 3).map((day, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-gray-700 w-20">
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 w-20">
                         {idx === 0 ? 'Hoje' : format(new Date(day.data), 'EEE', { locale: pt })}
                       </span>
-                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
                         <Thermometer className="w-4 h-4 text-red-400" />
                         {day.tempMin?.toFixed(0)}–{day.tempMax?.toFixed(0)}°C
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                       <span className="flex items-center gap-1">
                         <Droplets className="w-4 h-4 text-blue-400" />
                         {day.probChuva || 0}%
@@ -250,9 +250,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Tarefas Prioritárias */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-500" />
                 Tarefas Prioritárias
               </h3>
@@ -273,7 +273,7 @@ export default function DashboardPage() {
                             {tarefa.dataFim && ` → ${format(new Date(tarefa.dataFim), 'd MMM', { locale: pt })}`}
                           </p>
                         </div>
-                        <span className="text-xs font-medium px-2 py-0.5 bg-white/60 rounded">
+                        <span className="text-xs font-medium px-2 py-0.5 bg-white dark:bg-gray-800/60 rounded">
                           {tarefa.estado === 'EM_CURSO' ? '▶ Em curso' : tarefa.prioridade}
                         </span>
                       </div>
@@ -290,9 +290,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Insumos em Alerta */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Package className="w-5 h-5 text-amber-500" />
                 Insumos em Alerta
               </h3>
@@ -307,8 +307,8 @@ export default function DashboardPage() {
                   {lowStock.slice(0, 3).map((insumo) => (
                     <div key={insumo.id} className="flex items-center justify-between p-2 bg-amber-50 rounded border border-amber-100">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{insumo.nome}</p>
-                        <p className="text-xs text-gray-600">{insumo.categoria}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{insumo.nome}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">{insumo.categoria}</p>
                       </div>
                       <span className="text-sm font-bold text-amber-700">{insumo.stock} {insumo.unidade}</span>
                     </div>
@@ -321,8 +321,8 @@ export default function DashboardPage() {
                   {expiringSoon.slice(0, 3).map((insumo) => (
                     <div key={insumo.id} className="flex items-center justify-between p-2 bg-red-50 rounded border border-red-100">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{insumo.nome}</p>
-                        <p className="text-xs text-gray-600">{insumo.categoria}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{insumo.nome}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">{insumo.categoria}</p>
                       </div>
                       <span className="text-xs font-medium text-red-700">
                         {insumo.validade ? format(new Date(insumo.validade), 'd MMM yyyy', { locale: pt }) : '—'}
@@ -375,8 +375,8 @@ export default function DashboardPage() {
 
         {/* ========== CHARTS ========== */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Operações por Tipo</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Operações por Tipo</h3>
             {operacoesPorTipo && operacoesPorTipo.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -402,8 +402,8 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Operações por Mês</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Operações por Mês</h3>
             {operacoesPorMes && operacoesPorMes.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={operacoesPorMes}>
@@ -423,9 +423,9 @@ export default function DashboardPage() {
 
         {/* ========== ATIVIDADE RECENTE + TERRENOS ========== */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Atividade Recente</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Atividade Recente</h3>
               <Link href="/operacoes" className="text-sm text-green-600 hover:text-green-700">
                 Ver todas →
               </Link>
@@ -436,9 +436,9 @@ export default function DashboardPage() {
                   <div key={operacao.id} className="flex items-start gap-3 pb-4 border-b last:border-b-0">
                     <span className="text-2xl">{TIPO_ICONS[operacao.tipo] || '📋'}</span>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{operacao.tipo}</p>
-                      {operacao.descricao && <p className="text-sm text-gray-600">{operacao.descricao}</p>}
-                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{operacao.tipo}</p>
+                      {operacao.descricao && <p className="text-sm text-gray-600 dark:text-gray-400">{operacao.descricao}</p>}
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {format(new Date(operacao.data), 'd MMM, yyyy', { locale: pt })}
@@ -457,9 +457,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Terrenos</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Terrenos</h3>
               <Link href="/parcelas" className="text-sm text-green-600 hover:text-green-700">
                 Ver todas →
               </Link>
@@ -467,10 +467,10 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {parcelas && parcelas.length > 0 ? (
                 parcelas.slice(0, 5).map((parcela) => (
-                  <div key={parcela.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={parcela.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{parcela.nome}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{parcela.nome}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {parcela.area} ha
                         {parcela.altitude && ` • ${parcela.altitude}m`}
                       </p>
@@ -493,19 +493,19 @@ export default function DashboardPage() {
         <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg p-6 text-white">
           <h3 className="text-xl font-bold mb-4">Ações Rápidas</h3>
           <div className="grid md:grid-cols-4 gap-4">
-            <Link href="/parcelas/nova" className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-lg p-4 transition text-center">
+            <Link href="/parcelas/nova" className="bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 backdrop-blur rounded-lg p-4 transition text-center">
               <div className="text-3xl mb-2">🗺️</div>
               <p className="font-medium">Novo Terreno</p>
             </Link>
-            <Link href="/operacoes/nova" className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-lg p-4 transition text-center">
+            <Link href="/operacoes/nova" className="bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 backdrop-blur rounded-lg p-4 transition text-center">
               <div className="text-3xl mb-2">📝</div>
               <p className="font-medium">Nova Operação</p>
             </Link>
-            <Link href="/parcelas" className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-lg p-4 transition text-center">
+            <Link href="/parcelas" className="bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 backdrop-blur rounded-lg p-4 transition text-center">
               <div className="text-3xl mb-2">📊</div>
               <p className="font-medium">Ver Terrenos</p>
             </Link>
-            <Link href="/operacoes" className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-lg p-4 transition text-center">
+            <Link href="/operacoes" className="bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 backdrop-blur rounded-lg p-4 transition text-center">
               <div className="text-3xl mb-2">📋</div>
               <p className="font-medium">Ver Operações</p>
             </Link>
@@ -531,11 +531,11 @@ function AlertCard({ insight }: { insight: any }) {
         <div className={config.text}>{config.icon}</div>
         <div className="flex-1 min-w-0">
           <p className={`font-medium text-sm ${config.text}`}>{insight.title}</p>
-          <p className="text-xs text-gray-600 mt-1 line-clamp-2">{insight.description}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{insight.description}</p>
           {insight.actions && insight.actions.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {insight.actions.slice(0, 2).map((action: string, i: number) => (
-                <span key={i} className="text-xs bg-white/70 px-2 py-0.5 rounded text-gray-700">
+                <span key={i} className="text-xs bg-white dark:bg-gray-800/70 px-2 py-0.5 rounded text-gray-700 dark:text-gray-300">
                   {action}
                 </span>
               ))}
@@ -568,9 +568,9 @@ function QuickWidget({
         <div className="flex items-center gap-3">
           <div>{icon}</div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-gray-600 font-medium">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
-            <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{title}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-0.5">{value}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{subtitle}</p>
           </div>
           <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
         </div>
@@ -597,9 +597,9 @@ function StatCard({
       <div className="flex items-center gap-4">
         <div>{icon}</div>
         <div className="flex-1">
-          <p className="text-sm text-gray-600 font-medium">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-          <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{title}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1">{value}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>
         </div>
       </div>
     </div>

@@ -165,7 +165,7 @@ export default function FloatingChat() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200">
+    <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 dark:border-gray-700">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 rounded-t-2xl flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -186,7 +186,7 @@ export default function FloatingChat() {
         <div className="flex gap-2">
           <button
             onClick={() => setIsOpen(false)}
-            className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+            className="hover:bg-white dark:bg-gray-800/20 rounded-full p-1.5 transition-colors"
             aria-label="Minimizar chat"
           >
             <Minimize2 className="w-4 h-4" />
@@ -199,7 +199,7 @@ export default function FloatingChat() {
               setChatExpiresAt(null);
               setIsOpen(false);
             }}
-            className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+            className="hover:bg-white dark:bg-gray-800/20 rounded-full p-1.5 transition-colors"
             aria-label="Fechar e limpar chat"
           >
             <X className="w-4 h-4" />
@@ -208,7 +208,7 @@ export default function FloatingChat() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -218,13 +218,13 @@ export default function FloatingChat() {
               className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                 msg.role === 'user'
                   ? 'bg-green-600 text-white rounded-br-none'
-                  : 'bg-white text-gray-900 shadow-sm border border-gray-200 rounded-bl-none'
+                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-700 rounded-bl-none'
               }`}
             >
               <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
 
               {msg.role === 'assistant' && msg.confidence && (
-                <div className="mt-2 pt-2 border-t border-gray-200 flex items-center gap-2 text-xs text-gray-500">
+                <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <span>Confiança: {(msg.confidence * 100).toFixed(0)}%</span>
                 </div>
               )}
@@ -234,9 +234,9 @@ export default function FloatingChat() {
 
         {chatMutation.isPending && (
           <div className="flex justify-start">
-            <div className="bg-white rounded-2xl rounded-bl-none px-4 py-3 shadow-sm border border-gray-200 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-green-600" />
-              <span className="text-sm text-gray-600">A pensar...</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">A pensar...</span>
             </div>
           </div>
         )}
@@ -245,7 +245,7 @@ export default function FloatingChat() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-2xl">
         <div className="flex gap-2">
           <input
             type="text"
@@ -265,7 +265,7 @@ export default function FloatingChat() {
             <Send className="w-4 h-4" />
           </button>
         </div>
-        <div className="text-xs text-gray-500 mt-2 text-center space-y-0.5">
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center space-y-0.5">
           <p>Tenho acesso a todos os dados da tua conta</p>
           {chatExpiresAt && (
             <p className="text-green-600 font-medium">{getTimeUntilExpiry()}</p>

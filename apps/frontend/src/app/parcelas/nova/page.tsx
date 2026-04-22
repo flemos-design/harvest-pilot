@@ -216,14 +216,14 @@ export default function NovaParcelaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Novo Terreno</h1>
-              <p className="text-gray-600 mt-1">Criar novo terreno agrícola</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Novo Terreno</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Criar novo terreno agrícola</p>
             </div>
             <Link
               href="/parcelas"
@@ -239,10 +239,10 @@ export default function NovaParcelaPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nome do Talhão *
               </label>
               <input
@@ -258,7 +258,7 @@ export default function NovaParcelaPage() {
 
             {/* Propriedade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Propriedade *
               </label>
               <select
@@ -279,7 +279,7 @@ export default function NovaParcelaPage() {
 
             {/* Área */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Área (hectares) *
               </label>
               <input
@@ -293,12 +293,12 @@ export default function NovaParcelaPage() {
               {errors.area && (
                 <p className="mt-1 text-sm text-red-600">{errors.area.message}</p>
               )}
-              <p className="mt-1 text-xs text-gray-500">1 hectare = 10.000 m²</p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">1 hectare = 10.000 m²</p>
             </div>
 
             {/* Altitude */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Altitude (metros)
               </label>
               <input
@@ -312,7 +312,7 @@ export default function NovaParcelaPage() {
 
             {/* Tipo de Solo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Solo
               </label>
               <select
@@ -330,10 +330,10 @@ export default function NovaParcelaPage() {
 
             {/* Map Editor - Draw Geometry */}
             <div className="border-t pt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Desenhar Geometria do Terreno
               </label>
-              <p className="text-xs text-gray-500 mb-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                 Desenhe o polígono que representa o terreno. A área é calculada automaticamente.
               </p>
               <MapEditor
@@ -346,10 +346,10 @@ export default function NovaParcelaPage() {
 
             {/* File Upload */}
             <div className="border-t pt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Importar Geometria (GeoJSON/KML)
               </label>
-              <p className="text-xs text-gray-500 mb-3">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                 Alternativamente, importe um ficheiro GeoJSON ou KML com a geometria (será carregado no editor acima)
               </p>
 
@@ -357,7 +357,7 @@ export default function NovaParcelaPage() {
                 <label className="flex-1 cursor-pointer">
                   <div className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 transition">
                     <Upload className="w-5 h-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
                       {uploadedFileName || 'Escolher ficheiro GeoJSON/KML...'}
                     </span>
                   </div>
@@ -397,10 +397,10 @@ export default function NovaParcelaPage() {
             <div className="border-t pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Localização GPS (Centro do Talhão)
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     {uploadedFileName
                       ? 'Centro calculado automaticamente do ficheiro importado'
                       : 'Opcional: Use para criar automaticamente a geometria do terreno'}
@@ -431,7 +431,7 @@ export default function NovaParcelaPage() {
               {useGPS && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Latitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Latitude</label>
                     <input
                       type="number"
                       step="any"
@@ -441,7 +441,7 @@ export default function NovaParcelaPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Longitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Longitude</label>
                     <input
                       type="number"
                       step="any"
@@ -494,7 +494,7 @@ export default function NovaParcelaPage() {
               </button>
               <Link
                 href="/parcelas"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
               >
                 Cancelar
               </Link>

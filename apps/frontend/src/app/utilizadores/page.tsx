@@ -10,7 +10,7 @@ const PAPEL_COLORS: Record<string, string> = {
   ADMIN: 'bg-purple-100 text-purple-800',
   GESTOR: 'bg-blue-100 text-blue-800',
   PLANEADOR: 'bg-green-100 text-green-800',
-  OPERADOR: 'bg-gray-100 text-gray-800',
+  OPERADOR: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
 };
 
 export default function UtilizadoresPage() {
@@ -40,20 +40,20 @@ export default function UtilizadoresPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Utilizadores</h1>
-              <p className="text-gray-600 mt-1">Gestão de utilizadores e permissões</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Utilizadores</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Gestão de utilizadores e permissões</p>
             </div>
             <Link
               href="/utilizadores/novo"
@@ -68,10 +68,10 @@ export default function UtilizadoresPage() {
 
       <main className="container mx-auto px-4 py-8">
         {!utilizadores || utilizadores.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum utilizador</h3>
-            <p className="text-gray-600 mb-6">Adiciona utilizadores à plataforma</p>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nenhum utilizador</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Adiciona utilizadores à plataforma</p>
             <Link
               href="/utilizadores/novo"
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
@@ -81,28 +81,28 @@ export default function UtilizadoresPage() {
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilizador</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Papel</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organização</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Atividade</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Utilizador</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Papel</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Organização</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Atividade</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {utilizadores.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-blue-100 rounded-full">
                           <Users className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{user.nome}</p>
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{user.nome}</p>
+                          <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                             <Mail className="w-3 h-3" />
                             {user.email}
                           </div>
@@ -115,10 +115,10 @@ export default function UtilizadoresPage() {
                         {user.papel}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                       {user.organizacao?.nome || 'N/A'}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                       {user._count?.operacoes || 0} operações
                     </td>
                     <td className="px-6 py-4">

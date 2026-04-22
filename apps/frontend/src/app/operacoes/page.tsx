@@ -23,7 +23,7 @@ const TIPO_COLORS: Record<string, string> = {
   ADUBACAO: 'bg-lime-100 text-lime-800',
   TRATAMENTO: 'bg-purple-100 text-purple-800',
   COLHEITA: 'bg-amber-100 text-amber-800',
-  INSPECAO: 'bg-gray-100 text-gray-800',
+  INSPECAO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
   PODA: 'bg-orange-100 text-orange-800',
   DESBASTE: 'bg-red-100 text-red-800',
 };
@@ -44,7 +44,7 @@ export default function OperacoesPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar operações</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
@@ -58,14 +58,14 @@ export default function OperacoesPage() {
   }).length || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Operações de Campo</h1>
-              <p className="text-gray-600 mt-1">Registo offline de operações com GPS e fotos</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Operações de Campo</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Registo offline de operações com GPS e fotos</p>
             </div>
             <Link
               href="/operacoes/nova"
@@ -81,29 +81,29 @@ export default function OperacoesPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <ClipboardList className="w-8 h-8 text-green-600" />
               <div>
-                <p className="text-sm text-gray-600">Total Operações</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Operações</p>
                 <p className="text-2xl font-bold">{totalOperacoes}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <Calendar className="w-8 h-8 text-blue-600" />
               <div>
-                <p className="text-sm text-gray-600">Última Semana</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Última Semana</p>
                 <p className="text-2xl font-bold">{ultimaSemana}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <DollarSign className="w-8 h-8 text-amber-600" />
               <div>
-                <p className="text-sm text-gray-600">Custo Total</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Custo Total</p>
                 <p className="text-2xl font-bold">{custoTotal.toFixed(2)}€</p>
               </div>
             </div>
@@ -112,12 +112,12 @@ export default function OperacoesPage() {
 
         {/* Operações List */}
         {!operacoes || operacoes.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <ClipboardList className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Nenhuma operação registada
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Começa a registar as tuas operações de campo.
             </p>
           </div>
@@ -127,7 +127,7 @@ export default function OperacoesPage() {
               <Link
                 key={operacao.id}
                 href={`/operacoes/${operacao.id}`}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition cursor-pointer block"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-md transition cursor-pointer block"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between">
@@ -137,19 +137,19 @@ export default function OperacoesPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {operacao.tipo.replace('_', ' ')}
                           </h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 text-gray-800'}`}>
+                          <span className={`px-2 py-1 text-xs font-medium rounded ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
                             {operacao.tipo}
                           </span>
                         </div>
 
                         {operacao.descricao && (
-                          <p className="text-gray-700 mb-2">{operacao.descricao}</p>
+                          <p className="text-gray-700 dark:text-gray-300 mb-2">{operacao.descricao}</p>
                         )}
 
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>
@@ -173,13 +173,13 @@ export default function OperacoesPage() {
                         </div>
 
                         {operacao.notas && (
-                          <p className="mt-3 text-sm text-gray-600 italic border-l-2 border-gray-200 pl-3">
+                          <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-200 dark:border-gray-700 pl-3">
                             {operacao.notas}
                           </p>
                         )}
 
                         {operacao.latitude && operacao.longitude && (
-                          <div className="mt-2 text-xs text-gray-500">
+                          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                             📍 GPS: {operacao.latitude.toFixed(5)}, {operacao.longitude.toFixed(5)}
                           </div>
                         )}
@@ -188,7 +188,7 @@ export default function OperacoesPage() {
 
                     {operacao.custoTotal && operacao.custoTotal > 0 && (
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">Custo</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">Custo</div>
                         <div className="text-xl font-bold text-green-600">
                           {operacao.custoTotal.toFixed(2)}€
                         </div>
@@ -200,7 +200,7 @@ export default function OperacoesPage() {
                     <div className="mt-4 pt-4 border-t">
                       <div className="flex gap-2">
                         {operacao.fotos.map((foto, idx) => (
-                          <div key={idx} className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                          <div key={idx} className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-gray-400">
                             📷
                           </div>
                         ))}

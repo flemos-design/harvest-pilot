@@ -65,16 +65,16 @@ export default function ResetPasswordPage() {
               className="h-20 w-auto"
             />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">HarvestPilot</h1>
-          <p className="text-gray-600 mt-2">Redefinir Password</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">HarvestPilot</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">Redefinir Password</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
           {!success ? (
             <>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Nova Password</h2>
-              <p className="text-sm text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Nova Password</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                 Introduz a tua nova password. Deve ter pelo menos 6 caracteres.
               </p>
 
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {/* New Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nova Password
                   </label>
                   <input
@@ -103,7 +103,7 @@ export default function ResetPasswordPage() {
 
                 {/* Confirm Password */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Confirmar Password
                   </label>
                   <input
@@ -140,11 +140,11 @@ export default function ResetPasswordPage() {
           ) : (
             <div className="text-center py-4">
               <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Password alterada!</h2>
-              <p className="text-gray-600 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Password alterada!</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
                 A tua password foi redefinida com sucesso.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 A redirecionar para o login...
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Sistema de Gestão Agrícola com Satélite e Meteo
         </p>
       </div>

@@ -22,8 +22,8 @@ export default function ParcelasPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar terrenos</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             Certifica-te que o backend está a correr em http://localhost:3001
           </p>
         </div>
@@ -32,14 +32,14 @@ export default function ParcelasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Terrenos</h1>
-              <p className="text-gray-600 mt-1">Gestão de terrenos agrícolas</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Terrenos</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Gestão de terrenos agrícolas</p>
             </div>
             <div className="flex gap-3">
               <Link
@@ -70,31 +70,31 @@ export default function ParcelasPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <MapPin className="w-8 h-8 text-green-600" />
               <div>
-                <p className="text-sm text-gray-600">Total Terrenos</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Terrenos</p>
                 <p className="text-2xl font-bold">{parcelas?.length || 0}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <TrendingUp className="w-8 h-8 text-blue-600" />
               <div>
-                <p className="text-sm text-gray-600">Área Total</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Área Total</p>
                 <p className="text-2xl font-bold">
                   {parcelas?.reduce((sum, p) => sum + p.area, 0).toFixed(2)} ha
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <MapPin className="w-8 h-8 text-amber-600" />
               <div>
-                <p className="text-sm text-gray-600">Com Culturas</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Com Culturas</p>
                 <p className="text-2xl font-bold">
                   {parcelas?.filter((p) => p.culturas && p.culturas.length > 0).length || 0}
                 </p>
@@ -105,12 +105,12 @@ export default function ParcelasPage() {
 
         {/* Parcelas List */}
         {!parcelas || parcelas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Nenhum terreno encontrada
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Cria a tua primeiro terreno para começar a gerir a tua exploração agrícola.
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function ParcelasPage() {
               <Link
                 key={parcela.id}
                 href={`/parcelas/${parcela.id}`}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-lg transition cursor-pointer block overflow-hidden"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-lg transition cursor-pointer block overflow-hidden"
               >
                 {/* Map Thumbnail */}
                 <MapThumbnail geometry={parseGeometrySafe(parcela.geometria)} height="180px" />
@@ -128,9 +128,9 @@ export default function ParcelasPage() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{parcela.nome}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{parcela.nome}</h3>
                       {parcela.propriedade && (
-                        <p className="text-sm text-gray-500">{parcela.propriedade.nome}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{parcela.propriedade.nome}</p>
                       )}
                     </div>
                     <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
@@ -140,13 +140,13 @@ export default function ParcelasPage() {
 
                   <div className="space-y-2 text-sm">
                     {parcela.altitude && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                         <TrendingUp className="w-4 h-4" />
                         <span>{parcela.altitude}m altitude</span>
                       </div>
                     )}
                     {parcela.tipoSolo && (
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                         <MapPin className="w-4 h-4" />
                         <span>{parcela.tipoSolo}</span>
                       </div>
@@ -155,7 +155,7 @@ export default function ParcelasPage() {
 
                   {parcela.culturas && parcela.culturas.length > 0 && (
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-xs font-medium text-gray-500 mb-2">Culturas:</p>
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Culturas:</p>
                       <div className="flex flex-wrap gap-2">
                         {parcela.culturas.map((cultura) => (
                           <span
@@ -170,7 +170,7 @@ export default function ParcelasPage() {
                   )}
 
                   {parcela._count && (
-                    <div className="mt-4 pt-4 border-t flex justify-between text-xs text-gray-500">
+                    <div className="mt-4 pt-4 border-t flex justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>{parcela._count.operacoes} operações</span>
                       <span>{parcela._count.imagensRemotas} imagens</span>
                     </div>

@@ -70,7 +70,7 @@ export default function SWUpdateNotification() {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 max-w-sm animate-in slide-in-from-bottom-5">
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -78,10 +78,10 @@ export default function SWUpdateNotification() {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
               Nova versão disponível
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Uma atualização do HarvestPilot está pronta. Recarrega para obter as últimas funcionalidades.
             </p>
             <div className="mt-3 flex gap-2">
@@ -93,7 +93,7 @@ export default function SWUpdateNotification() {
               </button>
               <button
                 onClick={handleDismiss}
-                className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 transition"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-200 transition"
               >
                 Mais tarde
               </button>
@@ -101,7 +101,7 @@ export default function SWUpdateNotification() {
           </div>
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition"
+            className="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 transition"
             aria-label="Fechar"
           >
             <X className="w-5 h-5" />

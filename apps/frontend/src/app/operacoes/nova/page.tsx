@@ -107,14 +107,14 @@ export default function NovaOperacaoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Nova Operação</h1>
-              <p className="text-gray-600 mt-1">Registar operação de campo</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Operação</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Registar operação de campo</p>
             </div>
             <Link
               href="/operacoes"
@@ -130,10 +130,10 @@ export default function NovaOperacaoPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Tipo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Operação *
               </label>
               <select
@@ -154,7 +154,7 @@ export default function NovaOperacaoPage() {
 
             {/* Data */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data *
               </label>
               <input
@@ -169,7 +169,7 @@ export default function NovaOperacaoPage() {
 
             {/* Talhão */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Talhão *
               </label>
               <select
@@ -190,7 +190,7 @@ export default function NovaOperacaoPage() {
 
             {/* Descrição */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Descrição
               </label>
               <input
@@ -204,7 +204,7 @@ export default function NovaOperacaoPage() {
             {/* GPS Location */}
             <div className="border-t pt-6">
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Localização GPS
                 </label>
                 <button
@@ -227,7 +227,7 @@ export default function NovaOperacaoPage() {
               {useGPS && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Latitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Latitude</label>
                     <input
                       type="number"
                       step="any"
@@ -237,7 +237,7 @@ export default function NovaOperacaoPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">Longitude</label>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Longitude</label>
                     <input
                       type="number"
                       step="any"
@@ -252,7 +252,7 @@ export default function NovaOperacaoPage() {
 
             {/* Custo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Custo Total (€)
               </label>
               <input
@@ -267,7 +267,7 @@ export default function NovaOperacaoPage() {
 
             {/* Notas */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Notas
               </label>
               <textarea
@@ -280,7 +280,7 @@ export default function NovaOperacaoPage() {
 
             {/* Fotos */}
             <div className="border-t pt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                 Fotografias
               </label>
               <PhotoUpload
@@ -301,7 +301,7 @@ export default function NovaOperacaoPage() {
               />
               {uploadedPhotos.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     {uploadedPhotos.length} foto(s) carregada(s)
                   </p>
                   <div className="grid grid-cols-3 gap-2">
@@ -351,7 +351,7 @@ export default function NovaOperacaoPage() {
               </button>
               <Link
                 href="/operacoes"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
               >
                 Cancelar
               </Link>

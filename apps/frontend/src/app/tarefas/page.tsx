@@ -23,11 +23,11 @@ const ESTADO_COLORS: Record<EstadoTarefa, string> = {
   PLANEADA: 'bg-blue-100 text-blue-800 border-blue-300',
   EM_CURSO: 'bg-yellow-100 text-yellow-800 border-yellow-300',
   CONCLUIDA: 'bg-green-100 text-green-800 border-green-300',
-  CANCELADA: 'bg-gray-100 text-gray-800 border-gray-300',
+  CANCELADA: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300',
 };
 
 const PRIORIDADE_COLORS: Record<PrioridadeTarefa, string> = {
-  BAIXA: 'bg-gray-100 text-gray-700',
+  BAIXA: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
   MEDIA: 'bg-blue-100 text-blue-700',
   ALTA: 'bg-orange-100 text-orange-700',
   URGENTE: 'bg-red-100 text-red-700',
@@ -90,7 +90,7 @@ export default function TarefasPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar tarefas</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
@@ -109,14 +109,14 @@ export default function TarefasPage() {
   }, [tarefas]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Tarefas</h1>
-              <p className="text-gray-600 mt-1">Planeamento e gestão de atividades agrícolas</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tarefas</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Planeamento e gestão de atividades agrícolas</p>
             </div>
             <Link
               href="/tarefas/nova"
@@ -159,14 +159,14 @@ export default function TarefasPage() {
 
       {/* Filters */}
       <div className="container mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4 text-gray-600" />
-            <h3 className="font-semibold text-gray-900">Filtros</h3>
+            <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filtros</h3>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Estado</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Estado</label>
               <select
                 value={filterEstado}
                 onChange={(e) => setFilterEstado(e.target.value as EstadoTarefa | 'TODAS')}
@@ -180,7 +180,7 @@ export default function TarefasPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Prioridade</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Prioridade</label>
               <select
                 value={filterPrioridade}
                 onChange={(e) => setFilterPrioridade(e.target.value as PrioridadeTarefa | 'TODAS')}
@@ -194,7 +194,7 @@ export default function TarefasPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Tipo</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Tipo</label>
               <select
                 value={filterTipo}
                 onChange={(e) => setFilterTipo(e.target.value as TipoTarefa | 'TODOS')}
@@ -218,9 +218,9 @@ export default function TarefasPage() {
       {/* Tarefas List */}
       <main className="container mx-auto px-4 pb-8">
         {sortedTarefas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">Nenhuma tarefa encontrada</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhuma tarefa encontrada</p>
             <Link
               href="/tarefas/nova"
               className="inline-block mt-4 text-green-600 hover:text-green-700 font-medium"
@@ -240,7 +240,7 @@ export default function TarefasPage() {
               return (
                 <div
                   key={tarefa.id}
-                  className={`bg-white rounded-lg shadow-sm border-l-4 p-6 hover:shadow-md transition ${
+                  className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border-l-4 p-6 hover:shadow-md transition ${
                     isAtrasada ? 'border-red-500' : 'border-green-500'
                   }`}
                 >
@@ -254,14 +254,14 @@ export default function TarefasPage() {
                         <div className="flex items-start gap-3 mb-2">
                           <Link
                             href={`/tarefas/${tarefa.id}`}
-                            className="text-xl font-semibold text-gray-900 hover:text-green-600"
+                            className="text-xl font-semibold text-gray-900 dark:text-gray-100 hover:text-green-600"
                           >
                             {tarefa.titulo}
                           </Link>
                         </div>
 
                         {tarefa.descricao && (
-                          <p className="text-gray-600 mb-3">{tarefa.descricao}</p>
+                          <p className="text-gray-600 dark:text-gray-400 mb-3">{tarefa.descricao}</p>
                         )}
 
                         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -285,7 +285,7 @@ export default function TarefasPage() {
                           </span>
 
                           {/* Tipo */}
-                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">
+                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                             {tarefa.tipo}
                           </span>
 
@@ -297,7 +297,7 @@ export default function TarefasPage() {
                         </div>
 
                         {/* Datas */}
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                           <div>
                             <span className="font-medium">Início:</span>{' '}
                             {format(new Date(tarefa.dataInicio), "d MMM 'às' HH:mm", {

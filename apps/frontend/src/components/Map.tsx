@@ -276,12 +276,12 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
   if (isLoading) {
     return (
       <div
-        className="flex items-center justify-center bg-gray-100 rounded-lg"
+        className="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg"
         style={{ height }}
       >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">A carregar mapa...</p>
+          <p className="text-gray-600 dark:text-gray-400">A carregar mapa...</p>
         </div>
       </div>
     );
@@ -293,9 +293,9 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
 
       {parcelas && parcelas.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
-            <p className="text-gray-700">Sem parcelas para visualizar.</p>
-            <p className="text-sm text-gray-500 mt-2">Adiciono terrenos para as ver no mapa.</p>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm text-center">
+            <p className="text-gray-700 dark:text-gray-300">Sem parcelas para visualizar.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Adiciono terrenos para as ver no mapa.</p>
           </div>
         </div>
       )}

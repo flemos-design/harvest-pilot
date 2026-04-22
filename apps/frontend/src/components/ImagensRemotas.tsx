@@ -15,8 +15,8 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
 
   if (isLoadingLatest && isLoadingRecent) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
           <Satellite className="w-5 h-5 text-blue-600" />
           Imagens de Satélite
         </h2>
@@ -29,8 +29,8 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
 
   if (!latestImage && !recentImages?.length) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
           <Satellite className="w-5 h-5 text-blue-600" />
           Imagens de Satélite
         </h2>
@@ -57,8 +57,8 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
         <Satellite className="w-5 h-5 text-blue-600" />
         Imagens de Satélite
       </h2>
@@ -74,41 +74,41 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-3">
-              <div className="bg-white rounded p-3">
-                <p className="text-xs text-gray-600 mb-1">NDVI</p>
+              <div className="bg-white dark:bg-gray-800 rounded p-3">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">NDVI</p>
                 <p className={`text-2xl font-bold ${getIndexColor(latestImage.ndvi, 'ndvi')}`}>
                   {formatIndexValue(latestImage.ndvi)}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Vigor vegetativo</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Vigor vegetativo</p>
               </div>
 
-              <div className="bg-white rounded p-3">
-                <p className="text-xs text-gray-600 mb-1">NDRE</p>
+              <div className="bg-white dark:bg-gray-800 rounded p-3">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">NDRE</p>
                 <p className={`text-2xl font-bold ${getIndexColor(latestImage.ndre, 'ndre')}`}>
                   {formatIndexValue(latestImage.ndre)}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Clorofila</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Clorofila</p>
               </div>
 
-              <div className="bg-white rounded p-3">
-                <p className="text-xs text-gray-600 mb-1">EVI</p>
+              <div className="bg-white dark:bg-gray-800 rounded p-3">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">EVI</p>
                 <p className={`text-2xl font-bold ${getIndexColor(latestImage.evi, 'evi')}`}>
                   {formatIndexValue(latestImage.evi)}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Vegetação melhorada</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Vegetação melhorada</p>
               </div>
 
-              <div className="bg-white rounded p-3">
+              <div className="bg-white dark:bg-gray-800 rounded p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Cloud className="w-3 h-3 text-gray-600" />
-                  <p className="text-xs text-gray-600">Nuvens</p>
+                  <Cloud className="w-3 h-3 text-gray-600 dark:text-gray-400" />
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Nuvens</p>
                 </div>
-                <p className="text-2xl font-bold text-gray-700">
+                <p className="text-2xl font-bold text-gray-700 dark:text-gray-300">
                   {latestImage.nuvens !== null && latestImage.nuvens !== undefined
                     ? `${latestImage.nuvens.toFixed(1)}%`
                     : 'N/A'}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">Cobertura</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Cobertura</p>
               </div>
             </div>
 
@@ -133,16 +133,16 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
 
       {recentImages && recentImages.length > 1 && (
         <div>
-          <h3 className="font-semibold text-gray-900 mb-3 text-sm">Capturas Recentes</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-sm">Capturas Recentes</h3>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {recentImages.slice(0, 5).map((image) => (
               <div
                 key={image.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 transition"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {format(new Date(image.data), "dd/MM/yyyy", { locale: pt })}
                     </span>
                     <div className="flex gap-2 text-xs">
@@ -152,7 +152,7 @@ export function ImagensRemotas({ parcelaId }: ImagensRemotasProps) {
                         </span>
                       )}
                       {image.nuvens !== null && image.nuvens !== undefined && (
-                        <span className="text-gray-600">
+                        <span className="text-gray-600 dark:text-gray-400">
                           <Cloud className="w-3 h-3 inline mr-1" />
                           {image.nuvens.toFixed(0)}%
                         </span>

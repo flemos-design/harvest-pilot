@@ -68,7 +68,7 @@ export default function ParcelaDetailPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar talhão</h2>
-          <p className="text-gray-600">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
+          <p className="text-gray-600 dark:text-gray-400">{parcelaError ? (parcelaError as Error).message : 'Talhão não encontrado'}</p>
           <Link href="/parcelas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar aos talhões
           </Link>
@@ -131,21 +131,21 @@ export default function ParcelaDetailPage() {
   }, {} as Record<string, number>);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href="/parcelas"
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">{parcela.nome}</h1>
-                <p className="text-gray-600 mt-1">Detalhes do terreno</p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{parcela.nome}</h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">Detalhes do terreno</p>
               </div>
             </div>
             <div className="flex gap-3">
@@ -218,42 +218,42 @@ export default function ParcelaDetailPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Info Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
               <MapPin className="w-6 h-6 text-green-600" />
-              <p className="text-sm text-gray-600 font-medium">Área</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Área</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{parcela.area} ha</p>
-            <p className="text-xs text-gray-500 mt-1">{(parcela.area * 10000).toFixed(0)} m²</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{parcela.area} ha</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{(parcela.area * 10000).toFixed(0)} m²</p>
           </div>
 
           {parcela.altitude && (
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
               <div className="flex items-center gap-3 mb-2">
                 <TrendingUp className="w-6 h-6 text-blue-600" />
-                <p className="text-sm text-gray-600 font-medium">Altitude</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Altitude</p>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{parcela.altitude}m</p>
-              <p className="text-xs text-gray-500 mt-1">Nível do mar</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{parcela.altitude}m</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Nível do mar</p>
             </div>
           )}
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
               <Calendar className="w-6 h-6 text-purple-600" />
-              <p className="text-sm text-gray-600 font-medium">Operações</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Operações</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{totalOperacoes}</p>
-            <p className="text-xs text-gray-500 mt-1">Registos de campo</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalOperacoes}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Registos de campo</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-2">
               <Sprout className="w-6 h-6 text-amber-600" />
-              <p className="text-sm text-gray-600 font-medium">Custo Total</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">Custo Total</p>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{custoTotal.toFixed(2)}€</p>
-            <p className="text-xs text-gray-500 mt-1">Todas as operações</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{custoTotal.toFixed(2)}€</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Todas as operações</p>
           </div>
         </div>
 
@@ -261,30 +261,30 @@ export default function ParcelaDetailPage() {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Detalhes */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Informações</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Informações</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Propriedade</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Propriedade</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     {parcela.propriedade?.nome || 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Tipo de Solo</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tipo de Solo</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     {parcela.tipoSolo || 'Não especificado'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Criada em</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Criada em</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     {format(new Date(parcela.createdAt), "d 'de' MMMM, yyyy", { locale: pt })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Última atualização</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Última atualização</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     {format(new Date(parcela.updatedAt), "d 'de' MMMM, yyyy", { locale: pt })}
                   </p>
                 </div>
@@ -292,8 +292,8 @@ export default function ParcelaDetailPage() {
             </div>
 
             {/* Mapa */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-green-600" />
                 Localização
               </h2>
@@ -307,16 +307,16 @@ export default function ParcelaDetailPage() {
 
             {/* Culturas */}
             {parcela.culturas && parcela.culturas.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Culturas</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Culturas</h2>
                 <div className="space-y-4">
                   {parcela.culturas.map((cultura) => (
                     <div key={cultura.id} className="border rounded-lg p-4 bg-amber-50">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-lg">{cultura.especie}</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{cultura.especie}</h3>
                           {cultura.variedade && (
-                            <p className="text-sm text-gray-600 mt-1">Variedade: {cultura.variedade}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Variedade: {cultura.variedade}</p>
                           )}
                           <div className="mt-2 flex flex-wrap gap-2">
                             <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded">
@@ -343,9 +343,9 @@ export default function ParcelaDetailPage() {
             <Meteorologia parcelaId={id} />
 
             {/* Operações Recentes */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Operações Recentes</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Operações Recentes</h2>
                 <Link
                   href={`/operacoes/nova?parcelaId=${id}`}
                   className="text-sm text-green-600 hover:text-green-700 font-medium"
@@ -367,11 +367,11 @@ export default function ParcelaDetailPage() {
                         <div className="flex items-start gap-3 flex-1">
                           <span className="text-2xl">{TIPO_ICONS[operacao.tipo] || '📋'}</span>
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">{operacao.tipo}</p>
+                            <p className="font-medium text-gray-900 dark:text-gray-100">{operacao.tipo}</p>
                             {operacao.descricao && (
-                              <p className="text-sm text-gray-600 mt-1">{operacao.descricao}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{operacao.descricao}</p>
                             )}
-                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
                               <span>
                                 {format(new Date(operacao.data), "d MMM, yyyy", { locale: pt })}
                               </span>
@@ -397,8 +397,8 @@ export default function ParcelaDetailPage() {
           {/* Right Column */}
           <div className="space-y-6">
             {/* Estatísticas por Tipo */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Operações por Tipo</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Operações por Tipo</h2>
               {Object.keys(operacoesPorTipo).length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-4">Sem dados</p>
               ) : (
@@ -409,9 +409,9 @@ export default function ParcelaDetailPage() {
                       <div key={tipo} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{TIPO_ICONS[tipo] || '📋'}</span>
-                          <span className="text-sm text-gray-700">{tipo}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{tipo}</span>
                         </div>
-                        <span className="font-semibold text-gray-900">{count}</span>
+                        <span className="font-semibold text-gray-900 dark:text-gray-100">{count}</span>
                       </div>
                     ))}
                 </div>
@@ -437,13 +437,13 @@ export default function ParcelaDetailPage() {
               <div className="space-y-2">
                 <Link
                   href={`/operacoes/nova?parcelaId=${id}`}
-                  className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                  className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                 >
                   📝 Registar Operação
                 </Link>
                 <Link
                   href="/operacoes"
-                  className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                  className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                 >
                   📋 Ver Todas Operações
                 </Link>

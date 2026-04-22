@@ -21,8 +21,8 @@ export default function CulturasPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar culturas</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             Certifica-te que o backend está a correr em http://localhost:3001
           </p>
         </div>
@@ -31,14 +31,14 @@ export default function CulturasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Culturas</h1>
-              <p className="text-gray-600 mt-1">Presets específicos para a região de Espinhosela - Castanheiro & Cerejeira</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Culturas</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Presets específicos para a região de Espinhosela - Castanheiro & Cerejeira</p>
             </div>
             <Link
               href="/culturas/nova"
@@ -54,31 +54,31 @@ export default function CulturasPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <Sprout className="w-8 h-8 text-green-600" />
               <div>
-                <p className="text-sm text-gray-600">Total Culturas</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Culturas</p>
                 <p className="text-2xl font-bold">{stats?.total || 0}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <TreeDeciduous className="w-8 h-8 text-blue-600" />
               <div>
-                <p className="text-sm text-gray-600">Para Fruto</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Para Fruto</p>
                 <p className="text-2xl font-bold">
                   {stats?.porFinalidade.find((f) => f.finalidade === 'FRUTO')?._count || 0}
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <Axe className="w-8 h-8 text-amber-600" />
               <div>
-                <p className="text-sm text-gray-600">Para Madeira</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Para Madeira</p>
                 <p className="text-2xl font-bold">
                   {stats?.porFinalidade.find((f) => f.finalidade === 'MADEIRA')?._count || 0}
                 </p>
@@ -89,12 +89,12 @@ export default function CulturasPage() {
 
         {/* Culturas List */}
         {!culturas || culturas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <Sprout className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Nenhuma cultura encontrada
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Cria a tua primeira cultura para começar a gerir as tuas plantações.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function CulturasPage() {
               <Link
                 key={cultura.id}
                 href={`/culturas/${cultura.id}`}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-lg transition cursor-pointer block"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-lg transition cursor-pointer block"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -115,9 +115,9 @@ export default function CulturasPage() {
                         <Axe className="w-8 h-8 text-amber-600" />
                       )}
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{cultura.especie}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{cultura.especie}</h3>
                         {cultura.variedade && (
-                          <p className="text-sm text-gray-500">{cultura.variedade}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{cultura.variedade}</p>
                         )}
                       </div>
                     </div>
@@ -134,7 +134,7 @@ export default function CulturasPage() {
 
                   {cultura.ciclos && cultura.ciclos.length > 0 && (
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-xs font-medium text-gray-500 mb-2">
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
                         {cultura.ciclos.length} {cultura.ciclos.length === 1 ? 'ciclo' : 'ciclos'}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -147,7 +147,7 @@ export default function CulturasPage() {
                           </span>
                         ))}
                         {cultura.ciclos.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-50 text-gray-600 text-xs rounded">
+                          <span className="px-2 py-1 bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs rounded">
                             +{cultura.ciclos.length - 3}
                           </span>
                         )}
@@ -155,7 +155,7 @@ export default function CulturasPage() {
                     </div>
                   )}
 
-                  <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+                  <div className="mt-4 pt-4 border-t text-xs text-gray-500 dark:text-gray-400">
                     <p>
                       Criada em {new Date(cultura.createdAt).toLocaleDateString('pt-PT')}
                     </p>

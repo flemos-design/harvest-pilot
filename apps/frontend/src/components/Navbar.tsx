@@ -32,7 +32,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-800 border-b shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -60,7 +60,7 @@ export function Navbar() {
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium text-sm ${
                     active
                       ? 'bg-green-100 text-green-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-100'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -72,7 +72,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button - Placeholder */}
           <div className="md:hidden">
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+            <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -94,7 +94,7 @@ export function Navbar() {
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition font-medium text-sm ${
                     active
                       ? 'bg-green-100 text-green-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 hover:text-gray-900 dark:text-gray-100'
                   }`}
                 >
                   <Icon className="w-4 h-4" />

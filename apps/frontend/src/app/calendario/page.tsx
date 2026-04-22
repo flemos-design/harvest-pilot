@@ -25,7 +25,7 @@ const TIPO_COLORS: Record<string, string> = {
   ADUBACAO: 'bg-lime-100 text-lime-800 border-lime-300',
   TRATAMENTO: 'bg-purple-100 text-purple-800 border-purple-300',
   COLHEITA: 'bg-amber-100 text-amber-800 border-amber-300',
-  INSPECAO: 'bg-gray-100 text-gray-800 border-gray-300',
+  INSPECAO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300',
   PODA: 'bg-orange-100 text-orange-800 border-orange-300',
   DESBASTE: 'bg-red-100 text-red-800 border-red-300',
 };
@@ -109,21 +109,21 @@ export default function CalendarioPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar operações</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Calendário Agrícola</h1>
-              <p className="text-gray-600 mt-1">Planeamento de plantação e colheita com janelas recomendadas</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Calendário Agrícola</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Planeamento de plantação e colheita com janelas recomendadas</p>
             </div>
             <Link
               href="/operacoes/nova"
@@ -138,16 +138,16 @@ export default function CalendarioPage() {
             <div className="flex items-center gap-4">
               <button
                 onClick={handlePreviousMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <h2 className="text-2xl font-semibold text-gray-900 min-w-[200px] text-center">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 min-w-[200px] text-center">
                 {format(currentDate, "MMMM 'de' yyyy", { locale: pt })}
               </h2>
               <button
                 onClick={handleNextMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -161,7 +161,7 @@ export default function CalendarioPage() {
 
             {/* Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-600" />
+              <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               <select
                 value={selectedTipo}
                 onChange={(e) => setSelectedTipo(e.target.value)}
@@ -185,16 +185,16 @@ export default function CalendarioPage() {
       {/* Stats */}
       <div className="container mx-auto px-4 py-6">
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <p className="text-sm text-gray-600">Operações este mês</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Operações este mês</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <p className="text-sm text-gray-600">Talhões trabalhados</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.parcelasUnicas}</p>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Talhões trabalhados</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.parcelasUnicas}</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border">
-            <p className="text-sm text-gray-600">Custo total</p>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Custo total</p>
             <p className="text-2xl font-bold text-green-600">{stats.custo.toFixed(2)}€</p>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function CalendarioPage() {
           <div className="mt-6 bg-gradient-to-br from-blue-50 to-green-50 rounded-lg shadow-sm border border-blue-200 p-6">
             <div className="flex items-center gap-3 mb-4">
               <Lightbulb className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Janelas Recomendadas para {format(currentDate, 'MMMM', { locale: pt })}
               </h3>
             </div>
@@ -212,20 +212,20 @@ export default function CalendarioPage() {
               {janelasRecomendadas.map((janela: any) => (
                 <div
                   key={janela.id}
-                  className="bg-white rounded-lg p-4 border border-blue-200 hover:shadow-md transition"
+                  className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-blue-200 hover:shadow-md transition"
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">{janela.cultura}</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">{janela.cultura}</h4>
                     <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                       {janela.tipoOperacao}
                     </span>
                   </div>
                   {janela.descricao && (
-                    <p className="text-sm text-gray-600 mb-3">{janela.descricao}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{janela.descricao}</p>
                   )}
                   <div className="space-y-2 text-xs">
                     {janela.mesInicio && janela.mesFim && (
-                      <div className="flex items-center gap-2 text-gray-700">
+                      <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                         <Calendar className="w-3 h-3" />
                         <span>
                           Mês {janela.mesInicio}
@@ -234,7 +234,7 @@ export default function CalendarioPage() {
                       </div>
                     )}
                     {janela.regiao && (
-                      <div className="text-gray-600">
+                      <div className="text-gray-600 dark:text-gray-400">
                         📍 {janela.regiao}
                       </div>
                     )}
@@ -253,11 +253,11 @@ export default function CalendarioPage() {
 
       {/* Calendar Timeline */}
       <main className="container mx-auto px-4 pb-8">
-        <div className="bg-white rounded-lg shadow-sm border">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border">
           {diasDoMes.length === 0 ? (
             <div className="p-12 text-center">
               <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Nenhum dia no mês selecionado</p>
+              <p className="text-gray-500 dark:text-gray-400">Nenhum dia no mês selecionado</p>
             </div>
           ) : (
             <div className="divide-y">
@@ -275,10 +275,10 @@ export default function CalendarioPage() {
                     <div className="flex items-start gap-4">
                       {/* Date Column */}
                       <div className="flex-shrink-0 w-20 text-center">
-                        <div className={`text-xs font-medium uppercase ${isToday ? 'text-blue-600' : 'text-gray-500'}`}>
+                        <div className={`text-xs font-medium uppercase ${isToday ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'}`}>
                           {format(dia, 'EEE', { locale: pt })}
                         </div>
-                        <div className={`text-2xl font-bold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                        <div className={`text-2xl font-bold ${isToday ? 'text-blue-600' : 'text-gray-900 dark:text-gray-100'}`}>
                           {format(dia, 'd')}
                         </div>
                       </div>
@@ -293,7 +293,7 @@ export default function CalendarioPage() {
                               <Link
                                 key={operacao.id}
                                 href={`/operacoes/${operacao.id}`}
-                                className={`block p-3 rounded-lg border-l-4 hover:shadow-md transition ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 text-gray-800 border-gray-300'}`}
+                                className={`block p-3 rounded-lg border-l-4 hover:shadow-md transition ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300'}`}
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 flex-1">

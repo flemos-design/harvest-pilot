@@ -25,7 +25,7 @@ const CATEGORIA_COLORS: Record<string, string> = {
   FERTILIZANTE: 'bg-green-100 text-green-800',
   FITOFARMACO: 'bg-purple-100 text-purple-800',
   SEMENTE: 'bg-yellow-100 text-yellow-800',
-  OUTRO: 'bg-gray-100 text-gray-800',
+  OUTRO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
 };
 
 export default function InsumosPage() {
@@ -100,7 +100,7 @@ export default function InsumosPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar insumos</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
@@ -109,14 +109,14 @@ export default function InsumosPage() {
   const alertsCount = (lowStock?.length || 0) + (expiringSoon?.length || 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Insumos</h1>
-              <p className="text-gray-600 mt-1">Gestão de inventário e stock</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Insumos</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Gestão de inventário e stock</p>
             </div>
             <Link
               href="/insumos/novo"
@@ -130,11 +130,11 @@ export default function InsumosPage() {
           {/* Stats */}
           {stats && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white p-4 rounded-lg shadow-sm border">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Total de Insumos</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total || 0}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total de Insumos</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.total || 0}</p>
                   </div>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Package className="w-6 h-6 text-blue-600" />
@@ -142,10 +142,10 @@ export default function InsumosPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-lg shadow-sm border">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Valor em Stock</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Valor em Stock</p>
                     <p className="text-2xl font-bold text-green-600">{stats.valorTotal?.toFixed(2) || 0}€</p>
                   </div>
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -154,10 +154,10 @@ export default function InsumosPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-lg shadow-sm border">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Stock Baixo</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Stock Baixo</p>
                     <p className="text-2xl font-bold text-orange-600">{lowStock?.length || 0}</p>
                   </div>
                   <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -166,10 +166,10 @@ export default function InsumosPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-4 rounded-lg shadow-sm border">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">A Expirar (30d)</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">A Expirar (30d)</p>
                     <p className="text-2xl font-bold text-red-600">{expiringSoon?.length || 0}</p>
                   </div>
                   <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -210,7 +210,7 @@ export default function InsumosPage() {
                 </div>
 
                 {showStockAlert && lowStock && lowStock.length > 0 && (
-                  <div className="mt-3 p-3 bg-white rounded border">
+                  <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border">
                     <h4 className="font-medium text-sm mb-2">Stock Baixo:</h4>
                     <ul className="space-y-1 text-sm">
                       {lowStock.map((insumo: any) => (
@@ -228,7 +228,7 @@ export default function InsumosPage() {
                 )}
 
                 {showExpiringAlert && expiringSoon && expiringSoon.length > 0 && (
-                  <div className="mt-3 p-3 bg-white rounded border">
+                  <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border">
                     <h4 className="font-medium text-sm mb-2">A Expirar:</h4>
                     <ul className="space-y-1 text-sm">
                       {expiringSoon.map((insumo: any) => (
@@ -252,10 +252,10 @@ export default function InsumosPage() {
 
       {/* Filters */}
       <div className="container mx-auto px-4 py-4">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-4 h-4 text-gray-600" />
-            <h3 className="font-semibold text-gray-900">Filtros</h3>
+            <Filter className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filtros</h3>
           </div>
           <div className="flex gap-2">
             <button
@@ -263,7 +263,7 @@ export default function InsumosPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filterCategoria === 'TODOS'
                   ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
               }`}
             >
               Todos
@@ -275,7 +275,7 @@ export default function InsumosPage() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   filterCategoria === cat
                     ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                 }`}
               >
                 {CATEGORIA_ICONS[cat]} {cat}
@@ -288,9 +288,9 @@ export default function InsumosPage() {
       {/* Insumos List */}
       <main className="container mx-auto px-4 pb-8">
         {!insumos || insumos.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <Box className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">Nenhum insumo encontrado</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhum insumo encontrado</p>
             <Link
               href="/insumos/novo"
               className="inline-block mt-4 text-green-600 hover:text-green-700 font-medium"
@@ -307,7 +307,7 @@ export default function InsumosPage() {
               return (
                 <div
                   key={insumo.id}
-                  className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition ${
+                  className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 hover:shadow-md transition ${
                     stockStatus === 'empty' || validadeStatus === 'expired'
                       ? 'border-red-300'
                       : stockStatus === 'low' || validadeStatus === 'expiring'
@@ -321,7 +321,7 @@ export default function InsumosPage() {
                       <div>
                         <Link
                           href={`/insumos/${insumo.id}`}
-                          className="font-semibold text-gray-900 hover:text-green-600"
+                          className="font-semibold text-gray-900 dark:text-gray-100 hover:text-green-600"
                         >
                           {insumo.nome}
                         </Link>
@@ -333,19 +333,19 @@ export default function InsumosPage() {
                   </div>
 
                   {/* Stock Info */}
-                  <div className="mb-4 p-3 bg-gray-50 rounded">
+                  <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-900 rounded">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">Stock Atual:</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Stock Atual:</span>
                       <span className={`text-lg font-bold ${
                         stockStatus === 'empty' ? 'text-red-600' :
                         stockStatus === 'low' ? 'text-orange-600' :
-                        'text-gray-900'
+                        'text-gray-900 dark:text-gray-100'
                       }`}>
                         {insumo.stock} {insumo.unidade}
                       </span>
                     </div>
                     {insumo.stockMinimo && (
-                      <div className="flex items-center justify-between text-xs text-gray-500">
+                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                         <span>Mínimo:</span>
                         <span>{insumo.stockMinimo} {insumo.unidade}</span>
                       </div>
@@ -356,17 +356,17 @@ export default function InsumosPage() {
                   <div className="space-y-2 text-sm">
                     {insumo.custoUnit && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Custo Unit.:</span>
+                        <span className="text-gray-600 dark:text-gray-400">Custo Unit.:</span>
                         <span className="font-medium">{insumo.custoUnit.toFixed(2)}€/{insumo.unidade}</span>
                       </div>
                     )}
                     {insumo.validade && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Validade:</span>
+                        <span className="text-gray-600 dark:text-gray-400">Validade:</span>
                         <span className={`font-medium ${
                           validadeStatus === 'expired' ? 'text-red-600' :
                           validadeStatus === 'expiring' ? 'text-orange-600' :
-                          'text-gray-900'
+                          'text-gray-900 dark:text-gray-100'
                         }`}>
                           {format(new Date(insumo.validade), 'd MMM yyyy', { locale: pt })}
                           {validadeStatus === 'expired' && ' (Expirado!)'}
@@ -376,8 +376,8 @@ export default function InsumosPage() {
                     )}
                     {insumo.lote && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Lote:</span>
-                        <span className="font-medium text-gray-700">{insumo.lote}</span>
+                        <span className="text-gray-600 dark:text-gray-400">Lote:</span>
+                        <span className="font-medium text-gray-700 dark:text-gray-300">{insumo.lote}</span>
                       </div>
                     )}
                   </div>

@@ -8,7 +8,7 @@ import { pt } from 'date-fns/locale';
 
 const ESTADO_COLORS: Record<string, string> = {
   ATIVO: 'bg-green-100 text-green-800',
-  CONCLUIDO: 'bg-gray-100 text-gray-800',
+  CONCLUIDO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
   CANCELADO: 'bg-red-100 text-red-800',
 };
 
@@ -39,20 +39,20 @@ export default function CiclosPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Ciclos de Cultivo</h1>
-              <p className="text-gray-600 mt-1">Gestão de ciclos produtivos</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Ciclos de Cultivo</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Gestão de ciclos produtivos</p>
             </div>
             <Link
               href="/ciclos/novo"
@@ -67,10 +67,10 @@ export default function CiclosPage() {
 
       <main className="container mx-auto px-4 py-8">
         {!ciclos || ciclos.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
             <RefreshCw className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum ciclo</h3>
-            <p className="text-gray-600 mb-6">Regista ciclos de cultivo</p>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Nenhum ciclo</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Regista ciclos de cultivo</p>
             <Link
               href="/ciclos/novo"
               className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
@@ -82,12 +82,12 @@ export default function CiclosPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ciclos.map((ciclo) => (
-              <div key={ciclo.id} className="bg-white rounded-lg shadow-sm border hover:shadow-md transition p-6">
+              <div key={ciclo.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-md transition p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <RefreshCw className="w-5 h-5 text-green-600" />
-                      <h3 className="text-lg font-bold text-gray-900">{ciclo.epoca}</h3>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{ciclo.epoca}</h3>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${ESTADO_COLORS[ciclo.estado]}`}>
                       {ciclo.estado}
@@ -96,12 +96,12 @@ export default function CiclosPage() {
                 </div>
 
                 <div className="space-y-2 text-sm mb-4">
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <Calendar className="w-4 h-4" />
                     <span>Início: {format(new Date(ciclo.dataInicio), "d 'de' MMM yyyy", { locale: pt })}</span>
                   </div>
                   {ciclo.dataFim && (
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       <Calendar className="w-4 h-4" />
                       <span>Fim: {format(new Date(ciclo.dataFim), "d 'de' MMM yyyy", { locale: pt })}</span>
                     </div>

@@ -111,7 +111,7 @@ export default function EditarTarefaPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar tarefa</h2>
-          <p className="text-gray-600">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Tarefa não encontrada'}</p>
+          <p className="text-gray-600 dark:text-gray-400">{error ? error instanceof Error ? error.message : "Erro desconhecido" : 'Tarefa não encontrada'}</p>
           <Link href="/tarefas" className="mt-4 inline-block text-green-600 hover:text-green-700">
             ← Voltar para tarefas
           </Link>
@@ -121,14 +121,14 @@ export default function EditarTarefaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Editar Tarefa</h1>
-              <p className="text-gray-600 mt-1">{tarefa.titulo}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Editar Tarefa</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{tarefa.titulo}</p>
             </div>
             <Link
               href={`/tarefas/${id}`}
@@ -144,10 +144,10 @@ export default function EditarTarefaPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Título */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Título da Tarefa *
               </label>
               <input
@@ -163,7 +163,7 @@ export default function EditarTarefaPage() {
 
             {/* Descrição */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Descrição
               </label>
               <textarea
@@ -179,7 +179,7 @@ export default function EditarTarefaPage() {
 
             {/* Tipo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Tarefa *
               </label>
               <select
@@ -200,7 +200,7 @@ export default function EditarTarefaPage() {
             {/* Prioridade e Estado */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Prioridade *
                 </label>
                 <select
@@ -219,7 +219,7 @@ export default function EditarTarefaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Estado *
                 </label>
                 <select
@@ -241,7 +241,7 @@ export default function EditarTarefaPage() {
             {/* Datas */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Data e Hora de Início *
                 </label>
                 <input
@@ -255,7 +255,7 @@ export default function EditarTarefaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Data e Hora de Fim (opcional)
                 </label>
                 <input
@@ -292,7 +292,7 @@ export default function EditarTarefaPage() {
 
               <Link
                 href={`/tarefas/${id}`}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
               >
                 Cancelar
               </Link>

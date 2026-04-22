@@ -84,14 +84,14 @@ export default function NovaTarefaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Nova Tarefa</h1>
-              <p className="text-gray-600 mt-1">Planear atividade agrícola</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Tarefa</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Planear atividade agrícola</p>
             </div>
             <Link
               href="/tarefas"
@@ -107,10 +107,10 @@ export default function NovaTarefaPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Título */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Título da Tarefa *
               </label>
               <input
@@ -126,7 +126,7 @@ export default function NovaTarefaPage() {
 
             {/* Descrição */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Descrição
               </label>
               <textarea
@@ -142,7 +142,7 @@ export default function NovaTarefaPage() {
 
             {/* Tipo */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Tarefa *
               </label>
               <select
@@ -164,7 +164,7 @@ export default function NovaTarefaPage() {
             {/* Prioridade e Estado */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Prioridade *
                 </label>
                 <select
@@ -183,7 +183,7 @@ export default function NovaTarefaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Estado *
                 </label>
                 <select
@@ -205,7 +205,7 @@ export default function NovaTarefaPage() {
             {/* Datas */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Data e Hora de Início *
                 </label>
                 <input
@@ -219,7 +219,7 @@ export default function NovaTarefaPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Data e Hora de Fim (opcional)
                 </label>
                 <input
@@ -271,7 +271,7 @@ export default function NovaTarefaPage() {
 
               <Link
                 href="/tarefas"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
               >
                 Cancelar
               </Link>

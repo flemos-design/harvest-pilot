@@ -31,8 +31,8 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
 
   if (isLoadingForecast && isLoadingHistorico && isLoadingStats) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
           <Cloud className="w-5 h-5 text-blue-600" />
           Meteorologia
         </h2>
@@ -60,14 +60,14 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
 
   const getRainColor = (prob: number | null | undefined) => {
     if (prob === null || prob === undefined) return 'text-gray-400';
-    if (prob < 30) return 'text-gray-600';
+    if (prob < 30) return 'text-gray-600 dark:text-gray-400';
     if (prob < 60) return 'text-blue-500';
     return 'text-blue-700';
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
         <Cloud className="w-5 h-5 text-blue-600" />
         Meteorologia
       </h2>
@@ -75,14 +75,14 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
       {/* Estatísticas (Últimos 7 dias) */}
       {stats && stats.totalRegistos > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Últimos 7 Dias</h3>
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Últimos 7 Dias</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="bg-blue-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Thermometer className="w-4 h-4 text-blue-600" />
-                <p className="text-xs text-gray-600">Temp. Média</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Temp. Média</p>
               </div>
-              <p className="text-xl font-bold text-gray-800">
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 {stats.temperaturaMedia !== null
                   ? `${stats.temperaturaMedia.toFixed(1)}°C`
                   : 'N/A'}
@@ -92,9 +92,9 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
             <div className="bg-green-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <CloudRain className="w-4 h-4 text-green-600" />
-                <p className="text-xs text-gray-600">Precipitação</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Precipitação</p>
               </div>
-              <p className="text-xl font-bold text-gray-800">
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 {stats.precipitacaoTotal.toFixed(1)} mm
               </p>
             </div>
@@ -102,9 +102,9 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
             <div className="bg-purple-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Wind className="w-4 h-4 text-purple-600" />
-                <p className="text-xs text-gray-600">Vento Médio</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Vento Médio</p>
               </div>
-              <p className="text-xl font-bold text-gray-800">
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 {stats.ventoMedio !== null
                   ? `${stats.ventoMedio.toFixed(1)} km/h`
                   : 'N/A'}
@@ -114,9 +114,9 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
             <div className="bg-cyan-50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <Droplets className="w-4 h-4 text-cyan-600" />
-                <p className="text-xs text-gray-600">Humidade Média</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">Humidade Média</p>
               </div>
-              <p className="text-xl font-bold text-gray-800">
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-200">
                 {stats.humidadeMedia !== null
                   ? `${stats.humidadeMedia.toFixed(0)}%`
                   : 'N/A'}
@@ -129,15 +129,15 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
       {/* Previsão */}
       {forecast && forecast.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Previsão (Próximos 7 dias)</h3>
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Previsão (Próximos 7 dias)</h3>
           <div className="space-y-2">
             {forecast.map((day) => (
               <div
                 key={day.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 transition"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <span className="text-sm font-medium text-gray-700 w-28">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 w-28">
                     {formatDayLabel(day.data)}
                   </span>
 
@@ -152,7 +152,7 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
                     )}
 
                     {day.tempMin !== null && day.tempMin !== undefined && day.tempMax !== null && day.tempMax !== undefined && (
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {day.tempMin.toFixed(0)}° - {day.tempMax.toFixed(0)}°
                       </span>
                     )}
@@ -171,8 +171,8 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
 
                   {day.vento !== null && day.vento !== undefined && (
                     <div className="flex items-center gap-1">
-                      <Wind className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-600">
+                      <Wind className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         {day.vento.toFixed(0)} km/h
                       </span>
                     </div>
@@ -191,14 +191,14 @@ export function Meteorologia({ parcelaId }: MeteorologiaProps) {
       {/* Histórico */}
       {historico && historico.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Histórico Recente</h3>
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Histórico Recente</h3>
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {historico.slice(0, 7).map((record) => (
               <div
                 key={record.id}
-                className="flex items-center justify-between px-3 py-2 text-xs bg-gray-50 rounded"
+                className="flex items-center justify-between px-3 py-2 text-xs bg-gray-50 dark:bg-gray-900 rounded"
               >
-                <span className="text-gray-600">
+                <span className="text-gray-600 dark:text-gray-400">
                   {format(new Date(record.data), "dd/MM/yyyy", { locale: pt })}
                 </span>
                 <div className="flex items-center gap-3">

@@ -83,7 +83,7 @@ export default function EditarOrganizacaoPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Erro</h2>
-          <p className="text-gray-600">Organização não encontrada</p>
+          <p className="text-gray-600 dark:text-gray-400">Organização não encontrada</p>
           <Link href="/organizacoes" className="mt-4 inline-block text-green-600">← Voltar</Link>
         </div>
       </div>
@@ -91,13 +91,13 @@ export default function EditarOrganizacaoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Editar Organização</h1>
-              <p className="text-gray-600 mt-1">{organizacao.nome}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Editar Organização</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">{organizacao.nome}</p>
             </div>
             <Link
               href={`/organizacoes/${id}`}
@@ -112,21 +112,21 @@ export default function EditarOrganizacaoPage() {
 
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Icon Header */}
             <div className="flex items-center gap-3 pb-4 border-b">
               <div className="p-3 bg-green-100 rounded-lg">
                 <Building2 className="w-8 h-8 text-green-600" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Informações da Organização</h2>
-                <p className="text-sm text-gray-600">Atualiza os dados</p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Informações da Organização</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Atualiza os dados</p>
               </div>
             </div>
 
             {/* Nome */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Nome da Organização *
               </label>
               <input
@@ -144,7 +144,7 @@ export default function EditarOrganizacaoPage() {
 
             {/* Slug */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Slug (URL) *
               </label>
               <div className="flex items-center gap-2 mb-2">
@@ -161,13 +161,13 @@ export default function EditarOrganizacaoPage() {
                 <button
                   type="button"
                   onClick={() => setAutoSlug(true)}
-                  className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 transition"
                 >
                   Auto
                 </button>
               </div>
               {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Usado na URL: /organizacoes/slug/...
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function EditarOrganizacaoPage() {
               </button>
               <Link
                 href={`/organizacoes/${id}`}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition inline-flex items-center justify-center gap-2 font-medium"
               >
                 Cancelar
               </Link>

@@ -131,12 +131,12 @@ export function MapThumbnail({ geometry, height = '150px' }: MapThumbnailProps) 
   if (!geometry) {
     return (
       <div
-        className="flex items-center justify-center bg-gray-100 rounded-t-lg"
+        className="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-t-lg"
         style={{ height }}
       >
         <div className="text-center">
           <MapPin className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-xs text-gray-500">Sem geometria</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Sem geometria</p>
         </div>
       </div>
     );

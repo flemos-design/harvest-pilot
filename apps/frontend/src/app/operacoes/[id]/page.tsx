@@ -27,7 +27,7 @@ const TIPO_COLORS: Record<string, string> = {
   ADUBACAO: 'bg-lime-100 text-lime-800',
   TRATAMENTO: 'bg-purple-100 text-purple-800',
   COLHEITA: 'bg-amber-100 text-amber-800',
-  INSPECAO: 'bg-gray-100 text-gray-800',
+  INSPECAO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
   PODA: 'bg-orange-100 text-orange-800',
   DESBASTE: 'bg-red-100 text-red-800',
 };
@@ -83,15 +83,15 @@ export default function OperacaoDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href="/operacoes"
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ArrowLeft className="w-5 h-5" />
               </Link>
@@ -99,12 +99,12 @@ export default function OperacaoDetailPage() {
                 <span className="text-4xl">{TIPO_ICONS[operacao.tipo] || '📋'}</span>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-bold text-gray-900">{operacao.tipo}</h1>
-                    <span className={`px-3 py-1 text-sm font-medium rounded ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 text-gray-800'}`}>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{operacao.tipo}</h1>
+                    <span className={`px-3 py-1 text-sm font-medium rounded ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
                       {operacao.tipo}
                     </span>
                   </div>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
                     {format(new Date(operacao.data), "d 'de' MMMM 'de' yyyy", { locale: pt })}
                   </p>
                 </div>
@@ -147,35 +147,35 @@ export default function OperacaoDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Descrição */}
             {operacao.descricao && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Descrição</h2>
-                <p className="text-gray-700">{operacao.descricao}</p>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Descrição</h2>
+                <p className="text-gray-700 dark:text-gray-300">{operacao.descricao}</p>
               </div>
             )}
 
             {/* Detalhes */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Informações</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informações</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Data</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
                     {format(new Date(operacao.data), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: pt })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Tipo de Operação</p>
-                  <p className="font-medium text-gray-900">{operacao.tipo}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tipo de Operação</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">{operacao.tipo}</p>
                 </div>
                 {operacao.operador && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Operador</p>
-                    <p className="font-medium text-gray-900">{operacao.operador.nome}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Operador</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{operacao.operador.nome}</p>
                   </div>
                 )}
                 {operacao.custoTotal && operacao.custoTotal > 0 && (
                   <div>
-                    <p className="text-sm text-gray-600 mb-1">Custo Total</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Custo Total</p>
                     <p className="font-medium text-green-600 text-lg">{operacao.custoTotal.toFixed(2)}€</p>
                   </div>
                 )}
@@ -184,16 +184,16 @@ export default function OperacaoDetailPage() {
 
             {/* Talhão */}
             {operacao.parcela && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Terreno</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Terreno</h2>
                 <Link
                   href={`/parcelas/${operacao.parcela.id}`}
                   className="block p-4 bg-green-50 rounded-lg hover:bg-green-100 transition"
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-900 text-lg">{operacao.parcela.nome}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{operacao.parcela.area} hectares</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{operacao.parcela.nome}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{operacao.parcela.area} hectares</p>
                     </div>
                     <MapPin className="w-5 h-5 text-green-600" />
                   </div>
@@ -203,22 +203,22 @@ export default function OperacaoDetailPage() {
 
             {/* Localização GPS */}
             {operacao.latitude && operacao.longitude && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Localização GPS</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Localização GPS</h2>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm text-gray-700 mb-2">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                         Coordenadas registadas no momento da operação:
                       </p>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white rounded p-2">
-                          <p className="text-xs text-gray-600">Latitude</p>
+                        <div className="bg-white dark:bg-gray-800 rounded p-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Latitude</p>
                           <p className="font-mono text-sm font-medium">{operacao.latitude.toFixed(6)}</p>
                         </div>
-                        <div className="bg-white rounded p-2">
-                          <p className="text-xs text-gray-600">Longitude</p>
+                        <div className="bg-white dark:bg-gray-800 rounded p-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400">Longitude</p>
                           <p className="font-mono text-sm font-medium">{operacao.longitude.toFixed(6)}</p>
                         </div>
                       </div>
@@ -230,18 +230,18 @@ export default function OperacaoDetailPage() {
 
             {/* Notas */}
             {operacao.notas && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Notas</h2>
-                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-gray-300">
-                  <p className="text-gray-700 whitespace-pre-wrap">{operacao.notas}</p>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Notas</h2>
+                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-l-4 border-gray-300">
+                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{operacao.notas}</p>
                 </div>
               </div>
             )}
 
             {/* Fotos */}
             {operacao.fotos && operacao.fotos.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Fotografias</h2>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Fotografias</h2>
                 <PhotoGallery
                   images={operacao.fotos.map((url, idx) => ({
                     key: `foto-${idx}`,
@@ -257,14 +257,14 @@ export default function OperacaoDetailPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Info Cards */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Resumo</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Resumo</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                   <Calendar className="w-5 h-5 text-blue-600" />
                   <div>
-                    <p className="text-xs text-gray-600">Data</p>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Data</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {format(new Date(operacao.data), "dd/MM/yyyy", { locale: pt })}
                     </p>
                   </div>
@@ -274,8 +274,8 @@ export default function OperacaoDetailPage() {
                   <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
                     <User className="w-5 h-5 text-purple-600" />
                     <div>
-                      <p className="text-xs text-gray-600">Operador</p>
-                      <p className="text-sm font-medium text-gray-900">{operacao.operador.nome}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Operador</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{operacao.operador.nome}</p>
                     </div>
                   </div>
                 )}
@@ -284,7 +284,7 @@ export default function OperacaoDetailPage() {
                   <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                     <DollarSign className="w-5 h-5 text-green-600" />
                     <div>
-                      <p className="text-xs text-gray-600">Custo</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Custo</p>
                       <p className="text-sm font-medium text-green-600">{operacao.custoTotal.toFixed(2)}€</p>
                     </div>
                   </div>
@@ -294,8 +294,8 @@ export default function OperacaoDetailPage() {
                   <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
                     <MapPin className="w-5 h-5 text-amber-600" />
                     <div>
-                      <p className="text-xs text-gray-600">GPS</p>
-                      <p className="text-sm font-medium text-gray-900">Localização registada</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">GPS</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Localização registada</p>
                     </div>
                   </div>
                 )}
@@ -304,10 +304,10 @@ export default function OperacaoDetailPage() {
 
             {/* Insumos */}
             {operacao.insumos && Object.keys(operacao.insumos as object).length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">Insumos Utilizados</h3>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Insumos Utilizados</h3>
                 <div className="space-y-2 text-sm">
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400">
                     {JSON.stringify(operacao.insumos, null, 2)}
                   </p>
                 </div>
@@ -315,7 +315,7 @@ export default function OperacaoDetailPage() {
             )}
 
             {/* Timestamps */}
-            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600 space-y-2">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-xs text-gray-600 dark:text-gray-400 space-y-2">
               <div>
                 <span className="font-medium">Criado:</span>{' '}
                 {format(new Date(operacao.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
@@ -333,14 +333,14 @@ export default function OperacaoDetailPage() {
                 {operacao.parcela && (
                   <Link
                     href={`/parcelas/${operacao.parcela.id}`}
-                    className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                    className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                   >
                     🗺️ Ver Talhão
                   </Link>
                 )}
                 <Link
                   href="/operacoes/nova"
-                  className="block w-full bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg p-3 transition text-center"
+                  className="block w-full bg-white dark:bg-gray-800/20 hover:bg-white dark:bg-gray-800/30 backdrop-blur rounded-lg p-3 transition text-center"
                 >
                   📝 Nova Operação
                 </Link>

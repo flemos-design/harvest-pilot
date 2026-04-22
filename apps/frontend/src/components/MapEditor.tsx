@@ -240,11 +240,11 @@ export function MapEditor({
       <div ref={mapContainer} style={{ height, width: '100%' }} className="rounded-lg border" />
 
       {/* Toolbar */}
-      <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-2 flex flex-col gap-2 z-10">
+      <div className="absolute top-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 flex flex-col gap-2 z-10">
         <button
           onClick={drawMode === 'draw_polygon' ? stopDrawing : startDrawing}
-          className={`p-2 rounded hover:bg-gray-100 transition ${
-            drawMode === 'draw_polygon' ? 'bg-green-100 text-green-600' : 'text-gray-700'
+          className={`p-2 rounded hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 transition ${
+            drawMode === 'draw_polygon' ? 'bg-green-100 text-green-600' : 'text-gray-700 dark:text-gray-300'
           }`}
           title={drawMode === 'draw_polygon' ? 'Parar desenho' : 'Desenhar polígono'}
         >
@@ -253,7 +253,7 @@ export function MapEditor({
 
         <button
           onClick={deleteSelected}
-          className="p-2 rounded hover:bg-gray-100 transition text-gray-700"
+          className="p-2 rounded hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300"
           title="Eliminar selecionado"
         >
           <Trash2 className="w-5 h-5" />
@@ -272,17 +272,17 @@ export function MapEditor({
 
       {/* Area Display */}
       {currentArea > 0 && (
-        <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg px-4 py-3 z-10">
+        <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg px-4 py-3 z-10">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <Square className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-xs text-gray-600">Área calculada</p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-xs text-gray-600 dark:text-gray-400">Área calculada</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 {currentArea.toFixed(4)} ha
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {(currentArea * 10000).toFixed(0)} m²
               </p>
             </div>
@@ -291,9 +291,9 @@ export function MapEditor({
       )}
 
       {/* Instructions */}
-      <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-lg px-4 py-3 z-10 max-w-xs">
-        <p className="text-xs text-gray-600 font-medium mb-2">Instruções:</p>
-        <ul className="text-xs text-gray-500 space-y-1">
+      <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg px-4 py-3 z-10 max-w-xs">
+        <p className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-2">Instruções:</p>
+        <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <li>• Clique em <Edit3 className="w-3 h-3 inline" /> para desenhar</li>
           <li>• Clique no mapa para adicionar pontos</li>
           <li>• Duplo clique para terminar</li>

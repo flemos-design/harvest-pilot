@@ -51,7 +51,7 @@ export function DialogContent({
       <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange(false)} />
       <div
         className={cn(
-          'relative z-50 w-full max-w-2xl rounded-lg border bg-white p-6 shadow-lg overflow-y-auto max-h-[90vh]',
+          'relative z-50 w-full max-w-2xl rounded-lg border bg-white dark:bg-gray-800 p-6 shadow-lg overflow-y-auto max-h-[90vh]',
           className
         )}
       >

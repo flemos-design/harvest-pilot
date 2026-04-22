@@ -50,7 +50,7 @@ export function AlertDialogContent({
       <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange(false)} />
       <div
         className={cn(
-          'relative z-50 w-full max-w-lg rounded-lg border bg-white p-6 shadow-lg',
+          'relative z-50 w-full max-w-lg rounded-lg border bg-white dark:bg-gray-800 p-6 shadow-lg',
           className
         )}
       >
@@ -87,7 +87,7 @@ export function AlertDialogDescription({
   className?: string;
   children: React.ReactNode;
 }) {
-  return <p className={cn('text-sm text-gray-600', className)}>{children}</p>;
+  return <p className={cn('text-sm text-gray-600 dark:text-gray-400', className)}>{children}</p>;
 }
 
 export function AlertDialogFooter({
@@ -113,7 +113,7 @@ export function AlertDialogCancel({
 
   return (
     <button
-      className={cn('px-4 py-2 rounded-md border hover:bg-gray-100', className)}
+      className={cn('px-4 py-2 rounded-md border hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-700', className)}
       onClick={() => {
         onClick?.();
         onOpenChange(false);

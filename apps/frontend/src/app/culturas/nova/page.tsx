@@ -94,14 +94,14 @@ export default function NovaCulturaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Nova Cultura</h1>
-              <p className="text-gray-600 mt-1">Criar nova cultura agrícola</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Nova Cultura</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Criar nova cultura agrícola</p>
             </div>
             <Link
               href="/culturas"
@@ -117,14 +117,14 @@ export default function NovaCulturaPage() {
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
         <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Finalidade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Finalidade da Cultura *
               </label>
               <div className="grid grid-cols-2 gap-4">
-                <label className="relative flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-green-600 has-[:checked]:bg-green-50">
+                <label className="relative flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 has-[:checked]:border-green-600 has-[:checked]:bg-green-50">
                   <input
                     type="radio"
                     {...register('finalidade')}
@@ -134,12 +134,12 @@ export default function NovaCulturaPage() {
                   <div className="flex items-center gap-3">
                     <Sprout className="w-6 h-6 text-green-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Fruto</p>
-                      <p className="text-xs text-gray-500">Produção de frutos</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">Fruto</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Produção de frutos</p>
                     </div>
                   </div>
                 </label>
-                <label className="relative flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50">
+                <label className="relative flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 has-[:checked]:border-amber-600 has-[:checked]:bg-amber-50">
                   <input
                     type="radio"
                     {...register('finalidade')}
@@ -149,8 +149,8 @@ export default function NovaCulturaPage() {
                   <div className="flex items-center gap-3">
                     <Sprout className="w-6 h-6 text-amber-600" />
                     <div>
-                      <p className="font-medium text-gray-900">Madeira</p>
-                      <p className="text-xs text-gray-500">Produção madeireira</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">Madeira</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Produção madeireira</p>
                     </div>
                   </div>
                 </label>
@@ -162,7 +162,7 @@ export default function NovaCulturaPage() {
 
             {/* Espécie */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Espécie *
               </label>
               <select
@@ -184,7 +184,7 @@ export default function NovaCulturaPage() {
 
             {/* Variedade */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Variedade
               </label>
               <input
@@ -193,7 +193,7 @@ export default function NovaCulturaPage() {
                 placeholder="Ex: Longal, Judia, Boa Portuguesa"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
-              <p className="mt-1 text-xs text-gray-500">Opcional: Especifica a variedade da espécie</p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Opcional: Especifica a variedade da espécie</p>
               {errors.variedade && (
                 <p className="mt-1 text-sm text-red-600">{errors.variedade.message}</p>
               )}
@@ -201,7 +201,7 @@ export default function NovaCulturaPage() {
 
             {/* Terreno */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Terreno *
               </label>
               <select
@@ -219,7 +219,7 @@ export default function NovaCulturaPage() {
               {errors.parcelaId && (
                 <p className="mt-1 text-sm text-red-600">{errors.parcelaId.message}</p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Seleciona o terreno onde a cultura será plantada
               </p>
             </div>
@@ -259,7 +259,7 @@ export default function NovaCulturaPage() {
               </button>
               <Link
                 href="/culturas"
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
+                className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 transition font-medium inline-flex items-center justify-center"
               >
                 Cancelar
               </Link>
