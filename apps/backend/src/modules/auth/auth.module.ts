@@ -11,7 +11,7 @@ import { RolesGuard } from './guards/roles.guard';
     PrismaModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'harvestpilot-secret-change-in-production',
+      secret: process.env.JWT_SECRET || (() => { throw new Error('JWT_SECRET environment variable is required'); })(),
       signOptions: {
         expiresIn: '7d', // Token válido por 7 dias
       },

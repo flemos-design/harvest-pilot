@@ -14,7 +14,7 @@ let isRedirecting = false;
 // Request interceptor para adicionar token JWT
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('harvestpilot_token');
+    const token = localStorage.getItem('harvestpilot_token') || sessionStorage.getItem('harvestpilot_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
