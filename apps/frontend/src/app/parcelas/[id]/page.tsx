@@ -12,6 +12,7 @@ import { MapSingle } from '@/components/MapSingle';
 import { ImagensRemotas } from '@/components/ImagensRemotas';
 import { Meteorologia } from '@/components/Meteorologia';
 import { parcelaToKmlBlob, parcelaToKmzBlob, sanitizeFileName } from '@/lib/export-geo';
+import { parseGeometrySafe } from '@/lib/geo-utils';
 
 const TIPO_ICONS: Record<string, string> = {
   PLANTACAO: '🌱',
@@ -297,7 +298,7 @@ export default function ParcelaDetailPage() {
                 Localização
               </h2>
               <MapSingle
-                geometry={parcela.geometria}
+                geometry={parseGeometrySafe(parcela.geometria)}
                 parcelName={parcela.nome}
                 height="400px"
                 showControls={true}

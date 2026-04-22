@@ -4,6 +4,7 @@ import { useParcelas } from '@/hooks/use-parcelas';
 import { Loader2, MapPin, TrendingUp, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { MapThumbnail } from '@/components/MapThumbnail';
+import { parseGeometrySafe } from '@/lib/geo-utils';
 
 export default function ParcelasPage() {
   const { data: parcelas, isLoading, error } = useParcelas();
@@ -122,7 +123,7 @@ export default function ParcelasPage() {
                 className="bg-white rounded-lg shadow-sm border hover:shadow-lg transition cursor-pointer block overflow-hidden"
               >
                 {/* Map Thumbnail */}
-                <MapThumbnail geometry={parcela.geometria} height="180px" />
+                <MapThumbnail geometry={parseGeometrySafe(parcela.geometria)} height="180px" />
 
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">

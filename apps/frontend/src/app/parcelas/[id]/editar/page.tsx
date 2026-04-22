@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { MapSingle } from '@/components/MapSingle';
+import { parseGeometrySafe } from '@/lib/geo-utils';
 
 const parcelaSchema = z.object({
   nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -264,7 +265,7 @@ export default function EditarParcelaPage() {
                 Localização Atual
               </h3>
               <MapSingle
-                geometry={parcela.geometria}
+                geometry={parseGeometrySafe(parcela.geometria)}
                 parcelName={parcela.nome}
                 height="300px"
                 showControls={false}

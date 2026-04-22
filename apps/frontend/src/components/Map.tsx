@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import { useParcelas } from '@/hooks/use-parcelas';
 import { useRouter } from 'next/navigation';
+import { parseGeometrySafe } from '@/lib/geo-utils';
 
 interface MapProps {
   height?: string;
@@ -86,7 +87,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         .filter(p => p.geometria)
         .map(parcela => ({
           type: 'Feature',
-          geometry: parcela.geometria as GeoJSON.Geometry,
+          geometry: parseGeometrySafe(parcela.geometria),
           properties: {
             id: parcela.id,
             nome: parcela.nome,
