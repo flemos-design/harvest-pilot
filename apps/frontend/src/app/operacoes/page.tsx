@@ -1,54 +1,30 @@
 'use client';
 
 import { useOperacoes } from '@/hooks/use-operacoes';
-import { Loader2, ClipboardList, Calendar, DollarSign } from 'lucide-react';
+import { ClipboardList, Calendar, DollarSign, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui';
+import { Badge } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { LoadingState } from '@/components/ui/LoadingState';
 
 const TIPO_ICONS: Record<string, string> = {
-  PLANTACAO: '🌱',
-  REGA: '💧',
-  ADUBACAO: '🌿',
-  TRATAMENTO: '🧪',
-  COLHEITA: '🌾',
-  INSPECAO: '🔍',
-  PODA: '✂️',
-  DESBASTE: '🪓',
+  PLANTACAO: '🌱', REGA: '💧', ADUBACAO: '🌿', TRATAMENTO: '🧪',
+  COLHEITA: '🌾', INSPECAO: '🔍', PODA: '✂️', DESBASTE: '🪓',
 };
 
-const TIPO_COLORS: Record<string, string> = {
-  PLANTACAO: 'bg-green-100 text-green-800',
-  REGA: 'bg-blue-100 text-blue-800',
-  ADUBACAO: 'bg-lime-100 text-lime-800',
-  TRATAMENTO: 'bg-purple-100 text-purple-800',
-  COLHEITA: 'bg-amber-100 text-amber-800',
-  INSPECAO: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
-  PODA: 'bg-orange-100 text-orange-800',
-  DESBASTE: 'bg-red-100 text-red-800',
+const TIPO_BADGES: Record<string, string> = {
+  PLANTACAO: 'green', REGA: 'blue', ADUBACAO: 'green',
+  TRATAMENTO: 'purple', COLHEITA: 'amber', INSPECAO: 'slate',
+  PODA: 'orange', DESBASTE: 'red',
 };
 
 export default function OperacoesPage() {
   const { data: operacoes, isLoading, error } = useOperacoes();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar operações</h2>
-          <p className="text-gray-600 dark:text-gray-400">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
-        </div>
-      </div>
-    );
-  }
 
   const totalOperacoes = operacoes?.length || 0;
   const custoTotal = operacoes?.reduce((sum, op) => sum + (op.custoTotal || 0), 0) || 0;
@@ -57,113 +33,124 @@ export default function OperacoesPage() {
     return diff < 7 * 24 * 60 * 60 * 1000;
   }).length || 0;
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <PageHeader title="Operações de Campo" subtitle="Registo offline de operações com GPS e fotos" />
+        <div className="container mx-auto px-4 py-8">
+          <LoadingState fullPage />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <PageHeader title="Operações de Campo" subtitle="Registo offline de operações com GPS e fotos" />
+        <div className="container mx-auto px-4 py-8">
+          <Card className="text-center py-12">
+            <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar operações</h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              {error instanceof Error ? error.message : 'Erro desconhecido'}
+            </p>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Operações de Campo</h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">Registo offline de operações com GPS e fotos</p>
-            </div>
-            <Link
-              href="/operacoes/nova"
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
-            >
-              + Nova Operação
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="Operações de Campo"
+        subtitle="Registo offline de operações com GPS e fotos"
+        actions={
+          <Link href="/operacoes/nova">
+            <Button variant="primary" size="md" icon={<Plus className="w-4 h-4" />}>
+              Nova Operação
+            </Button>
+          </Link>
+        }
+      />
 
-      {/* Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+        <div className="grid md:grid-cols-3 gap-4">
+          <Card variant="colored" color="green">
             <div className="flex items-center gap-3">
-              <ClipboardList className="w-8 h-8 text-green-600" />
+              <ClipboardList className="w-8 h-8 text-emerald-600" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total Operações</p>
-                <p className="text-2xl font-bold">{totalOperacoes}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Total Operações</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{totalOperacoes}</p>
               </div>
             </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+          </Card>
+          <Card variant="colored" color="blue">
             <div className="flex items-center gap-3">
               <Calendar className="w-8 h-8 text-blue-600" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Última Semana</p>
-                <p className="text-2xl font-bold">{ultimaSemana}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Última Semana</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{ultimaSemana}</p>
               </div>
             </div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border">
+          </Card>
+          <Card variant="colored" color="amber">
             <div className="flex items-center gap-3">
               <DollarSign className="w-8 h-8 text-amber-600" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Custo Total</p>
-                <p className="text-2xl font-bold">{custoTotal.toFixed(2)}€</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Custo Total</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{custoTotal.toFixed(2)}€</p>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Operações List */}
         {!operacoes || operacoes.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-12 text-center">
-            <ClipboardList className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Nenhuma operação registada
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              Começa a registar as tuas operações de campo.
-            </p>
-          </div>
+          <EmptyState
+            icon={<ClipboardList className="w-16 h-16" />}
+            title="Nenhuma operação registada"
+            description="Começa a registar as tuas operações de campo."
+            action={{ label: 'Nova Operação', href: '/operacoes/nova' }}
+          />
         ) : (
           <div className="space-y-4">
             {operacoes.map((operacao) => (
               <Link
                 key={operacao.id}
                 href={`/operacoes/${operacao.id}`}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border hover:shadow-md transition cursor-pointer block"
+                className="block group"
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="text-3xl">
-                        {TIPO_ICONS[operacao.tipo] || '📋'}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <Card className="hover:shadow-md transition">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4 flex-1 min-w-0">
+                      <div className="text-3xl shrink-0">{TIPO_ICONS[operacao.tipo] || '📋'}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                             {operacao.tipo.replace('_', ' ')}
                           </h3>
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${TIPO_COLORS[operacao.tipo] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}>
+                          <Badge variant={TIPO_BADGES[operacao.tipo] as any || 'slate'} size="sm">
                             {operacao.tipo}
-                          </span>
+                          </Badge>
                         </div>
 
                         {operacao.descricao && (
-                          <p className="text-gray-700 dark:text-gray-300 mb-2">{operacao.descricao}</p>
+                          <p className="text-slate-700 dark:text-slate-300 mb-2">{operacao.descricao}</p>
                         )}
 
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-400">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            <span>
-                              {format(new Date(operacao.data), "d 'de' MMMM, yyyy", { locale: pt })}
-                            </span>
+                            <span>{format(new Date(operacao.data), "d 'de' MMMM, yyyy", { locale: pt })}</span>
                           </div>
-
                           {operacao.parcela && (
                             <div className="flex items-center gap-1">
                               <span className="font-medium">Talhão:</span>
                               <span>{operacao.parcela.nome}</span>
                             </div>
                           )}
-
                           {operacao.operador && (
                             <div className="flex items-center gap-1">
                               <span className="font-medium">Por:</span>
@@ -173,13 +160,13 @@ export default function OperacoesPage() {
                         </div>
 
                         {operacao.notas && (
-                          <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-200 dark:border-gray-700 pl-3">
+                          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 italic border-l-2 border-slate-200 dark:border-slate-700 pl-3">
                             {operacao.notas}
                           </p>
                         )}
 
                         {operacao.latitude && operacao.longitude && (
-                          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                             📍 GPS: {operacao.latitude.toFixed(5)}, {operacao.longitude.toFixed(5)}
                           </div>
                         )}
@@ -187,9 +174,9 @@ export default function OperacoesPage() {
                     </div>
 
                     {operacao.custoTotal && operacao.custoTotal > 0 && (
-                      <div className="text-right">
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Custo</div>
-                        <div className="text-xl font-bold text-green-600">
+                      <div className="text-right shrink-0">
+                        <div className="text-sm text-slate-500 dark:text-slate-400">Custo</div>
+                        <div className="text-xl font-bold text-emerald-600">
                           {operacao.custoTotal.toFixed(2)}€
                         </div>
                       </div>
@@ -197,17 +184,17 @@ export default function OperacoesPage() {
                   </div>
 
                   {operacao.fotos && operacao.fotos.length > 0 && (
-                    <div className="mt-4 pt-4 border-t">
+                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                       <div className="flex gap-2">
-                        {operacao.fotos.map((foto, idx) => (
-                          <div key={idx} className="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-gray-400">
+                        {operacao.fotos.map((_foto, idx) => (
+                          <div key={idx} className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-400">
                             📷
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
-                </div>
+                </Card>
               </Link>
             ))}
           </div>
