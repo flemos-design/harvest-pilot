@@ -60,12 +60,33 @@ export class IaService {
 
       const answer = completion.choices[0]?.message?.content || 'Sem resposta';
 
-      // 4. Retornar com metadados
+      // 4. Persistir conversa se necessário
+      let conversaId: string | undefined;
+      if (dto.message) {
+        try {
+          if (dto.conversaId) {
+            conversaId = dto.conversaId;
+            await this.addMensagem(conversaId, 'user', dto.message);
+            await this.addMensagem(conversaId, 'assistant', answer);
+          } else {
+            const titulo = dto.message.slice(0, 50);
+            const conversa = await this.createConversa(dto.organizacaoId, titulo);
+            conversaId = conversa.id;
+            await this.addMensagem(conversaId, 'user', dto.message);
+            await this.addMensagem(conversaId, 'assistant', answer);
+          }
+        } catch (error) {
+          this.logger.error(`Erro ao persistir conversa: ${error.message}`);
+        }
+      }
+
+      // 5. Retornar com metadados
       return {
         answer,
         sources: context.sources,
         confidence: this.calculateConfidence(context, answer),
         explanation: this.explainReasoning(dto.message, context, answer),
+        conversaId,
       };
     } catch (error) {
       this.logger.error(`OpenAI error: ${error.message}`);
@@ -908,5 +929,66 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
         probabilidadeChuva: meteo[0].probChuva,
       },
     };
+  }
+
+  /**
+   * Listar conversas de uma organização
+   */
+  async getConversas(organizacaoId: string) {
+    return this.prisma.conversaIA.findMany({
+      where: { organizacaoId },
+      orderBy: { updatedAt: 'desc' },
+    });
+  }
+
+  /**
+   * Obter uma conversa com as suas mensagens
+   */
+  async getConversa(id: string) {
+    return this.prisma.conversaIA.findUnique({
+      where: { id },
+      include: {
+        mensagens: {
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+  }
+
+  /**
+   * Criar uma nova conversa
+   */
+  async createConversa(organizacaoId: string, titulo: string) {
+    return this.prisma.conversaIA.create({
+      data: { organizacaoId, titulo },
+    });
+  }
+
+  /**
+   * Atualizar título de uma conversa
+   */
+  async updateConversa(id: string, titulo: string) {
+    return this.prisma.conversaIA.update({
+      where: { id },
+      data: { titulo },
+    });
+  }
+
+  /**
+   * Eliminar uma conversa (cascade elimina mensagens)
+   */
+  async deleteConversa(id: string) {
+    return this.prisma.conversaIA.delete({
+      where: { id },
+    });
+  }
+
+  /**
+   * Adicionar uma mensagem a uma conversa
+   */
+  async addMensagem(conversaId: string, role: string, content: string) {
+    return this.prisma.mensagemIA.create({
+      data: { conversaId, role, content },
+    });
   }
 }

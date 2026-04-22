@@ -14,6 +14,11 @@ export class ChatMessageDto {
   @ApiProperty({ description: 'ID da organização para contexto' })
   @IsString()
   organizacaoId: string;
+
+  @ApiProperty({ description: 'ID da conversa (opcional, para continuar histórico)', required: false })
+  @IsOptional()
+  @IsString()
+  conversaId?: string;
 }
 
 export class ChatResponseDto {
@@ -28,6 +33,9 @@ export class ChatResponseDto {
 
   @ApiProperty({ description: 'Explicação do raciocínio', required: false })
   explanation?: string;
+
+  @ApiProperty({ description: 'ID da conversa (se persistida)', required: false })
+  conversaId?: string;
 }
 
 export class InsightDto {

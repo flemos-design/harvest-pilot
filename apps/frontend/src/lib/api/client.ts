@@ -35,6 +35,7 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('harvestpilot_user');
       sessionStorage.removeItem('harvestpilot_token');
       sessionStorage.removeItem('harvestpilot_user');
+      document.cookie = 'hp_session=; path=/; max-age=0';
 
       // Redirecionar para login (evitar loop infinito)
       if (typeof window !== 'undefined' && !isRedirecting && !window.location.pathname.includes('/login')) {

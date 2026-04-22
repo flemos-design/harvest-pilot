@@ -254,3 +254,33 @@ model CalendarioRegra {
 
   @@map("calendario_regras")
 }
+
+// ===== ASSISTENTE IA — HISTÓRICO DE CONVERSAS =====
+
+model ConversaIA {
+  id            String   @id @default(cuid())
+  organizacaoId String   @map("organizacao_id")
+  titulo        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  mensagens MensagemIA[]
+
+  @@index([organizacaoId])
+  @@index([updatedAt])
+  @@map("conversas_ia")
+}
+
+model MensagemIA {
+  id        String   @id @default(cuid())
+  conversaId String  @map("conversa_id")
+  role      String   // user, assistant
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  conversa ConversaIA @relation(fields: [conversaId], references: [id], onDelete: Cascade)
+
+  @@index([conversaId])
+  @@index([createdAt])
+  @@map("mensagens_ia")
+}

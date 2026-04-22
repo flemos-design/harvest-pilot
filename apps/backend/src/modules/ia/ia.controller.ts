@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, Param, Patch, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { IaService } from './ia.service';
 import { ChatMessageDto, ChatResponseDto, InsightDto } from './dto/chat.dto';
@@ -26,5 +26,44 @@ export class IaController {
   @ApiQuery({ name: 'organizacaoId', required: true, description: 'ID da organização' })
   async getTopCriticalParcelas(@Query('organizacaoId') organizacaoId: string) {
     return this.iaService.getTopCriticalParcelas(organizacaoId);
+  }
+
+  // ===== HISTÓRICO DE CONVERSAS =====
+
+  @Get('conversas')
+  @ApiOperation({ summary: 'Listar conversas do assistente IA' })
+  @ApiQuery({ name: 'organizacaoId', required: true })
+  async getConversas(@Query('organizacaoId') organizacaoId: string) {
+    return this.iaService.getConversas(organizacaoId);
+  }
+
+  @Get('conversas/:id')
+  @ApiOperation({ summary: 'Obter uma conversa com todas as mensagens' })
+  async getConversa(@Param('id') id: string) {
+    return this.iaService.getConversa(id);
+  }
+
+  @Post('conversas')
+  @ApiOperation({ summary: 'Criar nova conversa' })
+  async createConversa(
+    @Body('organizacaoId') organizacaoId: string,
+    @Body('titulo') titulo: string,
+  ) {
+    return this.iaService.createConversa(organizacaoId, titulo);
+  }
+
+  @Patch('conversas/:id')
+  @ApiOperation({ summary: 'Renomear conversa' })
+  async updateConversa(
+    @Param('id') id: string,
+    @Body('titulo') titulo: string,
+  ) {
+    return this.iaService.updateConversa(id, titulo);
+  }
+
+  @Delete('conversas/:id')
+  @ApiOperation({ summary: 'Apagar conversa e mensagens' })
+  async deleteConversa(@Param('id') id: string) {
+    return this.iaService.deleteConversa(id);
   }
 }

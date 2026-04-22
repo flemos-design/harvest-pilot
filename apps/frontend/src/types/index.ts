@@ -510,6 +510,7 @@ export interface ChatMessage {
   message: string;
   parcelaId?: string;
   organizacaoId: string;
+  conversaId?: string;
 }
 
 export interface ChatResponse {
@@ -517,6 +518,7 @@ export interface ChatResponse {
   sources: string[];
   confidence: number;
   explanation?: string;
+  conversaId?: string;
 }
 
 export type InsightType = 'warning' | 'recommendation' | 'alert' | 'info';

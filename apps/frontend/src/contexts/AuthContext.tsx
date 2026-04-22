@@ -61,6 +61,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       storage.setItem('harvestpilot_token', response.access_token);
       storage.setItem('harvestpilot_user', JSON.stringify(response.user));
 
+      // Set session cookie for middleware auth check
+      document.cookie = 'hp_session=1; path=/; max-age=604800';
+
       // Update state
       setToken(response.access_token);
       setUser(response.user);
@@ -91,6 +94,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('harvestpilot_user');
     sessionStorage.removeItem('harvestpilot_token');
     sessionStorage.removeItem('harvestpilot_user');
+
+    // Clear session cookie
+    document.cookie = 'hp_session=; path=/; max-age=0';
 
     // Clear state
     setToken(null);
