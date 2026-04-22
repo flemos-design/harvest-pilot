@@ -3,6 +3,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import OpenAI from 'openai';
 import { ChatMessageDto, ChatResponseDto, InsightDto } from './dto/chat.dto';
 import { AutoSyncService } from '../meteorologia/auto-sync.service';
+import { NotificacoesService } from '../notificacoes/notificacoes.service';
 
 @Injectable()
 export class IaService {
@@ -13,6 +14,7 @@ export class IaService {
     private prisma: PrismaService,
     @Inject(forwardRef(() => AutoSyncService))
     private autoSyncService: AutoSyncService,
+    private notificacoesService: NotificacoesService,
   ) {
     if (!process.env.OPENAI_API_KEY) {
       this.logger.warn('OPENAI_API_KEY not configured - IA features disabled');
@@ -111,6 +113,13 @@ export class IaService {
     // 3. Insights de Operações (atrasadas/pendentes)
     const opInsights = await this.generateOperationInsights(organizacaoId);
     insights.push(...opInsights);
+
+    // Criar notificações automáticas para insights críticos
+    try {
+      await this.createNotificationsFromInsights(insights, organizacaoId);
+    } catch (error) {
+      this.logger.warn(`Erro ao criar notificações: ${error.message}`);
+    }
 
     // Ordenar por prioridade
     return insights.sort((a, b) => b.priority - a.priority).slice(0, 10);
@@ -929,6 +938,51 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
         probabilidadeChuva: meteo[0].probChuva,
       },
     };
+  }
+
+  /**
+   * Criar notificações automáticas a partir de insights
+   */
+  private async createNotificationsFromInsights(insights: InsightDto[], organizacaoId: string) {
+    // Buscar utilizadores da organização
+    const utilizadores = await this.prisma.utilizador.findMany({
+      where: { organizacaoId },
+      select: { id: true },
+    });
+
+    if (utilizadores.length === 0) return;
+
+    // Apenas insights de prioridade >= 3 criam notificações
+    const criticalInsights = insights.filter((i) => i.priority >= 3);
+
+    for (const insight of criticalInsights) {
+      const tipoMap: Record<string, string> = {
+        ndvi: 'NDVI',
+        meteo: 'METEO',
+        operation: 'TAREFA',
+      };
+
+      const tipo = tipoMap[insight.type] || 'SISTEMA';
+      const link = insight.parcelaIds?.length
+        ? `/parcelas/${insight.parcelaIds[0]}`
+        : insight.title.toLowerCase().includes('tarefa')
+          ? '/tarefas'
+          : undefined;
+
+      for (const user of utilizadores) {
+        try {
+          await this.notificacoesService.create({
+            userId: user.id,
+            tipo,
+            titulo: insight.title,
+            mensagem: insight.description,
+            link,
+          });
+        } catch (err) {
+          this.logger.warn(`Erro ao criar notificação para ${user.id}: ${err.message}`);
+        }
+      }
+    }
   }
 
   /**

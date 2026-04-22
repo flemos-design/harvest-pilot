@@ -284,3 +284,22 @@ model MensagemIA {
   @@index([createdAt])
   @@map("mensagens_ia")
 }
+
+// ===== NOTIFICAÇÕES =====
+
+model Notificacao {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  tipo          String   // NDVI, STOCK, METEO, TAREFA, SISTEMA
+  titulo        String
+  mensagem      String   @db.Text
+  lida          Boolean  @default(false)
+  link          String?  // URL para navegação
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([lida])
+  @@index([createdAt])
+  @@map("notificacoes")
+}

@@ -25,6 +25,7 @@ import { UtilizadoresModule } from './modules/utilizadores/utilizadores.module';
 import { EmailModule } from './modules/email/email.module';
 import { IaModule } from './modules/ia/ia.module';
 import { RelatoriosModule } from './modules/relatorios/relatorios.module';
+import { NotificacoesModule } from './modules/notificacoes/notificacoes.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { RelatoriosModule } from './modules/relatorios/relatorios.module';
     CalendarioModule,
     IaModule,
     RelatoriosModule,
+    NotificacoesModule,
 
   ],
   controllers: [AppController],
