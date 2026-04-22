@@ -4,7 +4,7 @@
   "private": true,
   "description": "HarvestPilot Backend API (NestJS)",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "rm -rf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
