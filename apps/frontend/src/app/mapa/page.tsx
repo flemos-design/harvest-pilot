@@ -122,7 +122,7 @@ export default function MapaPage() {
         <div className="flex gap-6">
           {/* Map */}
           <div className="flex-1">
-            <Map height="calc(100vh - 320px)" showControls={true} centerOnParcelas={true} />
+            <Map height="calc(100vh - 320px)" showControls={true} centerOnParcelas={true} parcelas={parcelas} isLoading={isLoading} />
           </div>
 
           {/* Legend */}

@@ -2,20 +2,21 @@
 
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
-import { useParcelas } from '@/hooks/use-parcelas';
 import { parseGeometrySafe } from '@/lib/geo-utils';
+import type { Parcela } from '@/types';
 
 interface MapProps {
   height?: string;
   showControls?: boolean;
   centerOnParcelas?: boolean;
+  parcelas?: Parcela[];
+  isLoading?: boolean;
 }
 
-export function Map({ height = '600px', showControls = true, centerOnParcelas = true }: MapProps) {
+export function Map({ height = '600px', showControls = true, centerOnParcelas = true, parcelas, isLoading }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { data: parcelas, isLoading } = useParcelas();
 
   console.log('[Map] Component render - isLoaded:', isLoaded, 'isLoading:', isLoading, 'parcelas count:', parcelas?.length ?? 'undefined');
 
@@ -120,7 +121,9 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
   }, [showControls]);
 
   useEffect(() => {
-    if (!map.current || !isLoaded || !parcelas || parcelas.length === 0) return;
+    if (!map.current || !isLoaded) return;
+    console.log('[Map] useEffect triggered - parcelas:', parcelas?.length ?? 'undefined');
+    if (!parcelas || parcelas.length === 0) return;
 
     const mapInstance = map.current;
 
