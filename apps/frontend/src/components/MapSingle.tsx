@@ -207,19 +207,31 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
     >
       <div ref={mapContainer} style={{ height: isFullscreen ? '100vh' : height }} className="w-full" />
 
-      {/* Fullscreen toggle button */}
-      <button
-        onClick={toggleFullscreen}
-        className="absolute top-3 right-3 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
-        title={isFullscreen ? 'Sair de ecrã inteiro' : 'Ecrã inteiro'}
-      >
-        {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-      </button>
-
+      {/* Top bar: parcel name + fullscreen button */}
       {parcelName && !isFullscreen && (
-        <div className="absolute top-3 left-3 bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{parcelName}</p>
+        <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-center">
+          <div className="bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{parcelName}</p>
+          </div>
+          <button
+            onClick={toggleFullscreen}
+            className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
+            title="Ecrã inteiro"
+          >
+            <Maximize2 className="w-4 h-4" />
+          </button>
         </div>
+      )}
+
+      {/* Fullscreen exit button (only in fullscreen mode) */}
+      {isFullscreen && (
+        <button
+          onClick={toggleFullscreen}
+          className="absolute top-3 right-3 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
+          title="Sair de ecrã inteiro"
+        >
+          <Minimize2 className="w-4 h-4" />
+        </button>
       )}
     </div>
   );
