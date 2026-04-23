@@ -129,7 +129,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
         type: 'fill',
         source: 'parcela',
         paint: {
-          'fill-color': '#22c55e',
+          'fill-color': '#ef4444',
           'fill-opacity': 0.5,
         },
       });
