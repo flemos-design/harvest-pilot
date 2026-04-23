@@ -129,7 +129,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
         type: 'fill',
         source: 'parcela',
         paint: {
-          'fill-color': '#ef4444',
+          'fill-color': '#22c55e',
           'fill-opacity': 0.5,
         },
       });
@@ -207,32 +207,23 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
     >
       <div ref={mapContainer} style={{ height: isFullscreen ? '100vh' : height }} className="w-full" />
 
-      {/* Top bar: parcel name + fullscreen button */}
+      {/* Parcel name badge */}
       {parcelName && !isFullscreen && (
-        <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-center">
-          <div className="bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{parcelName}</p>
-          </div>
-          <button
-            onClick={toggleFullscreen}
-            className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
-            title="Expandir ecrã inteiro"
-          >
-            <Maximize2 className="w-4 h-4" />
-          </button>
+        <div className="absolute top-3 left-3 z-20 bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{parcelName}</p>
         </div>
       )}
 
-      {/* Fullscreen exit button (only in fullscreen mode) */}
-      {isFullscreen && (
-        <button
-          onClick={toggleFullscreen}
-          className="absolute top-3 right-3 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
-          title="Sair de ecrã inteiro"
-        >
-          <Minimize2 className="w-4 h-4" />
-        </button>
-      )}
+      {/* Fullscreen toggle button - bottom right */}
+      <button
+        onClick={toggleFullscreen}
+        className={`absolute z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition ${
+          isFullscreen ? 'top-3 right-3' : 'bottom-4 right-4'
+        }`}
+        title={isFullscreen ? 'Sair de ecrã inteiro' : 'Ecrã inteiro'}
+      >
+        {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+      </button>
     </div>
   );
 }
