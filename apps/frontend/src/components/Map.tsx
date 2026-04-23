@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import { parseGeometrySafe } from '@/lib/geo-utils';
 import type { Parcela } from '@/types';
@@ -10,24 +10,24 @@ interface MapProps {
   showControls?: boolean;
   centerOnParcelas?: boolean;
   parcelas?: Parcela[];
-  isLoading?: boolean;
 }
 
-export function Map({ height = '600px', showControls = true, centerOnParcelas = true, parcelas, isLoading }: MapProps) {
+export function Map({ height = '600px', showControls = true, centerOnParcelas = true, parcelas }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const parcelasRef = useRef<Parcela[] | undefined>(parcelas);
+  const handlersAdded = useRef(false);
 
-  console.log('[Map] Component render - isLoaded:', isLoaded, 'isLoading:', isLoading, 'parcelas count:', parcelas?.length ?? 'undefined');
+  // Keep ref in sync with prop
+  parcelasRef.current = parcelas;
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    map.current = new maplibregl.Map({
+    const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
       style: {
         version: 8,
-        glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -55,85 +55,45 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
     });
 
     if (showControls) {
-      map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-      map.current.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+      mapInstance.addControl(new maplibregl.NavigationControl(), 'top-right');
+      mapInstance.addControl(new maplibregl.ScaleControl(), 'bottom-left');
     }
 
-    map.current.on('load', () => {
-      setIsLoaded(true);
-      // DEBUG: Add a hardcoded test polygon to verify MapLibre can render GeoJSON
-      const testGeojson: GeoJSON.FeatureCollection = {
-        type: 'FeatureCollection',
-        features: [
-          {
-            type: 'Feature',
-            geometry: {
-              type: 'Polygon',
-              coordinates: [
-                [
-                  [-6.751, 41.789],
-                  [-6.749, 41.789],
-                  [-6.749, 41.791],
-                  [-6.751, 41.791],
-                  [-6.751, 41.789],
-                ],
-              ],
-            },
-            properties: { id: 'test', nome: 'Teste' },
-          },
-        ],
-      };
-      try {
-        map.current!.addSource('test-polygon', {
-          type: 'geojson',
-          data: testGeojson,
-        });
-        map.current!.addLayer({
-          id: 'test-polygon-fill',
-          type: 'fill',
-          source: 'test-polygon',
-          paint: {
-            'fill-color': '#ff0000',
-            'fill-opacity': 0.6,
-          },
-        });
-        map.current!.addLayer({
-          id: 'test-polygon-outline',
-          type: 'line',
-          source: 'test-polygon',
-          paint: {
-            'line-color': '#000000',
-            'line-width': 3,
-          },
-        });
-        console.log('[Map] Test polygon added successfully');
-      } catch (e) {
-        console.error('[Map] Failed to add test polygon:', e);
+    mapInstance.on('load', () => {
+      console.log('[Map] Map loaded');
+      // If parcelas already available when map loads, render them immediately
+      if (parcelasRef.current && parcelasRef.current.length > 0) {
+        renderParcelas(mapInstance, parcelasRef.current, centerOnParcelas);
       }
     });
 
-    return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
-      }
-    };
-  }, [showControls]);
+    map.current = mapInstance;
 
+    return () => {
+      mapInstance.remove();
+      map.current = null;
+      handlersAdded.current = false;
+    };
+  }, [showControls, centerOnParcelas]);
+
+  // When parcelas prop changes, render them if map is already loaded
   useEffect(() => {
-    if (!map.current || !isLoaded) return;
-    console.log('[Map] useEffect triggered - parcelas:', parcelas?.length ?? 'undefined');
+    const mapInstance = map.current;
+    if (!mapInstance || !mapInstance.loaded()) return;
     if (!parcelas || parcelas.length === 0) return;
 
-    const mapInstance = map.current;
+    console.log('[Map] Parcelas changed, rendering', parcelas.length);
+    renderParcelas(mapInstance, parcelas, centerOnParcelas);
+  }, [parcelas, centerOnParcelas]);
 
+  function renderParcelas(mapInstance: maplibregl.Map, data: Parcela[], shouldFitBounds: boolean) {
     const features: GeoJSON.Feature[] = [];
-    console.log('[Map] Processing', parcelas.length, 'parcelas');
-    for (const parcela of parcelas) {
-      console.log('[Map] Parcela', parcela.id, 'geometria type:', typeof parcela.geometria, 'value:', parcela.geometria ? (typeof parcela.geometria === 'string' ? parcela.geometria.substring(0, 100) : JSON.stringify(parcela.geometria).substring(0, 100)) : 'null');
+    for (const parcela of data) {
       const geometry = parseGeometrySafe(parcela.geometria);
-      console.log('[Map] Parsed geometry:', geometry ? geometry.type : 'null');
-      if (!geometry) continue;
+      if (!geometry) {
+        console.warn('[Map] Invalid geometry for parcela:', parcela.id, parcela.nome);
+        continue;
+      }
       features.push({
         type: 'Feature',
         geometry,
@@ -147,6 +107,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       });
     }
 
+    console.log('[Map] Features built:', features.length);
     if (features.length === 0) return;
 
     const geojson: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features };
@@ -154,11 +115,13 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
     const existingSource = mapInstance.getSource('parcelas');
     if (existingSource) {
       (existingSource as maplibregl.GeoJSONSource).setData(geojson);
+      console.log('[Map] Updated existing source');
     } else {
       mapInstance.addSource('parcelas', {
         type: 'geojson',
         data: geojson,
       });
+      console.log('[Map] Added source');
 
       mapInstance.addLayer({
         id: 'parcelas-fill',
@@ -191,25 +154,50 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         filter: ['==', 'id', ''],
       });
 
-      mapInstance.addLayer({
-        id: 'parcelas-labels',
-        type: 'symbol',
-        source: 'parcelas',
-        layout: {
-          'text-field': ['get', 'nome'],
-          'text-font': ['Noto Sans Regular'],
-          'text-size': 12,
-          'text-anchor': 'center',
-        },
-        paint: {
-          'text-color': '#ffffff',
-          'text-halo-color': '#16a34a',
-          'text-halo-width': 2,
-        },
-      });
+      if (!handlersAdded.current) {
+        const onMouseEnter = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+          mapInstance.getCanvas().style.cursor = 'pointer';
+          if (e.features?.[0]?.properties?.id) {
+            mapInstance.setFilter('parcelas-highlight', ['==', 'id', e.features[0].properties.id]);
+          }
+        };
+
+        const onMouseLeave = () => {
+          mapInstance.getCanvas().style.cursor = '';
+          mapInstance.setFilter('parcelas-highlight', ['==', 'id', '']);
+        };
+
+        const onClick = (e: maplibregl.MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+          if (!e.features?.[0]?.properties || !e.lngLat) return;
+          const props = e.features[0].properties;
+          try {
+            new maplibregl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML(`
+                <div style="padding:8px;min-width:200px;">
+                  <h3 style="font-weight:bold;font-size:16px;margin-bottom:8px;color:#16a34a;">${props.nome}</h3>
+                  <div style="font-size:14px;color:#4b5563;">
+                    <p style="margin:4px 0;"><strong>Área:</strong> ${props.area} ha</p>
+                    <p style="margin:4px 0;"><strong>Cultura:</strong> ${props.cultura}</p>
+                    <p style="margin:4px 0;"><strong>Solo:</strong> ${props.tipoSolo}</p>
+                  </div>
+                  <a href="/parcelas/${props.id}" style="display:block;text-align:center;margin-top:12px;padding:6px 12px;background:#22c55e;color:white;border-radius:6px;text-decoration:none;font-size:14px;">Ver Detalhes</a>
+                </div>
+              `)
+              .addTo(mapInstance);
+          } catch {
+            // ignore
+          }
+        };
+
+        mapInstance.on('mouseenter', 'parcelas-fill', onMouseEnter);
+        mapInstance.on('mouseleave', 'parcelas-fill', onMouseLeave);
+        mapInstance.on('click', 'parcelas-fill', onClick);
+        handlersAdded.current = true;
+      }
     }
 
-    if (centerOnParcelas) {
+    if (shouldFitBounds) {
       const bounds = new maplibregl.LngLatBounds();
       let hasCoords = false;
       for (const f of features) {
@@ -229,23 +217,14 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         mapInstance.fitBounds(bounds, { padding: 50, maxZoom: 16 });
       }
     }
-  }, [isLoaded, parcelas, centerOnParcelas]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center bg-slate-100 dark:bg-slate-700 rounded-xl" style={{ height }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4" />
-          <p className="text-slate-600 dark:text-slate-400">A carregar mapa...</p>
-        </div>
-      </div>
-    );
   }
+
+  const hasParcelas = parcelas && parcelas.length > 0;
 
   return (
     <div className="relative w-full rounded-xl overflow-hidden shadow-lg">
       <div ref={mapContainer} style={{ height }} className="w-full" />
-      {parcelas && parcelas.length === 0 && (
+      {!hasParcelas && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none">
           <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg max-w-sm text-center">
             <p className="text-slate-700 dark:text-slate-300">Sem parcelas para visualizar.</p>

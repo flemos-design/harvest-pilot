@@ -23,7 +23,6 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
       container: mapContainer.current,
       style: {
         version: 8,
-        glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -118,25 +117,6 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
         },
       });
 
-      // Add label layer
-      if (parcelName) {
-        mapInstance.addLayer({
-          id: 'parcela-label',
-          type: 'symbol',
-          source: 'parcela',
-          layout: {
-            'text-field': parcelName,
-            'text-font': ['Noto Sans Regular'],
-            'text-size': 14,
-            'text-anchor': 'center',
-          },
-          paint: {
-            'text-color': '#ffffff',
-            'text-halo-color': '#16a34a',
-            'text-halo-width': 2,
-          },
-        });
-      }
     } else {
       // Update existing source
       const source = mapInstance.getSource('parcela') as maplibregl.GeoJSONSource;
