@@ -49,24 +49,28 @@ export default function EditarParcelaPage() {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<ParcelaFormData>({
     resolver: zodResolver(parcelaSchema),
+    defaultValues: {
+      nome: parcela?.nome || '',
+      area: parcela?.area || 0,
+      altitude: parcela?.altitude || undefined,
+      tipoSolo: parcela?.tipoSolo || '',
+      propriedadeId: parcela?.propriedadeId || '',
+    },
   });
 
   // Pre-populate form when parcela data is loaded
   useEffect(() => {
     if (parcela) {
-      reset({
-        nome: parcela.nome,
-        area: parcela.area,
-        altitude: parcela.altitude || undefined,
-        tipoSolo: parcela.tipoSolo || undefined,
-        propriedadeId: parcela.propriedadeId,
-      });
+      setValue('nome', parcela.nome);
+      setValue('area', parcela.area);
+      setValue('altitude', parcela.altitude || undefined);
+      setValue('tipoSolo', parcela.tipoSolo || '');
+      setValue('propriedadeId', parcela.propriedadeId);
     }
-  }, [parcela, reset]);
+  }, [parcela, setValue]);
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
