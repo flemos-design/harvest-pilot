@@ -17,6 +17,8 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
   const [isLoaded, setIsLoaded] = useState(false);
   const { data: parcelas, isLoading } = useParcelas();
 
+  console.log('[Map] Component render - isLoaded:', isLoaded, 'isLoading:', isLoading, 'parcelas count:', parcelas?.length ?? 'undefined');
+
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
