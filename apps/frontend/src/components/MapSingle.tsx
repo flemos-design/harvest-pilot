@@ -218,7 +218,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
       <button
         onClick={toggleFullscreen}
         className={`absolute z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition ${
-          isFullscreen ? 'top-3 right-3' : 'bottom-4 right-4'
+          'bottom-4 right-4'
         }`}
         title={isFullscreen ? 'Sair de ecrã inteiro' : 'Ecrã inteiro'}
       >
