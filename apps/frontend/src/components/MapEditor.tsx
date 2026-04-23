@@ -6,7 +6,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 // @ts-ignore - Turf types have package.json exports issue
 import * as turf from '@turf/turf';
-import { Edit3, Trash2, Square, Save, X } from 'lucide-react';
+import { Edit3, Trash2, Square, X, Maximize2, Minimize2 } from 'lucide-react';
 
 interface MapEditorProps {
   initialGeometry?: GeoJSON.Geometry;
@@ -29,6 +29,28 @@ export function MapEditor({
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentArea, setCurrentArea] = useState<number>(0);
   const [drawMode, setDrawMode] = useState<'simple_select' | 'draw_polygon'>('simple_select');
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Toggle fullscreen
+  const toggleFullscreen = () => {
+    setIsFullscreen(prev => {
+      const next = !prev;
+      setTimeout(() => map.current?.resize(), 100);
+      return next;
+    });
+  };
+
+  // Escape key to exit fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+        setTimeout(() => map.current?.resize(), 100);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   // Initialize map
   useEffect(() => {
@@ -234,10 +256,25 @@ export function MapEditor({
     onGeometryChange(null, 0);
   };
 
+  const containerClasses = isFullscreen
+    ? 'fixed inset-0 z-50 w-screen h-screen'
+    : 'relative';
+
+  const mapHeight = isFullscreen ? '100vh' : height;
+
   return (
-    <div className="relative">
+    <div className={containerClasses}>
       {/* Map Container */}
-      <div ref={mapContainer} style={{ height, width: '100%' }} className="rounded-lg border" />
+      <div ref={mapContainer} style={{ height: mapHeight, width: '100%' }} className={isFullscreen ? '' : 'rounded-lg border'} />
+
+      {/* Fullscreen toggle button */}
+      <button
+        onClick={toggleFullscreen}
+        className="absolute top-3 right-3 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
+        title={isFullscreen ? 'Sair de ecrã inteiro' : 'Ecrã inteiro'}
+      >
+        {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+      </button>
 
       {/* Toolbar */}
       <div className="absolute top-4 left-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-2 flex flex-col gap-2 z-10">

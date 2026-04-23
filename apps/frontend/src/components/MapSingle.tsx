@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
+import { Maximize2, Minimize2 } from 'lucide-react';
 
 interface MapSingleProps {
   geometry: GeoJSON.Geometry | null;
@@ -14,6 +15,33 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Toggle fullscreen
+  const toggleFullscreen = () => {
+    setIsFullscreen(prev => {
+      const next = !prev;
+      // Resize map after transition
+      setTimeout(() => {
+        if (map.current) {
+          map.current.resize();
+        }
+      }, 100);
+      return next;
+    });
+  };
+
+  // Escape key to exit fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+        setTimeout(() => map.current?.resize(), 100);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
 
   useEffect(() => {
     if (!mapContainer.current || map.current || !geometry) return;
@@ -170,10 +198,25 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
   }
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden shadow-md border border-gray-200 dark:border-gray-700">
-      <div ref={mapContainer} style={{ height }} className="w-full" />
+    <div
+      className={`${
+        isFullscreen
+          ? 'fixed inset-0 z-50 w-screen h-screen'
+          : 'relative w-full rounded-lg overflow-hidden shadow-md border border-gray-200 dark:border-gray-700'
+      }`}
+    >
+      <div ref={mapContainer} style={{ height: isFullscreen ? '100vh' : height }} className="w-full" />
 
-      {parcelName && (
+      {/* Fullscreen toggle button */}
+      <button
+        onClick={toggleFullscreen}
+        className="absolute top-3 right-3 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
+        title={isFullscreen ? 'Sair de ecrã inteiro' : 'Ecrã inteiro'}
+      >
+        {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+      </button>
+
+      {parcelName && !isFullscreen && (
         <div className="absolute top-3 left-3 bg-white dark:bg-gray-800 px-3 py-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{parcelName}</p>
         </div>
