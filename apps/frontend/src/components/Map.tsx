@@ -60,6 +60,55 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
 
     map.current.on('load', () => {
       setIsLoaded(true);
+      // DEBUG: Add a hardcoded test polygon to verify MapLibre can render GeoJSON
+      const testGeojson: GeoJSON.FeatureCollection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [
+                [
+                  [-6.751, 41.789],
+                  [-6.749, 41.789],
+                  [-6.749, 41.791],
+                  [-6.751, 41.791],
+                  [-6.751, 41.789],
+                ],
+              ],
+            },
+            properties: { id: 'test', nome: 'Teste' },
+          },
+        ],
+      };
+      try {
+        map.current!.addSource('test-polygon', {
+          type: 'geojson',
+          data: testGeojson,
+        });
+        map.current!.addLayer({
+          id: 'test-polygon-fill',
+          type: 'fill',
+          source: 'test-polygon',
+          paint: {
+            'fill-color': '#ff0000',
+            'fill-opacity': 0.6,
+          },
+        });
+        map.current!.addLayer({
+          id: 'test-polygon-outline',
+          type: 'line',
+          source: 'test-polygon',
+          paint: {
+            'line-color': '#000000',
+            'line-width': 3,
+          },
+        });
+        console.log('[Map] Test polygon added successfully');
+      } catch (e) {
+        console.error('[Map] Failed to add test polygon:', e);
+      }
     });
 
     return () => {
