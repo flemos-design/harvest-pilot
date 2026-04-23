@@ -24,7 +24,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
       container: mapContainer.current,
       style: {
         version: 8,
-        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+        glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -143,7 +143,7 @@ export function Map({ height = '600px', showControls = true, centerOnParcelas = 
         source: 'parcelas',
         layout: {
           'text-field': ['get', 'nome'],
-          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+          'text-font': ['Noto Sans Regular'],
           'text-size': 12,
           'text-anchor': 'center',
         },

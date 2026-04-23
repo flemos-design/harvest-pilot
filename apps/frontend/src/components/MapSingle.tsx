@@ -23,7 +23,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
       container: mapContainer.current,
       style: {
         version: 8,
-        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+        glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -126,7 +126,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
           source: 'parcela',
           layout: {
             'text-field': parcelName,
-            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-font': ['Noto Sans Regular'],
             'text-size': 14,
             'text-anchor': 'center',
           },
