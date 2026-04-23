@@ -554,3 +554,4 @@ Para questões técnicas ou sugestões, abra uma issue no repositório.
 ---
 
 **HarvestPilot** - Gestão Agrícola Inteligente 🌾
+# Railway deploy retry
