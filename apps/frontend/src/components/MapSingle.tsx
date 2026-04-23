@@ -216,7 +216,7 @@ export function MapSingle({ geometry, parcelName, height = '400px', showControls
           <button
             onClick={toggleFullscreen}
             className="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition"
-            title="Ecrã inteiro"
+            title="Expandir ecrã inteiro"
           >
             <Maximize2 className="w-4 h-4" />
           </button>
