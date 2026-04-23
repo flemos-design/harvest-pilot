@@ -172,7 +172,7 @@ export default function EditarParcelaPage() {
 
       {/* Form */}
       <main className="container mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
+        <form key={parcela.id} onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-6 space-y-6">
             {/* Nome */}
             <div>
