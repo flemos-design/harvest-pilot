@@ -449,6 +449,16 @@ export interface SatelliteConfigurationStatus {
   };
 }
 
+export interface SatelliteSyncResult {
+  lookbackDays: number;
+  maxCloud: number;
+  parcelas: number;
+  atualizadas: number;
+  semCaptura: number;
+  ignoradas: number;
+  falhas: number;
+}
+
 // ===== UTILIZADORES =====
 
 export type PapelUtilizador = 'ADMIN' | 'GESTOR' | 'PLANEADOR' | 'OPERADOR';

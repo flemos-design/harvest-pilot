@@ -16,6 +16,8 @@ The request grid approximates 10m pixels in WGS84 and is bounded to 1024 pixels 
 
 POST /api/v1/imagens-remotas/sync runs a synchronous organization-scoped sync for an authenticated user. The frontend exposes this as “Atualizar imagens”. The current backend is a single replica and processes parcels sequentially; a distributed queue/lock is required before scaling it. SATELLITE_AUTO_SYNC=true enables the daily 04:00 UTC job. Unique observation keys make repeated runs safe.
 
+The button only shows new cards after this request completes successfully. A successful request may still return zero images when no acquisition in the previous 30 days passes the cloud and pixel-quality filters; the UI reports that outcome separately from provider or configuration failures. The request body must be an empty JSON object, not JSON `null`.
+
 Existing Unsplash demonstration records are labelled DEMO by the development seed. This release does not delete stored records or convert them into real observations.
 
 ## Release verification

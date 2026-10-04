@@ -23,6 +23,8 @@ export default function SateliteGaleriaPage() {
   const missingConfiguration = configuration
     ? [...configuration.sentinel.missing, ...configuration.storage.missing]
     : [];
+  const syncErrorResponse = (syncImages.error as { response?: { data?: { message?: string } } } | null)?.response?.data;
+  const syncErrorMessage = syncErrorResponse?.message || 'O servidor ou o fornecedor Sentinel Hub não respondeu como esperado.';
 
   const imagensFiltradas = useMemo(() => {
     if (!todasImagens) return [];
@@ -169,7 +171,19 @@ export default function SateliteGaleriaPage() {
       {syncImages.isError && configuration?.ready !== false && (
         <div className="container mx-auto px-4 pt-4">
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            Não foi possível atualizar as imagens. O servidor ou o fornecedor Sentinel Hub não respondeu como esperado.
+            Não foi possível atualizar as imagens. {syncErrorMessage}
+          </div>
+        </div>
+      )}
+
+      {syncImages.data && (
+        <div className="container mx-auto px-4 pt-4">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            {syncImages.data.atualizadas > 0
+              ? `${syncImages.data.atualizadas} nova(s) imagem(ns) registada(s) em ${syncImages.data.parcelas} terreno(s).`
+              : `Não foram encontradas capturas elegíveis nos últimos ${syncImages.data.lookbackDays} dias.`}
+            {syncImages.data.semCaptura > 0 && ` ${syncImages.data.semCaptura} terreno(s) sem captura válida.`}
+            {syncImages.data.falhas > 0 && ` ${syncImages.data.falhas} terreno(s) falharam; tente novamente mais tarde.`}
           </div>
         </div>
       )}

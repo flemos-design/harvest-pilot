@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { imagensRemotasApi } from '@/lib/api';
-import type { CreateImagemRemotaDto } from '@/types';
+import type { CreateImagemRemotaDto, SatelliteSyncResult } from '@/types';
 
 export function useImagensRemotas(parcelaId?: string) {
   return useQuery({
@@ -13,7 +13,7 @@ export function useSyncImagensRemotas() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => imagensRemotasApi.sync(),
+    mutationFn: (): Promise<SatelliteSyncResult> => imagensRemotasApi.sync(),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['imagens-remotas'] }),
   });
 }
