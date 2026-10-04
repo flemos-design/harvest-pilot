@@ -121,7 +121,7 @@ export default function TarefaDetailPage() {
   const isAtrasada =
     tarefa.estado !== 'CONCLUIDA' &&
     tarefa.estado !== 'CANCELADA' &&
-    new Date(tarefa.dataInicio) < new Date();
+    Boolean(tarefa.dataFim && new Date(tarefa.dataFim) < new Date());
   const podeEditar = tarefa.estado !== 'CONCLUIDA' && tarefa.estado !== 'CANCELADA';
 
   return (

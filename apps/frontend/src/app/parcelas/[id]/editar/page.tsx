@@ -9,7 +9,7 @@ import { Loader2, Save, X, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { MapSingle } from '@/components/MapSingle';
+import { MapEditor } from '@/components/MapEditor';
 import { parseGeometrySafe } from '@/lib/geo-utils';
 
 const parcelaSchema = z.object({
@@ -44,6 +44,7 @@ export default function EditarParcelaPage() {
   const updateParcela = useUpdateParcela();
   const [useGPS, setUseGPS] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
+  const [editedGeometry, setEditedGeometry] = useState<GeoJSON.Geometry | null | undefined>(undefined);
 
   const {
     register,
@@ -69,6 +70,7 @@ export default function EditarParcelaPage() {
       setValue('altitude', parcela.altitude || undefined);
       setValue('tipoSolo', parcela.tipoSolo || '');
       setValue('propriedadeId', parcela.propriedadeId);
+      setEditedGeometry(parseGeometrySafe(parcela.geometria));
     }
   }, [parcela, setValue]);
 
@@ -84,6 +86,7 @@ export default function EditarParcelaPage() {
         setValue('latitude', position.coords.latitude);
         setValue('longitude', position.coords.longitude);
         setUseGPS(true);
+        setEditedGeometry(null);
         setGettingLocation(false);
       },
       (error) => {
@@ -104,8 +107,10 @@ export default function EditarParcelaPage() {
         propriedadeId: data.propriedadeId,
       };
 
-      // Se temos GPS, atualizar geometria
-      if (data.latitude && data.longitude) {
+      // A geometria editada tem prioridade; o GPS continua disponível como alternativa.
+      if (!useGPS && editedGeometry !== undefined && editedGeometry !== null) {
+        updateData.geometria = editedGeometry;
+      } else if (data.latitude && data.longitude) {
         const offset = 0.001; // ~100m
         updateData.geometria = {
           type: 'Polygon',
@@ -220,7 +225,7 @@ export default function EditarParcelaPage() {
                 type="number"
                 step="0.01"
                 min="0.01"
-                {...register('area', { valueAsNumber: true })}
+                {...register('area', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 placeholder="Ex: 2.5"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
@@ -238,7 +243,7 @@ export default function EditarParcelaPage() {
               <input
                 type="number"
                 step="1"
-                {...register('altitude', { valueAsNumber: true })}
+                {...register('altitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 placeholder="Ex: 900"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
@@ -266,14 +271,19 @@ export default function EditarParcelaPage() {
             <div className="border-t pt-6">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-green-600" />
-                Localização Atual
+                Geometria do terreno
               </h3>
-              <MapSingle
-                geometry={parseGeometrySafe(parcela.geometria)}
-                parcelName={parcela.nome}
-                height="300px"
-                showControls={false}
+              <MapEditor
+                initialGeometry={editedGeometry ?? undefined}
+                onGeometryChange={(geometry, area) => {
+                  setEditedGeometry(geometry);
+                  if (area > 0) setValue('area', Number(area.toFixed(4)));
+                }}
+                height="360px"
               />
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                Edita os vértices no mapa ou desenha um novo polígono. A área é recalculada automaticamente.
+              </p>
             </div>
 
             {/* GPS Location */}
@@ -314,7 +324,7 @@ export default function EditarParcelaPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('latitude', { valueAsNumber: true })}
+                      {...register('latitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -324,7 +334,7 @@ export default function EditarParcelaPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('longitude', { valueAsNumber: true })}
+                      {...register('longitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -340,8 +350,7 @@ export default function EditarParcelaPage() {
                 <div className="text-sm text-amber-800">
                   <p className="font-medium mb-1">Sobre Geometria</p>
                   <p className="text-amber-700">
-                    A geometria existente será mantida a não ser que captures uma nova localização GPS.
-                    Em breve poderás desenhar o terreno no mapa.
+                    A geometria desenhada no mapa será guardada com o terreno. Se usares o GPS, será gerado um polígono aproximado centrado nessa localização.
                   </p>
                 </div>
               </div>

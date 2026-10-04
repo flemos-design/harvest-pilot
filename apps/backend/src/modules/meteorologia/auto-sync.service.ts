@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { IpmaIntegrationService } from './ipma-integration.service';
 
@@ -18,6 +19,14 @@ export class AutoSyncService {
     private prisma: PrismaService,
     private ipmaService: IpmaIntegrationService,
   ) {}
+
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async syncAllOrganizationsDaily(): Promise<void> {
+    const organizacoes = await this.prisma.organizacao.findMany({ select: { id: true } });
+    for (const organizacao of organizacoes) {
+      await this.checkAndSyncIfNeeded(organizacao.id);
+    }
+  }
 
   /**
    * Verificar e sincronizar meteorologia se necessário

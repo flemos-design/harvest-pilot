@@ -283,7 +283,7 @@ export default function EditarOperacaoPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('latitude', { valueAsNumber: true })}
+                      {...register('latitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -293,7 +293,7 @@ export default function EditarOperacaoPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('longitude', { valueAsNumber: true })}
+                      {...register('longitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -311,7 +311,7 @@ export default function EditarOperacaoPage() {
                 type="number"
                 step="0.01"
                 min="0"
-                {...register('custoTotal', { valueAsNumber: true })}
+                {...register('custoTotal', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 placeholder="0.00"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />

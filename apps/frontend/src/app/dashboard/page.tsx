@@ -5,7 +5,7 @@ import { useOperacoes } from '@/hooks/use-operacoes';
 import { useTarefas, useTarefasStats } from '@/hooks/use-tarefas';
 import { useLowStockInsumos, useExpiringSoonInsumos } from '@/hooks/use-insumos';
 import { useInsights, useCriticalParcelas } from '@/hooks/use-ia';
-import { useOrganizacoes } from '@/hooks/use-organizacoes';
+import { useAuth } from '@/contexts/AuthContext';
 import { useForecast } from '@/hooks/use-meteorologia';
 import { useImagensRemotas } from '@/hooks/use-imagens-remotas';
 import {
@@ -38,8 +38,8 @@ export default function DashboardPage() {
   const { data: tarefasStats } = useTarefasStats();
   const { data: lowStock } = useLowStockInsumos();
   const { data: expiringSoon } = useExpiringSoonInsumos(30);
-  const { data: organizacoes } = useOrganizacoes();
-  const orgId = organizacoes?.[0]?.id || '';
+  const { user } = useAuth();
+  const orgId = user?.organizacaoId || '';
   const { data: insights, isLoading: isLoadingInsights } = useInsights(orgId);
   const { data: criticalParcelas, isLoading: isLoadingCritical } = useCriticalParcelas(orgId);
 
@@ -56,10 +56,10 @@ export default function DashboardPage() {
   const custoTotal = operacoes?.reduce((sum, op) => sum + (op.custoTotal || 0), 0) || 0;
 
   const tarefasPendentes = tarefas
-    ?.filter((t) => t.estado !== 'CONCLUIDA')
+    ?.filter((t) => t.estado === 'PLANEADA' || t.estado === 'EM_CURSO')
     .sort((a, b) => {
       const order = { URGENTE: 0, ALTA: 1, MEDIA: 2, BAIXA: 3 };
-      return (order[a.prioridade] || 99) - (order[b.prioridade] || 99);
+      return (order[a.prioridade] ?? 99) - (order[b.prioridade] ?? 99);
     })
     .slice(0, 5);
 
@@ -84,8 +84,9 @@ export default function DashboardPage() {
   }, [] as Array<{ mes: string; total: number }>);
 
   const ultimasOperacoes = operacoes
-    ?.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-    .slice(0, 5);
+    ? [...operacoes].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+    .slice(0, 5)
+    : undefined;
 
   if (isLoading) {
     return (
@@ -99,7 +100,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <PageHeader
         title="Dashboard"
-        subtitle="Visão geral da exploração agrícola com monitorização de vigor por satélite (Sentinel Hub) e alertas meteorológicos (IPMA)"
+        subtitle="Visão geral da exploração agrícola com monitorização de vigor e alertas meteorológicos"
       />
 
       <main className="container mx-auto px-4 py-8 space-y-8">

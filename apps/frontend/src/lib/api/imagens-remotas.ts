@@ -1,7 +1,19 @@
 import { apiClient } from './client';
-import type { ImagemRemota, CreateImagemRemotaDto } from '@/types';
+import type { ImagemRemota, CreateImagemRemotaDto, SatelliteConfigurationStatus } from '@/types';
 
 export const imagensRemotasApi = {
+  getConfigurationStatus: async () => {
+    const { data } = await apiClient.get<SatelliteConfigurationStatus>('/imagens-remotas/status');
+    return data;
+  },
+
+  sync: async (lookbackDays = 30, maxCloud = 30) => {
+    const { data } = await apiClient.post('/imagens-remotas/sync', null, {
+      params: { lookbackDays, maxCloud },
+    });
+    return data;
+  },
+
   getAll: async (parcelaId?: string) => {
     const params = parcelaId ? { parcelaId } : {};
     const { data } = await apiClient.get<ImagemRemota[]>('/imagens-remotas', { params });

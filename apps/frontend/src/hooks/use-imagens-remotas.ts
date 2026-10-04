@@ -9,6 +9,23 @@ export function useImagensRemotas(parcelaId?: string) {
   });
 }
 
+export function useSyncImagensRemotas() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => imagensRemotasApi.sync(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['imagens-remotas'] }),
+  });
+}
+
+export function useSatelliteConfigurationStatus() {
+  return useQuery({
+    queryKey: ['imagens-remotas', 'configuration-status'],
+    queryFn: imagensRemotasApi.getConfigurationStatus,
+    staleTime: 60_000,
+  });
+}
+
 export function useImagemRemota(id: string) {
   return useQuery({
     queryKey: ['imagens-remotas', id],

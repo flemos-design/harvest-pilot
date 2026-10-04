@@ -62,7 +62,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       storage.setItem('harvestpilot_user', JSON.stringify(response.user));
 
       // Set session cookie for middleware auth check
-      document.cookie = 'hp_session=1; path=/; max-age=604800';
+      document.cookie = rememberMe
+        ? 'hp_session=1; path=/; max-age=604800; SameSite=Lax'
+        : 'hp_session=1; path=/; SameSite=Lax';
 
       // Update state
       setToken(response.access_token);

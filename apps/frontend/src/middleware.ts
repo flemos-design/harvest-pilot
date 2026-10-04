@@ -16,6 +16,7 @@ const PROTECTED_PATHS = [
   '/assistente',
   '/mapa',
   '/utilizadores',
+  '/notificacoes',
   '/organizacoes',
   '/propriedades',
 ];

@@ -5,7 +5,7 @@
 - Conta no Railway: https://railway.app (grátis para começar, $5/mês depois)
 - Código no GitHub: ✅ `flemos-design/harvest-pilot`
 - Mapbox API Key
-- Sentinel Hub API Key (para imagens de satélite)
+- Sentinel Hub API Key (apenas quando a integração de satélite for ativada)
 
 ---
 
@@ -131,15 +131,20 @@ railway login
 # Conectar ao projeto
 railway link
 
-# Executar migrações
-railway run --service backend npm run migration:run
+# Numa base já existente, marcar o baseline uma única vez após confirmar
+# que o schema atual corresponde a apps/backend/prisma/migrations/00000000000000_baseline
+railway run --service backend npx prisma migrate resolve --applied 00000000000000_baseline
+
+# Executar migrações versionadas
+railway run --service backend npm run migrate:deploy
 ```
 
 #### 5.2. Via Interface Web
 
 1. No serviço Backend, ir a **"Deploy Logs"**
 2. Clicar em **"Deploy"** → **"Run Command"**
-3. Executar: `npm run migration:run`
+3. Numa base já existente, executar uma única vez `npx prisma migrate resolve --applied 00000000000000_baseline` depois de confirmar o schema.
+4. Executar: `npm run migrate:deploy`
 
 ---
 
@@ -230,10 +235,9 @@ Railway funciona por **usage-based pricing**:
 
 **Erro:** `relation "xxx" already exists`
 
-**Solução:** Limpar base de dados e correr de novo:
+**Solução:** Não apagar a base de dados nem usar `prisma db push --accept-data-loss`. Criar e rever uma migração Prisma de correção, aplicá-la em staging e depois executar:
 ```bash
-railway run --service backend npm run migration:revert
-railway run --service backend npm run migration:run
+railway run --service backend npm run migrate:deploy
 ```
 
 ---
@@ -257,7 +261,7 @@ railway logs --service backend
 railway logs --service frontend
 
 # Executar comando no serviço
-railway run --service backend npm run migration:run
+railway run --service backend npm run migrate:deploy
 
 # Conectar à base de dados
 railway connect postgres

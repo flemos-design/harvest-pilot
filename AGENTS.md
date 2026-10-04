@@ -8,7 +8,7 @@
 
 **HarvestPilot** é uma plataforma de gestão agrícola com monitorização por satélite e alertas meteorológicos. Foco em produção de frutos secos — **castanheiro** e **cerejeira** — na região de **Espinhovela, Bragança** (41.79°N, -6.75°W, ~900m altitude).
 
-**Fase atual:** MVP (Fase 1) — Mapa, Registos de Campo, Calendário, Relatórios e Assistente IA (Fase 5).
+**Fase atual:** MVP local — Mapa, Registos de Campo, Calendário, Relatórios e Assistente IA. Sentinel Hub, push nativo, leitura offline completa e publicação autenticada continuam fora do release verificado.
 
 **Repositório:** `flemos-design/harvest-pilot`  
 **Monorepo:** npm workspaces (`apps/*`, `packages/*`)
@@ -314,8 +314,8 @@ npm run capacitor:open:android
 - [x] Mapa Interativo (MapLibre, labels, hover, popups, thumbnails)
 - [x] Dashboard (cards, gráficos, feed de atividade)
 - [x] Assistente IA (chat, insights automáticos, terrenos críticos, RAG)
-- [x] PWA offline-first (Workbox, background sync, cache de tiles)
-- [x] App Mobile (Capacitor: iOS + Android)
+- [ ] PWA offline-first completo (há service worker e fila de mutações; leitura offline ainda é parcial)
+- [ ] App Mobile publicado (os plugins Capacitor existem, mas não há aceitação em dispositivos reais neste checkout)
 - [x] App Desktop (Tauri)
 
 ### 📅 Roadmap — Próximas Fases

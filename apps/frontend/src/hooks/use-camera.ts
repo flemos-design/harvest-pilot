@@ -14,8 +14,8 @@ export interface UseCameraReturn {
   base64: string | null;
   isLoading: boolean;
   error: Error | null;
-  takePicture: (options?: CameraOptions) => Promise<void>;
-  pickFromGallery: (options?: CameraOptions) => Promise<void>;
+  takePicture: (options?: CameraOptions) => Promise<{ photo: Photo; base64: string }>;
+  pickFromGallery: (options?: CameraOptions) => Promise<{ photo: Photo; base64: string }>;
   checkPermissions: () => Promise<boolean>;
   requestPermissions: () => Promise<boolean>;
   clearPhoto: () => void;
@@ -38,10 +38,12 @@ export function useCamera(): UseCameraReturn {
       // Converter para base64 se necessário
       const photoBase64 = await photoToBase64(newPhoto);
       setBase64(photoBase64);
+      return { photo: newPhoto, base64: photoBase64 };
     } catch (err) {
       const error = err as Error;
       setError(error);
       console.error('Erro ao tirar foto:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -58,10 +60,12 @@ export function useCamera(): UseCameraReturn {
       // Converter para base64
       const photoBase64 = await photoToBase64(newPhoto);
       setBase64(photoBase64);
+      return { photo: newPhoto, base64: photoBase64 };
     } catch (err) {
       const error = err as Error;
       setError(error);
       console.error('Erro ao escolher foto:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

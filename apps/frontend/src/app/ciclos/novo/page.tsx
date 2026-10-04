@@ -31,7 +31,7 @@ export default function NovoCicloPage() {
 
   const onSubmit = async (data: CicloFormData) => {
     try {
-      await createCiclo.mutateAsync(data as any);
+      await createCiclo.mutateAsync({ ...data, dataFim: data.dataFim || undefined } as any);
       router.push('/ciclos');
     } catch (error) {
       alert('Erro ao criar ciclo');

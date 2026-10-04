@@ -19,23 +19,21 @@ Usamos **Capacitor 7** para acesso a funcionalidades nativas (câmara, GPS, push
 
 ## ✅ Funcionalidades Implementadas
 
-### **PWA Offline-First**
+### **PWA com suporte offline parcial**
 - ✅ Service Worker com Workbox 7
 - ✅ Cache estratégico (NetworkFirst para API, CacheFirst para assets)
-- ✅ Background Sync para requests POST/PUT/DELETE offline
+- ✅ Background Sync para mutações suportadas
 - ✅ Update notifications quando há nova versão
 - ✅ Manifest.json completo com shortcuts
 - ✅ Cache de tiles de mapas (OpenStreetMap)
 
+> O `build:export` do frontend ainda não é um gate verde para Capacitor: as páginas autenticadas com rotas dinâmicas (por exemplo, `/insumos/[id]/editar`) exigem uma decisão de arquitetura antes de uma exportação estática utilizável.
+
 ### **Capacitor iOS**
-- ✅ Projeto Xcode criado em `apps/frontend/ios/`
-- ✅ Bundle ID: `com.harvestpilot.app`
-- ✅ Plugins instalados: Camera, Geolocation, Push Notifications, Filesystem, Share
+- ⚠️ Plugins e configuração declarados; o projeto Xcode não está versionado neste checkout
 
 ### **Capacitor Android**
-- ✅ Projeto Android Studio criado em `apps/frontend/android/`
-- ✅ Application ID: `com.harvestpilot.app`
-- ✅ Plugins instalados: Camera, Geolocation, Push Notifications, Filesystem, Share
+- ⚠️ Plugins e configuração declarados; o projeto Android não está versionado neste checkout
 
 ### **Plugins Nativos**
 - ✅ **Camera API** - Tirar fotos e escolher da galeria
@@ -379,12 +377,12 @@ No emulador:
 
 | Feature | PWA Web | iOS | Android | Notas |
 |---------|---------|-----|---------|-------|
-| **Offline-first** | ✅ | ✅ | ✅ | Background sync ativo |
+| **Offline** | 🟡 | 🟡 | 🟡 | Mutações em fila; leitura offline completa pendente |
 | **SW Update Notification** | ✅ | ✅ | ✅ | Toast com "Atualizar agora" |
 | **Câmara** | 🟡 | ✅ | ✅ | Web usa file input fallback |
 | **GPS** | 🟡 | ✅ | ✅ | Web usa HTML5 Geolocation |
 | **Push Notifications** | ⚠️ | ⚠️ | ⚠️ | Requer configuração FCM/APNs |
-| **Background Sync** | ✅ | ✅ | ✅ | Retry automático 24h |
+| **Background Sync** | 🟡 | 🟡 | 🟡 | Aplicado às mutações suportadas |
 | **Map tiles cache** | ✅ | ✅ | ✅ | 200 tiles, 30 dias |
 | **API cache** | ✅ | ✅ | ✅ | NetworkFirst, 24h |
 

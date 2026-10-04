@@ -1,3 +1,4 @@
+> Documento de arquitetura alvo. As tecnologias e integrações aqui descritas não representam, por si só, funcionalidades publicadas ou verificadas; consultar `README.md` e `TESTES_PRODUCAO.md` para o estado atual.
 
 ### Regras Git
 - **Commits:** Mensagens descritivas obrigatórias
@@ -200,4 +201,3 @@
 - Fornecer sempre comandos de limpeza e rollback (incluindo `git reset` se necessário)
 - Verificar estado Docker antes de iniciar qualquer trabalho
 - Commits frequentes com mensagens claras > commits grandes e vagos
-

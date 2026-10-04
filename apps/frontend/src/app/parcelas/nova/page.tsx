@@ -17,6 +17,7 @@ import { Button } from '@/components/ui';
 import { FormInput } from '@/components/ui/FormInput';
 import { FormSelect } from '@/components/ui/FormSelect';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { parseGeoFile, validateGeometry } from '@/lib/kmz-parser';
 
 const parcelaSchema = z.object({
   nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -54,6 +55,21 @@ export default function NovaParcelaPage() {
 
   const latitude = watch('latitude');
   const longitude = watch('longitude');
+  const nome = watch('nome');
+
+  const setGeometryCenter = (geometry: any) => {
+    const points: number[][] = [];
+    const collect = (value: any): void => {
+      if (Array.isArray(value) && typeof value[0] === 'number') points.push(value);
+      else if (Array.isArray(value)) value.forEach(collect);
+    };
+    collect(geometry.coordinates);
+    if (!points.length) return;
+    const lng = points.reduce((sum, point) => sum + point[0], 0) / points.length;
+    const lat = points.reduce((sum, point) => sum + point[1], 0) / points.length;
+    setValue('latitude', lat);
+    setValue('longitude', lng);
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -64,8 +80,22 @@ export default function NovaParcelaPage() {
       return;
     }
     try {
+      if (ext === 'kml') {
+        const result = await parseGeoFile(file, '');
+        const terreno = result.propriedades[0]?.terrenos[0];
+        if (!terreno) throw new Error('Nenhum polígono encontrado');
+        const geometry = terreno.geometria;
+        const validation = validateGeometry(geometry);
+        if (!validation.valid) throw new Error(validation.error);
+        setUploadedGeometry(geometry);
+        setUploadedFileName(file.name);
+        setValue('area', terreno.area);
+        if (terreno.nome && !nome) setValue('nome', terreno.nome);
+        setGeometryCenter(geometry);
+        return;
+      }
+
       const text = await file.text();
-      if (ext === 'kml') { alert('KML em breve. Use GeoJSON.'); return; }
       const geojson = JSON.parse(text);
       let geometry;
       if (geojson.type === 'FeatureCollection' && geojson.features?.[0]) geometry = geojson.features[0].geometry;
@@ -73,17 +103,13 @@ export default function NovaParcelaPage() {
       else if (geojson.type === 'Polygon' || geojson.type === 'MultiPolygon') geometry = geojson;
       else throw new Error('Tipo não suportado');
 
-      if (geometry.type === 'Polygon' && geometry.coordinates?.[0]?.[0]) {
-        const coords = geometry.coordinates[0];
-        const lats = coords.map((c: number[]) => c[1]);
-        const lngs = coords.map((c: number[]) => c[0]);
-        setValue('latitude', (Math.min(...lats) + Math.max(...lats)) / 2);
-        setValue('longitude', (Math.min(...lngs) + Math.max(...lngs)) / 2);
-      }
+      const validation = validateGeometry(geometry);
+      if (!validation.valid) throw new Error(validation.error);
+      setGeometryCenter(geometry);
       setUploadedGeometry(geometry);
       setUploadedFileName(file.name);
-    } catch {
-      alert('Erro ao ler ficheiro. Verifica se é um GeoJSON válido.');
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Erro ao ler ficheiro. Verifica se é um GeoJSON ou KML válido.');
     }
   };
 
@@ -109,7 +135,8 @@ export default function NovaParcelaPage() {
         ]],
       };
     } else {
-      geometria = { type: 'Polygon', coordinates: [[[-6.7500, 41.7900], [-6.7490, 41.7900], [-6.7490, 41.7890], [-6.7500, 41.7890], [-6.7500, 41.7900]]] };
+      alert('Desenha ou importa a geometria do terreno antes de guardar.');
+      return;
     }
 
     try {
@@ -178,14 +205,14 @@ export default function NovaParcelaPage() {
                 placeholder="Ex: 2.5"
                 error={errors.area?.message}
                 helperText="1 hectare = 10.000 m²"
-                {...register('area', { valueAsNumber: true })}
+                {...register('area', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
               />
 
               <FormInput
                 label="Altitude (metros)"
                 type="number"
                 placeholder="Ex: 900"
-                {...register('altitude', { valueAsNumber: true })}
+                {...register('altitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
               />
 
               <FormSelect

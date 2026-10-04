@@ -15,12 +15,12 @@ import { Badge } from '@/components/ui/Badge';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
 
-const tipoConfig: Record<string, { icon: React.ReactNode; label: string; variant: 'green' | 'blue' | 'orange' | 'amber' | 'slate' }> = {
-  NDVI: { icon: <Sprout className="w-5 h-5" />, label: 'NDVI', variant: 'green' },
-  METEO: { icon: <CloudRain className="w-5 h-5" />, label: 'Meteorologia', variant: 'blue' },
-  TAREFA: { icon: <ClipboardList className="w-5 h-5" />, label: 'Tarefa', variant: 'orange' },
-  STOCK: { icon: <AlertTriangle className="w-5 h-5" />, label: 'Stock', variant: 'amber' },
-  SISTEMA: { icon: <Info className="w-5 h-5" />, label: 'Sistema', variant: 'slate' },
+const tipoConfig: Record<string, { icon: React.ReactNode; label: string; variant: 'green' | 'blue' | 'orange' | 'amber' | 'slate'; classes: string }> = {
+  NDVI: { icon: <Sprout className="w-5 h-5" />, label: 'NDVI', variant: 'green', classes: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' },
+  METEO: { icon: <CloudRain className="w-5 h-5" />, label: 'Meteorologia', variant: 'blue', classes: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' },
+  TAREFA: { icon: <ClipboardList className="w-5 h-5" />, label: 'Tarefa', variant: 'orange', classes: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400' },
+  STOCK: { icon: <AlertTriangle className="w-5 h-5" />, label: 'Stock', variant: 'amber', classes: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
+  SISTEMA: { icon: <Info className="w-5 h-5" />, label: 'Sistema', variant: 'slate', classes: 'bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400' },
 };
 
 function formatDate(date: string) {
@@ -134,7 +134,7 @@ export default function NotificacoesPage() {
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded-xl shrink-0 bg-${config.variant}-50 dark:bg-${config.variant}-900/20 text-${config.variant}-600 dark:text-${config.variant}-400`}>
+                    <div className={`p-2 rounded-xl shrink-0 ${config.classes}`}>
                       {config.icon}
                     </div>
                     <div className="flex-1 min-w-0">

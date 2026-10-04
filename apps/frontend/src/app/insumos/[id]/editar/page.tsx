@@ -51,7 +51,7 @@ export default function EditarInsumoPage() {
 
   const onSubmit = async (data: InsumoFormData) => {
     try {
-      await updateInsumo.mutateAsync({ id, data: data as any });
+      await updateInsumo.mutateAsync({ id, data: { ...data, validade: data.validade || undefined } as any });
       router.push(`/insumos`);
     } catch (error) {
       alert('Erro ao atualizar insumo');
@@ -138,7 +138,7 @@ export default function EditarInsumoPage() {
                 <input
                   type="number"
                   step="0.01"
-                  {...register('stock', { valueAsNumber: true })}
+                  {...register('stock', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
               </div>
@@ -148,7 +148,7 @@ export default function EditarInsumoPage() {
                 <input
                   type="number"
                   step="0.01"
-                  {...register('stockMinimo', { valueAsNumber: true })}
+                  {...register('stockMinimo', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
               </div>
@@ -159,7 +159,7 @@ export default function EditarInsumoPage() {
               <input
                 type="number"
                 step="0.01"
-                {...register('custoUnit', { valueAsNumber: true })}
+                {...register('custoUnit', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />
             </div>

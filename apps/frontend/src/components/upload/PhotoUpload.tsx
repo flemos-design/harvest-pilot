@@ -30,9 +30,11 @@ export function PhotoUpload({
 
   // Converter base64 para File
   const base64ToFile = (base64: string, filename: string): File => {
-    const arr = base64.split(',');
-    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
-    const bstr = atob(arr[1]);
+    const [header, payload] = base64.includes(',')
+      ? base64.split(',', 2)
+      : ['data:image/jpeg;base64', base64];
+    const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
+    const bstr = atob(payload);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
     while (n--) {
@@ -44,12 +46,12 @@ export function PhotoUpload({
   // Tirar foto com câmara
   const handleTakePhoto = async () => {
     try {
-      await camera.takePicture();
-      if (camera.base64 && camera.photo) {
-        const file = base64ToFile(camera.base64, `photo-${Date.now()}.jpg`);
+      const captured = await camera.takePicture();
+      if (captured.base64) {
+        const file = base64ToFile(captured.base64, `photo-${Date.now()}.jpg`);
         const newPhoto = {
           id: `photo-${Date.now()}`,
-          base64: camera.base64,
+          base64: captured.base64,
           file,
         };
 
@@ -70,12 +72,12 @@ export function PhotoUpload({
   // Escolher da galeria
   const handlePickFromGallery = async () => {
     try {
-      await camera.pickFromGallery();
-      if (camera.base64 && camera.photo) {
-        const file = base64ToFile(camera.base64, `photo-${Date.now()}.jpg`);
+      const picked = await camera.pickFromGallery();
+      if (picked.base64) {
+        const file = base64ToFile(picked.base64, `photo-${Date.now()}.jpg`);
         const newPhoto = {
           id: `photo-${Date.now()}`,
-          base64: camera.base64,
+          base64: picked.base64,
           file,
         };
 

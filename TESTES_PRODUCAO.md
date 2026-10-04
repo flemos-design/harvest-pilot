@@ -46,7 +46,7 @@ npx playwright show-report
 
 ## 📊 Resultados Esperados
 
-- **Taxa de sucesso:** 90-100%
+- **Taxa de sucesso:** 100% dos smoke checks executados
 - **Performance API:** < 500ms (target: < 2s)
 - **Performance Frontend:** < 3s (target: < 5s)
 - **CORS:** Todos os domínios aceites
@@ -66,11 +66,15 @@ npx playwright show-report
 
 ## 📝 Notas
 
-Os testes validam a arquitetura completa:
+Os testes validam apenas disponibilidade e configuração básica dos domínios:
 ```
 bo.harvestpilot.online  → Frontend Next.js
 app.harvestpilot.online → Frontend Next.js
 api.harvestpilot.online → Backend NestJS API
 ```
+
+Estes testes não comprovam login, CRUD protegido, isolamento entre organizações,
+permissões, upload, push notifications, sincronização offline ou integração Sentinel.
+Esses fluxos continuam a exigir testes autenticados próprios antes de um release.
 
 **Última execução bem-sucedida:** 8 Nov 2025 - 9/10 testes ✅

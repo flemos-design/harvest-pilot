@@ -208,7 +208,7 @@ export default function TarefasPage() {
               const isAtrasada =
                 tarefa.estado !== 'CONCLUIDA' &&
                 tarefa.estado !== 'CANCELADA' &&
-                new Date(tarefa.dataInicio) < new Date();
+                Boolean(tarefa.dataFim && new Date(tarefa.dataFim) < new Date());
 
               return (
                 <Card key={tarefa.id} className={`border-l-4 ${isAtrasada ? 'border-l-red-500' : 'border-l-emerald-500'}`}>

@@ -78,7 +78,9 @@ export async function requestCameraPermissions(): Promise<boolean> {
  */
 export async function photoToBase64(photo: Photo): Promise<string> {
   if (photo.base64String) {
-    return photo.base64String;
+    return photo.base64String.startsWith('data:')
+      ? photo.base64String
+      : `data:image/jpeg;base64,${photo.base64String}`;
   }
 
   // Se for URI, converter para blob e depois base64
@@ -89,9 +91,7 @@ export async function photoToBase64(photo: Photo): Promise<string> {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
-        // Remover prefixo data:image/...;base64,
-        const base64Data = base64.split(',')[1];
-        resolve(base64Data);
+        resolve(base64);
       };
       reader.onerror = reject;
       reader.readAsDataURL(blob);

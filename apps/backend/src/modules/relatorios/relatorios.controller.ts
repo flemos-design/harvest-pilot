@@ -14,7 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RelatoriosService } from './relatorios.service';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUser, CurrentUserData } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('relatorios')
 @ApiBearerAuth()
@@ -36,7 +36,7 @@ export class RelatoriosController {
   async exportOperacoesPDF(
     @Query('dataInicio') dataInicio: string,
     @Query('dataFim') dataFim: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: CurrentUserData,
     @Res() res: Response,
   ) {
     if (!dataInicio || !dataFim) {
@@ -81,9 +81,10 @@ export class RelatoriosController {
   })
   async exportCadernoCampoPDF(
     @Query('parcelaId') parcelaId: string,
+    @CurrentUser() user: CurrentUserData,
+    @Res() res: Response,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
-    @Res() res?: Response,
   ) {
     if (!parcelaId) {
       throw new BadRequestException('parcelaId é obrigatório');
@@ -108,6 +109,7 @@ export class RelatoriosController {
 
     const pdfBuffer = await this.relatoriosService.generateCadernoCampo(
       parcelaId,
+      user.organizacaoId,
       inicio,
       fim,
     );

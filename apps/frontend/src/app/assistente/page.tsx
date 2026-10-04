@@ -6,7 +6,7 @@ import {
   useConversas, useConversa, useCreateConversa,
   useDeleteConversa, useUpdateConversa,
 } from '@/hooks/use-ia';
-import { useOrganizacoes } from '@/hooks/use-organizacoes';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Send, Loader2, Lightbulb, AlertTriangle, TrendingDown, Brain,
   Plus, MessageSquare, Trash2, Edit3, X, Check, Clock,
@@ -29,8 +29,8 @@ export default function AssistentePage() {
   const [editingTitle, setEditingTitle] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { data: organizacoes } = useOrganizacoes();
-  const orgId = organizacoes?.[0]?.id || '';
+  const { user } = useAuth();
+  const orgId = user?.organizacaoId || '';
 
   const chatMutation = useChat();
   const { data: insights, isLoading: loadingInsights } = useInsights(orgId);

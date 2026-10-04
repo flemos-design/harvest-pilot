@@ -4,27 +4,8 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
-    // API requests - NetworkFirst com fallback e background sync
-    {
-      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas|propriedades).*/i,
-      handler: 'NetworkFirst',
-      options: {
-        cacheName: 'api-data-cache',
-        expiration: {
-          maxEntries: 64,
-          maxAgeSeconds: 24 * 60 * 60, // 24 hours
-        },
-        networkTimeoutSeconds: 10,
-        plugins: [
-          {
-            handlerDidError: async () => {
-              // Fallback para cache quando network falha
-              return caches.match('/offline-fallback.json');
-            },
-          },
-        ],
-      },
-    },
+    // Dados autenticados nunca são guardados em cache partilhado: o fallback offline
+    // não pode devolver dados da conta/organização anterior.
     // POST/PUT/DELETE requests - Background sync
     {
       urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
@@ -55,6 +36,19 @@ const withPWA = require('next-pwa')({
     {
       urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
       method: 'DELETE',
+      handler: 'NetworkOnly',
+      options: {
+        backgroundSync: {
+          name: 'api-queue',
+          options: {
+            maxRetentionTime: 24 * 60,
+          },
+        },
+      },
+    },
+    {
+      urlPattern: /^https?:\/\/.*\/api\/v1\/(parcelas|operacoes|culturas).*/i,
+      method: 'PATCH',
       handler: 'NetworkOnly',
       options: {
         backgroundSync: {

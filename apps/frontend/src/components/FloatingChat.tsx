@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useChat } from '@/hooks/use-ia';
-import { useOrganizacoes } from '@/hooks/use-organizacoes';
+import { useAuth } from '@/contexts/AuthContext';
 import { Send, Loader2, X, Minimize2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -24,8 +24,8 @@ export default function FloatingChat() {
   const [chatExpiresAt, setChatExpiresAt] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { data: organizacoes } = useOrganizacoes();
-  const orgId = organizacoes?.[0]?.id || '';
+  const { user } = useAuth();
+  const orgId = user?.organizacaoId || '';
 
   const chatMutation = useChat();
 

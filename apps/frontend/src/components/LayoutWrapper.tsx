@@ -11,8 +11,13 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Don't show app layout on home/landing page and auth pages
-  const authPages = ['/', '/login', '/register'];
-  const showAppLayout = !authPages.includes(pathname);
+  const showAppLayout = !(
+    pathname === '/' ||
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/forgot-password' ||
+    pathname.startsWith('/reset-password')
+  );
 
   if (!showAppLayout) {
     return (
@@ -31,7 +36,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[260px] transition-all duration-300">
+      <div className="flex-1 flex flex-col ml-0 lg:ml-[260px] transition-all duration-300">
         {/* Header */}
         <Header />
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import OpenAI from 'openai';
 import { ChatMessageDto, ChatResponseDto, InsightDto } from './dto/chat.dto';
@@ -67,6 +67,10 @@ export class IaService {
       if (dto.message) {
         try {
           if (dto.conversaId) {
+            const ownedConversation = await this.prisma.conversaIA.findFirst({
+              where: { id: dto.conversaId, organizacaoId: dto.organizacaoId },
+            });
+            if (!ownedConversation) throw new UnauthorizedException('Conversa não pertence à organização autenticada');
             conversaId = dto.conversaId;
             await this.addMensagem(conversaId, 'user', dto.message);
             await this.addMensagem(conversaId, 'assistant', answer);
@@ -258,8 +262,8 @@ export class IaService {
         }),
         // 2. PARCELA ESPECÍFICA
         parcelaId
-          ? this.prisma.parcela.findUnique({
-              where: { id: parcelaId },
+          ? this.prisma.parcela.findFirst({
+              where: { id: parcelaId, propriedade: { organizacaoId } },
               include: {
                 propriedade: true,
                 culturas: {
@@ -740,6 +744,7 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
       if (ndviTrend && ndviTrend.quedaPercentagem > 15) {
         insights.push({
           type: 'warning',
+          source: 'NDVI',
           title: `Queda de vigor na parcela ${parcela.nome}`,
           description: `NDVI caiu ${ndviTrend.quedaPercentagem.toFixed(1)}% nos últimos 7 dias`,
           parcelaIds: [parcela.id],
@@ -780,6 +785,7 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
       if (meteoRisk && meteoRisk.score > 0.6) {
         insights.push({
           type: 'alert',
+          source: 'METEO',
           title: `Risco meteorológico na parcela ${parcela.nome}`,
           description: meteoRisk.description,
           parcelaIds: [parcela.id],
@@ -819,6 +825,7 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
     if (tarefasAtrasadas.length > 0) {
       insights.push({
         type: 'warning',
+        source: 'TAREFA',
         title: `${tarefasAtrasadas.length} tarefas atrasadas`,
         description: `Existem tarefas pendentes que passaram da data limite`,
         parcelaIds: [], // Tarefas não têm relação direta com parcela no schema
@@ -956,13 +963,7 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
     const criticalInsights = insights.filter((i) => i.priority >= 3);
 
     for (const insight of criticalInsights) {
-      const tipoMap: Record<string, string> = {
-        ndvi: 'NDVI',
-        meteo: 'METEO',
-        operation: 'TAREFA',
-      };
-
-      const tipo = tipoMap[insight.type] || 'SISTEMA';
+      const tipo = insight.source;
       const link = insight.parcelaIds?.length
         ? `/parcelas/${insight.parcelaIds[0]}`
         : insight.title.toLowerCase().includes('tarefa')
@@ -971,8 +972,21 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
 
       for (const user of utilizadores) {
         try {
-          await this.notificacoesService.create({
-            userId: user.id,
+          const duplicateSince = new Date(Date.now() - 24 * 60 * 60 * 1000);
+          const duplicate = await this.prisma.notificacao.findFirst({
+            where: {
+              userId: user.id,
+              tipo,
+              titulo: insight.title,
+              mensagem: insight.description,
+              link,
+              createdAt: { gte: duplicateSince },
+            },
+            select: { id: true },
+          });
+          if (duplicate) continue;
+
+          await this.notificacoesService.createForUser(user.id, {
             tipo,
             titulo: insight.title,
             mensagem: insight.description,
@@ -998,9 +1012,9 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
   /**
    * Obter uma conversa com as suas mensagens
    */
-  async getConversa(id: string) {
-    return this.prisma.conversaIA.findUnique({
-      where: { id },
+  async getConversa(id: string, organizacaoId?: string) {
+    return this.prisma.conversaIA.findFirst({
+      where: { id, ...(organizacaoId ? { organizacaoId } : {}) },
       include: {
         mensagens: {
           orderBy: { createdAt: 'asc' },
@@ -1021,9 +1035,11 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
   /**
    * Atualizar título de uma conversa
    */
-  async updateConversa(id: string, titulo: string) {
+  async updateConversa(id: string, titulo: string, organizacaoId?: string) {
+    const conversa = await this.prisma.conversaIA.findFirst({ where: { id, ...(organizacaoId ? { organizacaoId } : {}) } });
+    if (!conversa) throw new Error('Conversa não encontrada');
     return this.prisma.conversaIA.update({
-      where: { id },
+      where: { id: conversa.id },
       data: { titulo },
     });
   }
@@ -1031,9 +1047,11 @@ Responde à pergunta do utilizador de forma útil, detalhada e baseada nos dados
   /**
    * Eliminar uma conversa (cascade elimina mensagens)
    */
-  async deleteConversa(id: string) {
+  async deleteConversa(id: string, organizacaoId?: string) {
+    const conversa = await this.prisma.conversaIA.findFirst({ where: { id, ...(organizacaoId ? { organizacaoId } : {}) } });
+    if (!conversa) throw new Error('Conversa não encontrada');
     return this.prisma.conversaIA.delete({
-      where: { id },
+      where: { id: conversa.id },
     });
   }
 

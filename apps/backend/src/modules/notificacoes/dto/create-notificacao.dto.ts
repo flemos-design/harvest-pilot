@@ -1,11 +1,7 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateNotificacaoDto {
-  @ApiProperty({ description: 'ID do utilizador destinatário' })
-  @IsString()
-  userId: string;
-
   @ApiProperty({ description: 'Tipo de notificação', enum: ['NDVI', 'STOCK', 'METEO', 'TAREFA', 'SISTEMA'] })
   @IsString()
   tipo: string;

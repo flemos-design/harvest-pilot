@@ -42,6 +42,9 @@ export class InsightDto {
   @ApiProperty({ description: 'Tipo de insight' })
   type: 'warning' | 'recommendation' | 'alert' | 'info';
 
+  @ApiProperty({ description: 'Origem do insight', enum: ['NDVI', 'METEO', 'TAREFA'] })
+  source: 'NDVI' | 'METEO' | 'TAREFA';
+
   @ApiProperty({ description: 'Título do insight' })
   title: string;
 

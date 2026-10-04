@@ -13,13 +13,14 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { UtilizadoresService } from './utilizadores.service';
-import { CreateUtilizadorDto } from './dto/create-utilizador.dto';
+import { CreateUtilizadorDto, PapelUtilizador } from './dto/create-utilizador.dto';
 import { UpdateUtilizadorDto } from './dto/update-utilizador.dto';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Public } from '../auth/decorators/public.decorator';
+import { CurrentUser, CurrentUserData } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('utilizadores')
 @ApiBearerAuth()
@@ -31,7 +32,18 @@ export class UtilizadoresController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post()
   @ApiOperation({ summary: 'Criar novo utilizador (registo)' })
-  create(@Body() createUtilizadorDto: CreateUtilizadorDto) {
+  create(
+    @Body() createUtilizadorDto: CreateUtilizadorDto,
+    @CurrentUser() user?: CurrentUserData,
+  ) {
+    // Registo público cria uma organização nova e nunca pode escolher tenant/papel.
+    if (!user) {
+      return this.utilizadoresService.create({
+        ...createUtilizadorDto,
+        organizacaoId: undefined,
+        papel: PapelUtilizador.ADMIN,
+      });
+    }
     return this.utilizadoresService.create(createUtilizadorDto);
   }
 
@@ -42,6 +54,12 @@ export class UtilizadoresController {
   @ApiOperation({ summary: 'Login de utilizador' })
   login(@Body() loginDto: LoginDto) {
     return this.utilizadoresService.login(loginDto);
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: 'Obter o utilizador autenticado' })
+  me(@CurrentUser() user: CurrentUserData) {
+    return this.utilizadoresService.findOne(user.id);
   }
 
   @Get()

@@ -38,7 +38,7 @@ export default function NovoInsumoPage() {
 
   const onSubmit = async (data: InsumoFormData) => {
     try {
-      await createInsumo.mutateAsync(data as any);
+      await createInsumo.mutateAsync({ ...data, validade: data.validade || undefined } as any);
       router.push('/insumos');
     } catch (error) {
       console.error('Erro ao criar insumo:', error);
@@ -117,7 +117,7 @@ export default function NovoInsumoPage() {
                 <input
                   type="number"
                   step="0.01"
-                  {...register('stock', { valueAsNumber: true })}
+                  {...register('stock', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
                 {errors.stock && <p className="mt-1 text-sm text-red-600">{errors.stock.message}</p>}
@@ -128,7 +128,7 @@ export default function NovoInsumoPage() {
                 <input
                   type="number"
                   step="0.01"
-                  {...register('stockMinimo', { valueAsNumber: true })}
+                  {...register('stockMinimo', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                 />
                 {errors.stockMinimo && <p className="mt-1 text-sm text-red-600">{errors.stockMinimo.message}</p>}
@@ -141,7 +141,7 @@ export default function NovoInsumoPage() {
               <input
                 type="number"
                 step="0.01"
-                {...register('custoUnit', { valueAsNumber: true })}
+                {...register('custoUnit', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 placeholder="0.00"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               />

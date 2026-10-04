@@ -90,8 +90,9 @@ export function Header() {
       ADMIN: 'Administrador',
       GESTOR: 'Gestor',
       OPERADOR: 'Operador',
+      PLANEADOR: 'Planeador',
     };
-    return user?.papel ? roleLabels[user.papel] : 'Utilizador';
+    return user?.papel ? (roleLabels[user.papel] || 'Utilizador') : 'Utilizador';
   };
 
   const breadcrumbs = pathname
@@ -150,7 +151,7 @@ export function Header() {
       <div className="h-full px-6 flex items-center justify-between">
         {/* Left: Breadcrumbs */}
         <div className="flex items-center gap-2">
-          <button className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+          <button type="button" aria-label="Abrir menu" onClick={() => window.dispatchEvent(new Event('hp:toggle-sidebar'))} className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
             <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
           </button>
 
@@ -330,11 +331,11 @@ export function Header() {
                   <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{user?.nome || 'Utilizador'}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
                 </div>
-                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem">
+                <button onClick={() => { setShowUserMenu(false); router.push('/perfil'); }} className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem">
                   <User className="w-4 h-4" />
                   Meu Perfil
                 </button>
-                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem">
+                <button onClick={() => { setShowUserMenu(false); router.push('/perfil#definicoes'); }} className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2" role="menuitem">
                   <Settings className="w-4 h-4" />
                   Definições
                 </button>

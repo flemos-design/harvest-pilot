@@ -4,6 +4,11 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 
+export interface UploadConfigurationStatus {
+  configured: boolean;
+  missing: string[];
+}
+
 @Injectable()
 export class UploadService {
   private s3Client: S3Client;
@@ -34,10 +39,45 @@ export class UploadService {
     });
   }
 
+  getConfigurationStatus(): UploadConfigurationStatus {
+    const missing: string[] = [];
+    if (!process.env.S3_ACCESS_KEY) missing.push('S3_ACCESS_KEY');
+    if (!process.env.S3_SECRET_KEY) missing.push('S3_SECRET_KEY');
+    if (process.env.NODE_ENV === 'production' && !process.env.S3_ENDPOINT) {
+      missing.push('S3_ENDPOINT');
+    }
+    if (process.env.NODE_ENV === 'production' && !process.env.S3_PUBLIC_URL) {
+      missing.push('S3_PUBLIC_URL');
+    }
+
+    return { configured: missing.length === 0, missing };
+  }
+
   private ensureS3Enabled(): void {
     if (!this.s3Enabled) {
       throw new BadRequestException('Upload service is not configured. Set S3_ACCESS_KEY and S3_SECRET_KEY environment variables.');
     }
+  }
+
+  async uploadBuffer(
+    buffer: Buffer,
+    folder: string,
+    extension: string,
+    contentType: string,
+  ): Promise<{ key: string; url: string }> {
+    this.ensureS3Enabled();
+    const key = `${folder}/${uuidv4()}.${extension}`;
+
+    await this.s3Client.send(new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+      Body: buffer,
+      ContentType: contentType,
+      ACL: 'public-read',
+    }));
+
+    const baseUrl = process.env.S3_PUBLIC_URL || process.env.S3_ENDPOINT || 'http://localhost:9000';
+    return { key, url: `${baseUrl}/${this.bucketName}/${key}` };
   }
 
   /**

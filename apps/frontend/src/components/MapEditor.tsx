@@ -8,6 +8,8 @@ import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import * as turf from '@turf/turf';
 import { Edit3, Trash2, Square, X, Maximize2, Minimize2 } from 'lucide-react';
 
+const DEFAULT_MAP_CENTER: [number, number] = [-6.75, 41.79];
+
 interface MapEditorProps {
   initialGeometry?: GeoJSON.Geometry;
   onGeometryChange: (geometry: GeoJSON.Geometry | null, area: number) => void;
@@ -20,7 +22,7 @@ export function MapEditor({
   initialGeometry,
   onGeometryChange,
   height = '500px',
-  center = [-6.75, 41.79], // Espinhosela, Bragança
+  center = DEFAULT_MAP_CENTER, // Espinhosela, Bragança
   zoom = 15,
 }: MapEditorProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -30,6 +32,7 @@ export function MapEditor({
   const [currentArea, setCurrentArea] = useState<number>(0);
   const [drawMode, setDrawMode] = useState<'simple_select' | 'draw_polygon'>('simple_select');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const initialGeometryLoaded = useRef(false);
 
   // Toggle fullscreen
   const toggleFullscreen = () => {
@@ -169,7 +172,8 @@ export function MapEditor({
 
   // Load initial geometry
   useEffect(() => {
-    if (!isLoaded || !draw.current || !initialGeometry) return;
+    if (!isLoaded || !draw.current || !initialGeometry || initialGeometryLoaded.current) return;
+    initialGeometryLoaded.current = true;
 
     try {
       // Clear existing features

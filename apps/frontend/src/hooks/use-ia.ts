@@ -3,8 +3,12 @@ import { iaApi } from '@/lib/api';
 import type { ChatMessage, Insight, CriticalParcela } from '@/types';
 
 export function useChat() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (message: ChatMessage) => iaApi.chat(message),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['conversas-ia', variables.organizacaoId] });
+    },
   });
 }
 

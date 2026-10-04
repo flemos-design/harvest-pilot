@@ -11,9 +11,18 @@
 
 </div>
 
-**Plataforma de Gestão Agrícola com Satélite e Meteo**
+**Plataforma de Gestão Agrícola com Meteo e análise de parcelas**
 
-Sistema completo de gestão agrícola com monitorização por satélite e alertas meteorológicos para produção de frutos secos (castanheiro e cerejeira). Inclui mapa de parcelas, registos de campo offline, calendário agrícola, análise de vigor vegetativo e previsões meteorológicas.
+Base de gestão agrícola para produção de frutos secos (castanheiro e cerejeira), com mapa de parcelas, registos de campo, calendário, previsões meteorológicas e indicadores NDVI quando existem imagens registadas.
+
+### Estado verificado
+
+- A API e o frontend têm builds locais reproduzíveis e o arranque Railway não altera o schema automaticamente.
+- O schema tem um baseline Prisma versionado; bases existentes precisam de validação e `prisma migrate resolve` uma única vez antes de `migrate deploy`.
+- O suporte offline cobre principalmente mutações em fila; a leitura completa offline ainda está em evolução.
+- A galeria NDVI apresenta dados registados, mas a sincronização Sentinel Hub ainda não está ligada.
+- A exportação estática para Capacitor está bloqueada pelas rotas dinâmicas autenticadas; o build web normal está funcional.
+- Os smoke tests de produção verificam disponibilidade, HTTPS e CORS; não substituem testes autenticados de permissões e isolamento.
 
 ---
 
@@ -46,7 +55,7 @@ Sistema completo de gestão agrícola com monitorização por satélite e alerta
 - ✅ **Gestão de Parcelas & Operações**
   - CRUD completo de Parcelas (criar, listar, editar, eliminar)
   - CRUD completo de Operações com GPS e custos
-  - Registos de campo com localização e fotos (offline-first)
+  - Registos de campo com localização, fotos e fila de mutações offline
 - ✅ **Calendário Agrícola**
   - Vista mensal com operações organizadas por dia
   - Filtros por tipo de operação
@@ -64,17 +73,15 @@ Sistema completo de gestão agrícola com monitorização por satélite e alerta
 - ✅ **Infraestrutura**
   - Base de dados geoespacial (PostGIS)
   - API REST documentada (Swagger)
-  - PWA (Progressive Web App)
+  - PWA (Progressive Web App) com service worker
   - Sistema de gestão de culturas e ciclos
 
 ### Fases Futuras
 - 📅 Janelas recomendadas de plantação/colheita
-- 🌦️ Integração meteorológica (IPMA)
 - 🛰️ Análise NDVI/NDRE (Sentinel Hub)
 - 🔔 Sistema de notificações push
-- 🔐 Sistema de autenticação (JWT)
-- 📸 Upload de fotos (MinIO/S3)
-- 🤖 Assistente IA
+- 📸 Upload S3 com ownership e políticas de acesso revistas
+- 📱 Leitura offline completa e aceitação mobile em dispositivos reais
 
 ---
 
@@ -462,11 +469,11 @@ Endpoints principais:
   - [x] Navbar com 6 páginas
   - [x] Indicador de página ativa
   - [x] Logo e menu mobile
-- [ ] Upload de GeoJSON/KML
-- [ ] PWA offline-first com service workers
+- [x] Upload de GeoJSON/KML
+- [ ] Leitura offline completa (o service worker e a fila de mutações são parciais)
 
-### 📅 Fase 2 - Meteo & Agenda
-- [ ] Integração IPMA
+### 📅 Fase 2 - Meteo & Agenda (parcial)
+- [x] Integração IPMA e sincronização diária
 - [ ] Agenda global
 - [ ] Notificações push
 - [ ] Janelas recomendadas
@@ -477,13 +484,13 @@ Endpoints principais:
 - [ ] Alertas de anomalia
 
 ### 📊 Fase 4 - Operações & Custos
-- [ ] Inventário de insumos
+- [x] Inventário de insumos (CRUD)
 - [ ] Custos por parcela
 - [ ] Relatórios
 
 ### 🤖 Fase 5 - IA aplicada
-- [ ] Assistente IA
-- [ ] Recomendações explicáveis
+- [x] Assistente IA
+- [x] Recomendações explicáveis
 - [ ] Deteção de outliers
 
 ### 📡 Fase 6 - Sensores (Opcional)

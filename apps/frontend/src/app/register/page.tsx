@@ -41,7 +41,7 @@ export default function RegisterPage() {
     try {
       setError('');
       const { confirmPassword, ...registerData } = data;
-      await registerUser({ ...registerData, papel: 'GESTOR' });
+      await registerUser(registerData);
     } catch (err: any) {
       setError(err.message || 'Erro ao criar conta. Tenta novamente.');
     }

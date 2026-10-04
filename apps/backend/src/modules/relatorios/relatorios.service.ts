@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import PDFDocument from 'pdfkit';
 import { format } from 'date-fns';
@@ -55,12 +55,16 @@ export class RelatoriosService {
    */
   async generateCadernoCampo(
     parcelaId: string,
+    organizacaoId: string,
     dataInicio?: Date,
     dataFim?: Date,
   ): Promise<Buffer> {
     // Fetch parcela details
-    const parcela = await this.prisma.parcela.findUnique({
-      where: { id: parcelaId },
+    const parcela = await this.prisma.parcela.findFirst({
+      where: {
+        id: parcelaId,
+        propriedade: { organizacaoId },
+      },
       include: {
         propriedade: {
           select: {
@@ -105,7 +109,7 @@ export class RelatoriosService {
     });
 
     if (!parcela) {
-      throw new Error('Parcela não encontrada');
+      throw new NotFoundException('Parcela não encontrada');
     }
 
     return this.createCadernoCampoPDF(parcela, dataInicio, dataFim);

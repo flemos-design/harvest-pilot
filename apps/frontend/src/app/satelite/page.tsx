@@ -1,6 +1,10 @@
 'use client';
 
-import { useImagensRemotas } from '@/hooks/use-imagens-remotas';
+import {
+  useImagensRemotas,
+  useSatelliteConfigurationStatus,
+  useSyncImagensRemotas,
+} from '@/hooks/use-imagens-remotas';
 import { useParcelas } from '@/hooks/use-parcelas';
 import { Loader2, Satellite, Cloud, TrendingUp, Filter, Calendar, MapPin, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -14,6 +18,11 @@ export default function SateliteGaleriaPage() {
 
   const { data: todasImagens, isLoading, error } = useImagensRemotas();
   const { data: parcelas } = useParcelas();
+  const { data: configuration } = useSatelliteConfigurationStatus();
+  const syncImages = useSyncImagensRemotas();
+  const missingConfiguration = configuration
+    ? [...configuration.sentinel.missing, ...configuration.storage.missing]
+    : [];
 
   const imagensFiltradas = useMemo(() => {
     if (!todasImagens) return [];
@@ -95,10 +104,20 @@ export default function SateliteGaleriaPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                 <Satellite className="w-8 h-8 text-blue-600" />
-                Galeria de Satélite
+                Galeria de Imagens Remotas
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">Visualização de imagens remotas de todos os terrenos</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Visualização das imagens remotas registadas nos terrenos</p>
             </div>
+            <button
+              type="button"
+              onClick={() => syncImages.mutate()}
+              disabled={syncImages.isPending || configuration?.ready === false}
+              title={configuration?.ready === false ? 'Configuração do servidor pendente' : undefined}
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Loader2 className={`w-4 h-4 ${syncImages.isPending ? 'animate-spin' : ''}`} />
+              {syncImages.isPending ? 'A procurar capturas…' : 'Atualizar imagens'}
+            </button>
           </div>
 
           {/* Filters */}
@@ -134,6 +153,26 @@ export default function SateliteGaleriaPage() {
           </div>
         </div>
       </header>
+
+      {configuration?.ready === false && (
+        <div className="container mx-auto px-4 pt-4">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <p className="font-medium">Sincronização indisponível</p>
+            <p className="mt-1">
+              O administrador do servidor precisa configurar o Sentinel Hub e o armazenamento de imagens.
+              {missingConfiguration.length > 0 && ` Variáveis em falta: ${missingConfiguration.join(', ')}.`}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {syncImages.isError && configuration?.ready !== false && (
+        <div className="container mx-auto px-4 pt-4">
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            Não foi possível atualizar as imagens. O servidor ou o fornecedor Sentinel Hub não respondeu como esperado.
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="container mx-auto px-4 py-6">
@@ -183,7 +222,7 @@ export default function SateliteGaleriaPage() {
             <p className="text-gray-600 dark:text-gray-400">
               {parcelaFilter
                 ? 'Nenhuma imagem encontrada para este terreno'
-                : 'Ainda não há imagens de satélite no sistema'}
+                : 'Ainda não há imagens remotas registadas no sistema'}
             </p>
           </div>
         ) : (

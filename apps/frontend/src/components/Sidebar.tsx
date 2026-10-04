@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   LayoutDashboard,
   FileText,
@@ -66,6 +66,13 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const toggle = () => setMobileOpen((open) => !open);
+    window.addEventListener('hp:toggle-sidebar', toggle);
+    return () => window.removeEventListener('hp:toggle-sidebar', toggle);
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {
@@ -75,10 +82,12 @@ export function Sidebar() {
   };
 
   return (
+    <>
+      {mobileOpen && <button type="button" aria-label="Fechar menu" onClick={() => setMobileOpen(false)} className="fixed inset-0 bg-black/40 z-30 lg:hidden" />}
     <aside
       className={`fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700 transition-all duration-300 z-40 flex flex-col ${
         collapsed ? 'w-[72px]' : 'w-[260px]'
-      }`}
+      } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
     >
       {/* Logo */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-700 flex-shrink-0">
@@ -117,6 +126,7 @@ export function Sidebar() {
                 return (
                   <Link
                     key={item.href}
+                    onClick={() => setMobileOpen(false)}
                     href={item.href}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group ${
                       active
@@ -156,5 +166,6 @@ export function Sidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }

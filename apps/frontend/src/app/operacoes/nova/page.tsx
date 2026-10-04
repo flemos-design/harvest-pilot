@@ -8,7 +8,8 @@ import { useParcelas } from '@/hooks/use-parcelas';
 import { Loader2, Save, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { PhotoUpload } from '@/components/upload/PhotoUpload';
 import type { UploadedImage } from '@/types/upload';
 
@@ -17,7 +18,7 @@ const operacaoSchema = z.object({
   data: z.string().min(1, 'Data é obrigatória'),
   descricao: z.string().optional(),
   parcelaId: z.string().min(1, 'Talhão é obrigatório'),
-  operadorId: z.string().optional(),
+  operadorId: z.string().min(1, 'Operador é obrigatório'),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   notas: z.string().optional(),
@@ -39,6 +40,8 @@ const TIPO_OPTIONS = [
 
 export default function NovaOperacaoPage() {
   const router = useRouter();
+  const { user } = useAuth();
+  const [initialParcelaId, setInitialParcelaId] = useState('');
   const { data: parcelas, isLoading: isLoadingParcelas } = useParcelas();
   const createOperacao = useCreateOperacao();
   const [useGPS, setUseGPS] = useState(false);
@@ -54,8 +57,17 @@ export default function NovaOperacaoPage() {
     resolver: zodResolver(operacaoSchema),
     defaultValues: {
       data: new Date().toISOString().split('T')[0],
+      parcelaId: initialParcelaId,
+      operadorId: user?.id || '',
     },
   });
+
+  useEffect(() => {
+    const queryParcelaId = new URLSearchParams(window.location.search).get('parcelaId') || '';
+    setInitialParcelaId(queryParcelaId);
+    if (queryParcelaId) setValue('parcelaId', queryParcelaId);
+    if (user?.id) setValue('operadorId', user.id);
+  }, [setValue, user?.id]);
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -88,9 +100,10 @@ export default function NovaOperacaoPage() {
         latitude: useGPS ? data.latitude : undefined,
         longitude: useGPS ? data.longitude : undefined,
         fotos: uploadedPhotos.map((photo) => photo.url), // Add photo URLs
+        operadorId: data.operadorId,
       };
 
-      await createOperacao.mutateAsync(operacaoData as any);
+      await createOperacao.mutateAsync(operacaoData);
       router.push('/operacoes');
     } catch (error) {
       console.error('Erro ao criar operação:', error);
@@ -186,6 +199,9 @@ export default function NovaOperacaoPage() {
               {errors.parcelaId && (
                 <p className="mt-1 text-sm text-red-600">{errors.parcelaId.message}</p>
               )}
+              {errors.operadorId && (
+                <p className="mt-1 text-sm text-red-600">{errors.operadorId.message}</p>
+              )}
             </div>
 
             {/* Descrição */}
@@ -231,7 +247,7 @@ export default function NovaOperacaoPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('latitude', { valueAsNumber: true })}
+                      {...register('latitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -241,7 +257,7 @@ export default function NovaOperacaoPage() {
                     <input
                       type="number"
                       step="any"
-                      {...register('longitude', { valueAsNumber: true })}
+                      {...register('longitude', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
                       readOnly
                     />
@@ -259,7 +275,7 @@ export default function NovaOperacaoPage() {
                 type="number"
                 step="0.01"
                 min="0"
-                {...register('custoTotal', { valueAsNumber: true })}
+                {...register('custoTotal', { setValueAs: (value) => value === '' ? undefined : Number(value) })}
                 placeholder="0.00"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />

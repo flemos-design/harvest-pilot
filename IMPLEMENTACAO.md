@@ -3,6 +3,8 @@
 **Data:** 7 de Novembro de 2025
 **Fase:** MVP (Fase 1) - Mapa & Registos
 
+> Este documento é um snapshot histórico da implementação. O estado de release atual está em `README.md`; integrações e itens marcados como futuros aqui não devem ser tratados como publicação concluída.
+
 ---
 
 ## ✅ O Que Foi Implementado

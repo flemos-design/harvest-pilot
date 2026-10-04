@@ -437,6 +437,18 @@ export interface ImagemRemota {
   };
 }
 
+export interface SatelliteConfigurationStatus {
+  ready: boolean;
+  sentinel: {
+    configured: boolean;
+    missing: string[];
+  };
+  storage: {
+    configured: boolean;
+    missing: string[];
+  };
+}
+
 // ===== UTILIZADORES =====
 
 export type PapelUtilizador = 'ADMIN' | 'GESTOR' | 'PLANEADOR' | 'OPERADOR';
